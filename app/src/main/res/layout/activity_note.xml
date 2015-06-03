@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/toolbar_layout" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:theme="@style/NotesItemTheme"
+            android:layout_margin="20dp"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.rengwuxian.materialedittext.MaterialEditText
+                style="@style/EditTextTheme"
+                android:id="@+id/label_edit_text"
+                android:textSize="@dimen/abc_text_size_large_material"
+                app:met_primaryColor="?attr/colorPrimary"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="@string/label"
+                app:met_floatingLabelAlwaysShown="true"
+                app:met_floatingLabelTextColor="?attr/colorPrimary"
+                app:met_maxCharacters="25"/>
+            <com.rengwuxian.materialedittext.MaterialEditText
+                style="@style/EditTextTheme"
+                android:id="@+id/content_edit_text"
+                app:met_primaryColor="?attr/colorPrimary"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelAlwaysShown="true"
+                app:met_floatingLabelTextColor="?attr/colorPrimary"
+                app:met_floatingLabelText="@string/note_content" />
+            <TextView
+                android:id="@+id/opr_time_line_text"
+                android:layout_marginTop="6dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?android:textColorSecondary"
+                android:gravity="end"
+                android:textSize="@dimen/abc_text_size_small_material"
+                android:lineSpacingExtra="6dp"
+                tool:text="创建: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n"
+                android:layout_gravity="right"/>
+        </LinearLayout>
+        <include layout="@layout/toolbar_shadow_layout"/>
+    </FrameLayout>
+
+</LinearLayout>

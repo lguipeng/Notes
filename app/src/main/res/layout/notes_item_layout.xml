@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notes_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="8dp"
+    android:descendantFocusability="blocksDescendants"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardElevation="4dp"
+    card_view:cardCornerRadius="4dp">
+    <LinearLayout
+        android:theme="@style/NotesItemTheme"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/note_label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:padding="6dp"
+                tools:text="Label Text"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="@dimen/abc_text_size_medium_material"/>
+            <ImageButton
+                android:id="@+id/note_more"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="6dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_more_grey"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/note_content_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            tools:text="Content Text Content Text Content Text Content Text Content Text Content Text Content Text Content Text Content Text Content Text "
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="@dimen/abc_text_size_small_material"/>
+        <TextView
+            android:id="@+id/note_last_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            tools:text="2015-5-24:16:05"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="@dimen/abc_text_size_caption_material"/>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
