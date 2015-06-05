@@ -1,3 +1,12 @@
+#ScreenShot
+<img src="./screenshot/S50603-103314.jpg" width="30%" height="30%">
+<img src="./screenshot/S50605-164248.jpg" width="30%" height="30%">
+
+<img src="./screenshot/S50605-164615.jpg" width="30%" height="30%">
+<img src="./screenshot/S50605-164642.jpg" width="30%" height="30%">
+
+<img src="./screenshot/S50605-164712.jpg" width="30%" height="30%">
+
 #1.1.0
 - 增加了笔记列表的瀑布流式的布局，可在设置里面切换
 - 增加了下拉同步笔记的组件
