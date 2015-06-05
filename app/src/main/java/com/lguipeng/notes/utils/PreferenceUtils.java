@@ -18,6 +18,10 @@ public class PreferenceUtils{
 
     public static final String NOTE_TYPE_KEY = "NOTE_TYPE_KEY";
 
+    public static final String NOTE_LAYOUT_KEY = "NOTE_LAYOUT_KEY";
+
+    public static final String NOTE_VERSION_KEY = "NOTE_VERSION_KEY";
+
     private PreferenceUtils(Context context){
         sharedPreferences = context.getSharedPreferences(SettingFragment.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         shareEditor = sharedPreferences.edit();
@@ -56,6 +60,18 @@ public class PreferenceUtils{
     }
 
     public void saveParam(String key, boolean value){
-        shareEditor.putBoolean(key,value).commit();
+        shareEditor.putBoolean(key, value).commit();
+    }
+
+    public long getLongParam(String key){
+        return getLongParam(key, 0);
+    }
+
+    public long getLongParam(String key, long defaultInt){
+        return sharedPreferences.getLong(key, defaultInt);
+    }
+
+    public void saveParam(String key, long value){
+        shareEditor.putLong(key, value).commit();
     }
 }

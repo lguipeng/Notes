@@ -26,6 +26,16 @@ public class CloudNote extends BmobObject {
 
     private String noteType;
 
+    private long version;
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
     public String getNoteType() {
         return noteType;
     }

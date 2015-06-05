@@ -17,31 +17,47 @@
     <TextView
         android:id="@+id/version_text"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:textColor="?android:textColorSecondary"
         android:textSize="@dimen/abc_text_size_medium_material"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-    <Button
-        android:background="@drawable/white_button_background"
-        android:id="@+id/blog_btn"
-        android:textColor="@color/grey"
+    <com.balysv.materialripple.MaterialRippleLayout
         android:layout_marginTop="60dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:text="@string/jianshu_blog"
-        android:textSize="@dimen/abc_text_size_button_material"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:background="@drawable/white_button_background"
-        android:id="@+id/project_home_btn"
-        android:textColor="@color/grey"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleColor="?attr/colorPrimary">
+        <Button
+            android:background="@drawable/white_button_background"
+            android:id="@+id/blog_btn"
+            android:textColor="?attr/colorPrimary"
+            android:text="@string/jianshu_blog"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.balysv.materialripple.MaterialRippleLayout>
+
+    <com.balysv.materialripple.MaterialRippleLayout
         android:layout_marginTop="14dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:text="@string/project_home"
-        android:textSize="@dimen/abc_text_size_button_material"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleColor="?attr/colorPrimary">
+        <Button
+            android:background="@drawable/white_button_background"
+            android:id="@+id/project_home_btn"
+            android:textColor="?attr/colorPrimary"
+            android:text="@string/project_home"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.balysv.materialripple.MaterialRippleLayout>
+
 </LinearLayout>

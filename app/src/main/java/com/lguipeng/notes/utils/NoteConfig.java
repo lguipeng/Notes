@@ -14,7 +14,6 @@ public class NoteConfig {
     public final static int NOTE_TRASH_TYPE = 0x03;
 
     public final static int NOTE_UPDATE_EVENT = 0x00;
-    public final static int ACCOUNT_FIRST_SAVE_EVENT = 0x01;
-    public final static int NOTE_TYPE_UPDATE_EVENT = 0x03;
+    public final static int NOTE_TYPE_UPDATE_EVENT = 0x01;
 
 }

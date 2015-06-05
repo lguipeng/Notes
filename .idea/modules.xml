@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/MaterialPreference/MaterialPreference.iml" filepath="$PROJECT_DIR$/MaterialPreference/MaterialPreference.iml" />
       <module fileurl="file://$PROJECT_DIR$/Notes.iml" filepath="$PROJECT_DIR$/Notes.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/orm-library/orm-library.iml" filepath="$PROJECT_DIR$/orm-library/orm-library.iml" />

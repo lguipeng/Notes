@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.lguipeng.notes.BuildConfig;
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.module.DataModule;
 
@@ -34,9 +35,6 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
     Button blogButton;
     @InjectView(R.id.project_home_btn)
     Button projectHomeButton;
-
-    private final String blogUrl = "http://www.jianshu.com/users/f612d54d668e/latest_articles";
-    private final String projectUrl = "https://github.com/lguipeng";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +59,10 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.blog_btn:
-                startViewAction(blogUrl);
+                startViewAction(BuildConfig.BLOG_URL);
                 break;
             case R.id.project_home_btn:
-                startViewAction(projectUrl);
+                startViewAction(BuildConfig.PROJECT_URL);
                 break;
             default:
                 break;

@@ -30,6 +30,7 @@
             <com.rengwuxian.materialedittext.MaterialEditText
                 style="@style/EditTextTheme"
                 android:id="@+id/content_edit_text"
+                app:met_hideUnderline="true"
                 app:met_primaryColor="?attr/colorPrimary"
                 app:met_floatingLabel="highlight"
                 app:met_floatingLabelAlwaysShown="true"

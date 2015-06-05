@@ -46,9 +46,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @TargetApi(19)
     private void initWindow(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            return;
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -71,11 +68,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected int getStatusBarColor(){
+    public int getStatusBarColor(){
+        return getColorPrimary();
+    }
+
+    public int getColorPrimary(){
         TypedValue typedValue = new  TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
         return typedValue.data;
     }
+
 
     @Override
     public void onDestroy() {

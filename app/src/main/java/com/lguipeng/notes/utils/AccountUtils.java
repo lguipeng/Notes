@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 public class AccountUtils {
 
-    private static String EMAIL_TYPE = "com.android.email";
+    private static final String EMAIL_TYPE = "com.android.email";
 
     public static void findValidAccount(Context context, AccountFinderListener listener){
         if (listener == null)

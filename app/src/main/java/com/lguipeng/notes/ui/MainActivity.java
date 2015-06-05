@@ -9,12 +9,14 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -42,7 +44,7 @@ import com.lguipeng.notes.module.DataModule;
 import com.lguipeng.notes.utils.JsonUtils;
 import com.lguipeng.notes.utils.NoteConfig;
 import com.lguipeng.notes.utils.PreferenceUtils;
-import com.lguipeng.notes.utils.ToastUtil;
+import com.lguipeng.notes.utils.SnackbarUtils;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ScrollDirectionListener;
 import com.pnikosis.materialishprogress.ProgressWheel;
@@ -61,10 +63,13 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by lgp on 2015/5/24.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener{
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
+
+    @InjectView(R.id.refresher)
+    SwipeRefreshLayout refreshLayout;
 
     @InjectView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -100,6 +105,8 @@ public class MainActivity extends BaseActivity {
 
     private boolean rightHandOn = false;
 
+    private boolean flowLayout = true;
+
     private boolean hasUpdateNote = false;
 
     private PreferenceUtils mPreferenceUtils;
@@ -115,7 +122,6 @@ public class MainActivity extends BaseActivity {
         initDrawerView();
         initRecyclerView();
         EventBus.getDefault().register(this);
-        initAccount();
     }
 
     @Override
@@ -129,6 +135,7 @@ public class MainActivity extends BaseActivity {
                 setMenuListViewGravity(Gravity.START);
             }
         }
+
     }
 
     @Override
@@ -137,6 +144,9 @@ public class MainActivity extends BaseActivity {
         if (hasUpdateNote){
             changeToSelectNoteType(mCurrentNoteType);
             hasUpdateNote = false;
+        }
+        if (flowLayout != preferenceUtils.getBooleanParam(PreferenceUtils.NOTE_LAYOUT_KEY, true)){
+            changeItemLayout(!flowLayout);
         }
     }
 
@@ -155,9 +165,6 @@ public class MainActivity extends BaseActivity {
         switch (event){
             case NoteConfig.NOTE_UPDATE_EVENT:
                 hasUpdateNote = true;
-                break;
-            case NoteConfig.ACCOUNT_FIRST_SAVE_EVENT:
-                initAccount();
                 break;
             case NoteConfig.NOTE_TYPE_UPDATE_EVENT:
                 initDrawerListView();
@@ -235,12 +242,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
                 return true;
             case R.id.sync:
-                String account = preferenceUtils.getStringParam(getString(R.string.sync_account_key));
-                if (TextUtils.isEmpty(account)){
-                    ToastUtil.show(this, R.string.no_account_tip);
-                }else {
-                    syncNotes();
-                }
+                sync();
                 return true;
             case R.id.about:
                 intent = new Intent(MainActivity.this, AboutActivity.class);
@@ -344,7 +346,7 @@ public class MainActivity extends BaseActivity {
 
     private void initRecyclerView(){
         showProgressWheel(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        initItemLayout();
         recyclerView.setHasFixedSize(true);
         recyclerAdapter = new NotesAdapter(initItemData(mCurrentNoteType));
         recyclerAdapter.setOnInViewClickListener(R.id.notes_item_root,
@@ -356,7 +358,7 @@ public class MainActivity extends BaseActivity {
                             return;
                         startNoteActivity(NoteActivity.VIEW_NOTE_TYPE, values);
                     }
-        });
+                });
         recyclerAdapter.setOnInViewClickListener(R.id.note_more,
                 new BaseRecyclerViewAdapter.onInternalClickListenerImpl<Note>() {
                     @Override
@@ -364,7 +366,7 @@ public class MainActivity extends BaseActivity {
                         super.OnClickListener(parentV, v, position, values);
                         showPopupMenu(v, values);
                     }
-        });
+                });
         recyclerAdapter.setFirstOnly(false);
         recyclerAdapter.setDuration(300);
         recyclerView.setAdapter(recyclerAdapter);
@@ -388,6 +390,13 @@ public class MainActivity extends BaseActivity {
             }
         });
         showProgressWheel(false);
+        refreshLayout.setColorSchemeColors(getColorPrimary());
+        refreshLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void onRefresh() {
+        sync();
     }
 
     private void changeToSelectNoteType(int type){
@@ -417,11 +426,11 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     int id = item.getItemId();
-                    if (id < noteTypelist.size() -1){
+                    if (id < noteTypelist.size() - 1) {
                         note.setType(id);
                         finalDb.update(note);
                         changeToSelectNoteType(mCurrentNoteType);
-                    }else{
+                    } else {
                         showDeleteForeverDialog(note);
                     }
                     return true;
@@ -529,24 +538,10 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void initAccount(){
-        boolean isPullSync;
-        String account = preferenceUtils.getStringParam(getString(R.string.sync_account_key));
-        if (!TextUtils.isEmpty(account)){
-            isPullSync = preferenceUtils.getBooleanParam(account, true);
-            if (isPullSync){
-                pullCloudNote(account);
-            }
-        }
-
-    }
-
-    private void syncNotes(){
-        ToastUtil.show(this, R.string.syncing);
+    private void syncNotes(final String account){
         new Thread(){
             @Override
             public void run() {
-                final String account = preferenceUtils.getStringParam(getString(R.string.sync_account_key));
                 BmobQuery<CloudNote> query = new BmobQuery<>();
                 query.addWhereEqualTo("email", account);
                 query.findObjects(MainActivity.this, new FindListenerImpl<CloudNote>(){
@@ -556,9 +551,41 @@ public class MainActivity extends BaseActivity {
                         List<Note> list = finalDb.findAll(Note.class);
                         if (notes != null && notes.size() >= 1){
                             cloudNote = notes.get(0);
+                            long localVersion = preferenceUtils.getLongParam(PreferenceUtils.NOTE_VERSION_KEY);
+                            if (cloudNote.getVersion() > localVersion){
+                                //pull notes
+                                preferenceUtils.saveParam(PreferenceUtils.NOTE_TYPE_KEY, cloudNote.getNoteType());
+                                for (String string : cloudNote.getNoteList()) {
+                                    Note note = JsonUtils.parseNote(string);
+                                    if (note == null)
+                                        continue;
+                                    finalDb.saveBindId(note);
+                                    NoteOperateLog log = new NoteOperateLog();
+                                    log.setTime(note.getLastOprTime());
+                                    log.setType(NoteConfig.NOTE_CREATE_OPR);
+                                    log.setNote(note);
+                                    finalDb.save(log);
+                                }
+                                preferenceUtils.saveParam(PreferenceUtils.NOTE_VERSION_KEY, cloudNote.getVersion());
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        initDrawerListView();
+                                        changeToSelectNoteType(mCurrentNoteType);
+                                        onSyncSuccess();
+                                    }
+                                });
+                                return;
+                            }else {
+                                //upload notes
+                                cloudNote.setVersion(++localVersion);
+
+                            }
                         }else {
                             cloudNote = new CloudNote();
                             cloudNote.setEmail(account);
+                            cloudNote.setVersion(1);
+
                         }
                         cloudNote.clearNotes();
                         for (Note note : list){
@@ -570,6 +597,7 @@ public class MainActivity extends BaseActivity {
                             cloudNote.save(MainActivity.this, new SaveListenerImpl() {
                                 @Override
                                 public void onSuccess() {
+                                    preferenceUtils.saveParam(PreferenceUtils.NOTE_VERSION_KEY, cloudNote.getVersion());
                                     onSyncSuccess();
                                 }
 
@@ -583,6 +611,7 @@ public class MainActivity extends BaseActivity {
                             cloudNote.update(MainActivity.this, new UpdateListenerImpl() {
                                 @Override
                                 public void onSuccess() {
+                                    preferenceUtils.saveParam(PreferenceUtils.NOTE_VERSION_KEY, cloudNote.getVersion());
                                     onSyncSuccess();
                                 }
 
@@ -604,78 +633,57 @@ public class MainActivity extends BaseActivity {
         }.start();
     }
 
+    private void sync(){
+        String account = preferenceUtils.getStringParam(getString(R.string.sync_account_key));
+        if (TextUtils.isEmpty(account)){
+            SnackbarUtils.show(this, R.string.no_account_tip);
+            if (refreshLayout.isRefreshing()){
+                refreshLayout.setRefreshing(false);
+            }
+        }else {
+            if (!refreshLayout.isRefreshing()){
+                refreshLayout.setRefreshing(true);
+            }
+            syncNotes(account);
+        }
+    }
+
     private void onSyncSuccess(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ToastUtil.show(MainActivity.this, R.string.sync_success);
+                refreshLayout.setRefreshing(false);
+                SnackbarUtils.show(MainActivity.this, R.string.sync_success);
             }
         });
-    }
-
-    private void onPullSyncNoData(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ToastUtil.show(MainActivity.this, R.string.pull_sync_no_data_tip);
-            }
-        });
-    }
-
-    private void onPullSyncSuccess(){
-        ToastUtil.show(MainActivity.this, R.string.pull_sync_success_tip);
     }
 
     private void onSyncFail(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ToastUtil.show(MainActivity.this, R.string.sync_success);
+                refreshLayout.setRefreshing(false);
+                SnackbarUtils.show(MainActivity.this, R.string.sync_success);
             }
         });
     }
 
-    private void pullCloudNote(final String account){
-        if (TextUtils.isEmpty(account)){
-            return;
+    private void changeItemLayout(boolean flow){
+        flowLayout = flow;
+        if (!flow){
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        }else {
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
         }
-        BmobQuery<CloudNote> query = new BmobQuery<>();
-        query.addWhereEqualTo("email", account);
-        query.findObjects(this, new FindListenerImpl<CloudNote>() {
-            @Override
-            public void onSuccess(List<CloudNote> list) {
-                if (list == null || list.size() <= 0){
-                    onPullSyncNoData();
-                    return;
-                }
-                preferenceUtils.saveParam(account, false);
-                CloudNote cloudNote = list.get(0);
-                preferenceUtils.saveParam(PreferenceUtils.NOTE_TYPE_KEY, cloudNote.getNoteType());
-                for (String string : cloudNote.getNoteList()) {
-                    Note note = JsonUtils.parseNote(string);
-                    if (note == null)
-                        continue;
-                    finalDb.saveBindId(note);
-                    NoteOperateLog log = new NoteOperateLog();
-                    log.setTime(note.getLastOprTime());
-                    log.setType(NoteConfig.NOTE_CREATE_OPR);
-                    log.setNote(note);
-                    finalDb.save(log);
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initDrawerListView();
-                        changeToSelectNoteType(mCurrentNoteType);
-                        onPullSyncSuccess();
-                    }
-                });
-            }
+    }
 
-            @Override
-            public void onError(int i, String s) {
-                super.onError(i, s);
-            }
-        });
+    private void initItemLayout(){
+        if (preferenceUtils.getBooleanParam(PreferenceUtils.NOTE_LAYOUT_KEY, true)){
+            flowLayout = true;
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
+        }else {
+            flowLayout = false;
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        }
     }
 }

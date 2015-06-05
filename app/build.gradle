@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 def packTime() {
     return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("UTC"))
 }
+def projectUrl = "https://github.com/lguipeng/Notes"
+def blogUrl = "http://www.jianshu.com/users/f612d54d668e/latest_articles"
 def bmobAppKey = "4fcb90c69b6642982163dc08edf26e31"
 android {
     signingConfigs {
@@ -11,16 +13,18 @@ android {
             //setting you signing.properties
         }
     }
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion Integer.parseInt(ANDROID_BUILD_COMPILE_SDK_VERSION)
+    buildToolsVersion ANDROID_BUILD_TOOLS_VERSION
     defaultConfig {
         applicationId "com.lguipeng.notes"
-        minSdkVersion 14
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0.2"
+        minSdkVersion Integer.parseInt(MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(ANDROID_BUILD_TARGET_SDK_VERSION)
+        versionCode Integer.parseInt(VERSION_CODE)
+        versionName VERSION_NAME
 
         buildConfigField "String", "BMOB_KEY", "\"${bmobAppKey}\""
+        buildConfigField "String", "PROJECT_URL", "\"${projectUrl}\""
+        buildConfigField "String", "BLOG_URL", "\"${blogUrl}\""
     }
     buildTypes {
 
@@ -80,9 +84,10 @@ dependencies {
     compile 'com.squareup.dagger:dagger:1.2.2'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'com.jenzz:materialpreference:1.3'
     compile 'com.pnikosis:materialish-progress:1.5'
+    compile 'com.nispok:snackbar:2.10.10'
     compile project(':orm-library')
+    compile project(':MaterialPreference')
 }
 
 File propFile = file('signing.properties');

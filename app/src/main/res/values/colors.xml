@@ -4,7 +4,9 @@
     <color name="warm_red">#FF6347</color>
     <color name="dark_warm_red">#FF6347</color>
     <color name="grey" >#ffbebebe</color>
+    <color name="dark_grey">#FF080808</color>
     <color name="light_grey">#ffbebebe</color>
+    <color name="light_grey_1">#FFEEEEEE</color>
 
     <color name="main_color">@color/warm_red</color>
     <color name="dark_main_color">@color/dark_warm_red</color>

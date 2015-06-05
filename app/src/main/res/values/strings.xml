@@ -47,13 +47,11 @@
     <string name="choose_account">请选择账号</string>
     <string name="sync_account">同步账号</string>
     <string name="sync_account_key">sync_account_key</string>
-    <string name="no_account_tip">请在设置里面添加一个有效的邮箱账号</string>
+    <string name="no_account_tip">请在手机设置中添加一个有效的邮箱账号</string>
     <string name="multi_account_choose_tip">您的有效邮箱账号多于一个，请点击选择</string>
     <string name="syncing">正在后台同步中</string>
     <string name="sync_success">同步成功</string>
     <string name="sync_fail">同步失败，建议在网络好的时候进行同步</string>
-    <string name="pull_sync_no_data_tip">该账号没有同步过数据</string>
-    <string name="pull_sync_success_tip">成功同步最新数据</string>
     <string name="pay_for_me_title">觉得不错，随意打赏</string>
     <string name="jianshu_blog">简书博客</string>
     <string name="project_home">项目主页</string>
@@ -63,4 +61,7 @@
     <string name="recycle_bin">回收站</string>
     <string name="move_to">移回</string>
     <string name="give_favor_key">give_favor_key</string>
+    <string name="change_note_layout">切换列表布局</string>
+    <string name="flow_note_item_layout">瀑布流呈现列表</string>
+    <string name="flow_note_item_layout_key">flow_note_item_layout_key</string>
 </resources>

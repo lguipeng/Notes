@@ -46,7 +46,7 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filte
             return;
         holder.setLabelText(note.getLabel());
         holder.setContentText(note.getContent());
-        holder.setTimeText(TimeUtils.getTime(note.getLastOprTime()));
+        holder.setTimeText(TimeUtils.getConciseTime(note.getLastOprTime()));
         animate(viewHolder, position);
     }
 

@@ -16,6 +16,7 @@
         <item name="popupTheme">@style/popupTheme</item>
         <item name="popupMenuStyle">@style/popupMenuStyle</item>
         <item name="android:activatedBackgroundIndicator">@drawable/activated_background</item>
+        <item name="selectableItemBackground">@drawable/selectable_background</item>
     </style>
 
     <style name="AppBaseTheme.Light" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -33,7 +34,7 @@
         <item name="popupTheme">@style/popupTheme</item>
         <item name="popupMenuStyle">@style/popupMenuStyle</item>
         <item name="android:activatedBackgroundIndicator">@drawable/activated_background</item>
-
+        <item name="selectableItemBackground">@drawable/selectable_background</item>
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme">
@@ -86,8 +87,8 @@
     </style>
 
     <style name="NotesItemTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:textColorPrimary">@android:color/black</item>
-        <item name="android:textColorSecondary">@color/grey</item>
+        <item name="android:textColorPrimary">@color/dark_grey</item>
+        <item name="android:textColorSecondary">#848484</item>
         <item name="colorPrimary">@color/warm_red</item>
         <item name="colorPrimaryDark">@color/dark_warm_red</item>
     </style>
