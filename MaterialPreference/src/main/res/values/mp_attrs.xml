@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <attr name="mp_colorAccent"
+      format="reference|color"/>
+
+</resources>
