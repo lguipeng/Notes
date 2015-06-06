@@ -192,8 +192,8 @@ public class NoteActivity extends BaseActivity{
         if (keyCode == KeyEvent.KEYCODE_BACK){
             if (doneMenuItem.isVisible()){
                 showNotSaveNoteDialog();
+                return true;
             }
-            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
