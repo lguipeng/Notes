@@ -61,4 +61,5 @@
     <string name="give_favor_key">give_favor_key</string>
     <string name="card_note_item_layout">卡片式笔记</string>
     <string name="card_note_item_layout_key">card_note_item_layout_key</string>
+    <string name="not_save_note_leave_tip">笔记已经发生变化，是否保存后再离开</string>
 </resources>

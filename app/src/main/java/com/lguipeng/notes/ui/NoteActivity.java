@@ -1,12 +1,15 @@
 package com.lguipeng.notes.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -123,7 +126,7 @@ public class NoteActivity extends BaseActivity{
             @Override
             public void onClick(View view) {
                 if (doneMenuItem.isVisible()){
-                    saveNote();
+                    showNotSaveNoteDialog();
                     return;
                 }
                 finish();
@@ -182,6 +185,41 @@ public class NoteActivity extends BaseActivity{
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            if (doneMenuItem.isVisible()){
+                showNotSaveNoteDialog();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void showNotSaveNoteDialog(){
+        hideKeyBoard(labelEditText);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        builder.setTitle(R.string.not_save_note_leave_tip);
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        saveNote();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        NoteActivity.this.finish();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        builder.setPositiveButton(R.string.sure, listener);
+        builder.setNegativeButton(R.string.cancel, listener);
+        builder.show();
     }
 
     private void saveNote(){
