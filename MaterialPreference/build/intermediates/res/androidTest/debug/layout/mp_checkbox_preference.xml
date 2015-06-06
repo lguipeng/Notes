@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/checkbox"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:focusable="false"
-    android:clickable="false"
-    /><!-- From: file:/E:/Android-Studio-WorkDir/Notes/MaterialPreference/src/main/res/layout/mp_checkbox_preference.xml --><!-- From: file:/E:/Android-Studio-WorkDir/Notes/MaterialPreference/build/intermediates/bundles/debug/res/layout/mp_checkbox_preference.xml -->
