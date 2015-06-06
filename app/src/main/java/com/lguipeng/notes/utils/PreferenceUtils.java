@@ -18,10 +18,6 @@ public class PreferenceUtils{
 
     public static final String NOTE_TYPE_KEY = "NOTE_TYPE_KEY";
 
-    public static final String NOTE_LAYOUT_KEY = "NOTE_LAYOUT_KEY";
-
-    public static final String NOTE_VERSION_KEY = "NOTE_VERSION_KEY";
-
     private PreferenceUtils(Context context){
         sharedPreferences = context.getSharedPreferences(SettingFragment.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         shareEditor = sharedPreferences.edit();

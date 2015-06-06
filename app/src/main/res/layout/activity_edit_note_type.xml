@@ -4,15 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar_layout" />
-    <LinearLayout
-        android:id="@+id/edit_root_view"
-        android:orientation="vertical"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="25dp"
-        android:layout_marginTop="10dp"
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:fadingEdge="none"
+        android:scrollbars="none"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollingCache="false"
+        android:overScrollMode="never">
+        <LinearLayout
+            android:id="@+id/edit_root_view"
+            android:orientation="vertical"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </LinearLayout>
+    </ScrollView>
+
 
 </LinearLayout>

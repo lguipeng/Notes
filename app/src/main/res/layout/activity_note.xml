@@ -36,17 +36,28 @@
                 app:met_floatingLabelAlwaysShown="true"
                 app:met_floatingLabelTextColor="?attr/colorPrimary"
                 app:met_floatingLabelText="@string/note_content" />
-            <TextView
-                android:id="@+id/opr_time_line_text"
-                android:layout_marginTop="6dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?android:textColorSecondary"
-                android:gravity="end"
-                android:textSize="@dimen/abc_text_size_small_material"
-                android:lineSpacingExtra="6dp"
-                tool:text="创建: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n"
-                android:layout_gravity="right"/>
+            <ScrollView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fadingEdge="none"
+                android:scrollbars="none"
+                android:cacheColorHint="@android:color/transparent"
+                android:scrollingCache="false"
+                android:overScrollMode="never">
+                <TextView
+                    android:id="@+id/opr_time_line_text"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:textColorSecondary"
+                    android:gravity="end"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:lineSpacingExtra="6dp"
+                    android:layout_gravity="right"
+                    tool:text="创建: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n" />
+            </ScrollView>
         </LinearLayout>
         <include layout="@layout/toolbar_shadow_layout"/>
     </FrameLayout>

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.balysv.materialripple.MaterialRippleLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:id="@+id/notes_item_root"
     android:alpha="0.7"
     android:background="@drawable/abc_popup_background_mtrl_mult"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     app:mrl_rippleOverlay="true"
-    app:mrl_rippleColor="?attr/colorPrimary" >
+    app:mrl_rippleColor="?attr/colorPrimary">
         <LinearLayout
             android:theme="@style/NotesItemTheme"
             android:orientation="vertical"

@@ -122,6 +122,10 @@ public class NoteActivity extends BaseActivity{
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (doneMenuItem.isVisible()){
+                    saveNote();
+                    return;
+                }
                 finish();
             }
         });
@@ -173,33 +177,37 @@ public class NoteActivity extends BaseActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.done:
-                hideKeyBoard(labelEditText);
-                note.setLabel(labelEditText.getText().toString());
-                note.setContent(contentEditText.getText().toString());
-                note.setLastOprTime(TimeUtils.getCurrentTimeInLong());
-
-                NoteOperateLog log = new NoteOperateLog();
-                log.setTime(TimeUtils.getCurrentTimeInLong());
-                switch (operateNoteType){
-                    case CREATE_NOTE_TYPE:
-                        finalDb.saveBindId(note);
-                        log.setType(NoteConfig.NOTE_CREATE_OPR);
-                        log.setNote(note);
-                        finalDb.save(log);
-                        break;
-                    default:
-                        finalDb.update(note);
-                        log.setType(NoteConfig.NOTE_EDIT_OPR);
-                        log.setNote(note);
-                        finalDb.save(log);
-                        break;
-                }
-                EventBus.getDefault().post(NoteConfig.NOTE_UPDATE_EVENT);
-                finish();
+                saveNote();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void saveNote(){
+        hideKeyBoard(labelEditText);
+        note.setLabel(labelEditText.getText().toString());
+        note.setContent(contentEditText.getText().toString());
+        note.setLastOprTime(TimeUtils.getCurrentTimeInLong());
+
+        NoteOperateLog log = new NoteOperateLog();
+        log.setTime(TimeUtils.getCurrentTimeInLong());
+        switch (operateNoteType){
+            case CREATE_NOTE_TYPE:
+                finalDb.saveBindId(note);
+                log.setType(NoteConfig.NOTE_CREATE_OPR);
+                log.setNote(note);
+                finalDb.save(log);
+                break;
+            default:
+                finalDb.update(note);
+                log.setType(NoteConfig.NOTE_EDIT_OPR);
+                log.setNote(note);
+                finalDb.save(log);
+                break;
+        }
+        EventBus.getDefault().post(NoteConfig.NOTE_UPDATE_EVENT);
+        finish();
     }
 
     class SimpleTextWatcher implements TextWatcher {

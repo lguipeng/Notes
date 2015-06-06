@@ -29,8 +29,6 @@ android {
     buildTypes {
 
         debug {
-            // 显示Log
-            buildConfigField "boolean", "LOG_DEBUG", "true"
             versionNameSuffix " Beta"
             minifyEnabled false
             zipAlignEnabled false
@@ -38,8 +36,6 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // 不显示Log
-            buildConfigField "boolean", "LOG_DEBUG", "false"
             minifyEnabled false
             zipAlignEnabled false
             shrinkResources true

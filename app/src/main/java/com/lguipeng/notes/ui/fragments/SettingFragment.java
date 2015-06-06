@@ -47,7 +47,7 @@ public class SettingFragment extends BaseFragment{
 
     private boolean rightHandMode;
 
-    private boolean flowLayout;
+    private boolean cardLayout;
 
     private  List<String> accountItems = new ArrayList<>();
 
@@ -70,9 +70,9 @@ public class SettingFragment extends BaseFragment{
         showNoteHistoryLogCheckBox.setChecked(showNoteHistoryLog);
         rightHandModeSwitch = (SwitchPreference)findPreference(getString(R.string.right_hand_mode_key));
         rightHandModeSwitch.setChecked(rightHandMode);
-        flowLayout = preferenceUtils.getBooleanParam(PreferenceUtils.NOTE_LAYOUT_KEY, true);
-        CheckBoxPreference flowLayoutPreference = (CheckBoxPreference)findPreference(getString(R.string.flow_note_item_layout_key));
-        flowLayoutPreference.setChecked(flowLayout);
+        cardLayout = preferenceUtils.getBooleanParam(getString(R.string.card_note_item_layout_key), true);
+        CheckBoxPreference cardLayoutPreference = (CheckBoxPreference)findPreference(getString(R.string.card_note_item_layout_key));
+        cardLayoutPreference.setChecked(cardLayout);
         feedbackPreference = (Preference)findPreference(getString(R.string.advice_feedback_key));
         accountPreference = (Preference)findPreference(getString(R.string.sync_account_key));
         payMePreference = (Preference)findPreference(getString(R.string.pay_for_me_key));
@@ -95,9 +95,9 @@ public class SettingFragment extends BaseFragment{
             preferenceUtils.saveParam(getString(R.string.right_hand_mode_key), rightHandMode);
         }
 
-        if (TextUtils.equals(key, getString(R.string.flow_note_item_layout_key))){
-            flowLayout = !flowLayout;
-            preferenceUtils.saveParam(PreferenceUtils.NOTE_LAYOUT_KEY, flowLayout);
+        if (TextUtils.equals(key, getString(R.string.card_note_item_layout_key))){
+            cardLayout = !cardLayout;
+            preferenceUtils.saveParam(getString(R.string.card_note_item_layout_key), cardLayout);
         }
 
         if (TextUtils.equals(key, getString(R.string.show_note_history_log_key))){

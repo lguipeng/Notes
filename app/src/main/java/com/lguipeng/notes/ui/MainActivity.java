@@ -41,6 +41,7 @@ import com.lguipeng.notes.model.Note;
 import com.lguipeng.notes.model.NoteOperateLog;
 import com.lguipeng.notes.model.NoteType;
 import com.lguipeng.notes.module.DataModule;
+import com.lguipeng.notes.utils.AccountUtils;
 import com.lguipeng.notes.utils.JsonUtils;
 import com.lguipeng.notes.utils.NoteConfig;
 import com.lguipeng.notes.utils.PreferenceUtils;
@@ -105,7 +106,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     private boolean rightHandOn = false;
 
-    private boolean flowLayout = true;
+    private boolean cardLayout = true;
 
     private boolean hasUpdateNote = false;
 
@@ -114,6 +115,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private boolean hasEditClick = false;
 
     private  List<String> noteTypelist;
+
+    private boolean hasSyncing = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,8 +148,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             changeToSelectNoteType(mCurrentNoteType);
             hasUpdateNote = false;
         }
-        if (flowLayout != preferenceUtils.getBooleanParam(PreferenceUtils.NOTE_LAYOUT_KEY, true)){
-            changeItemLayout(!flowLayout);
+        if (cardLayout != preferenceUtils.getBooleanParam(getString(R.string.card_note_item_layout_key), true)){
+            changeItemLayout(!cardLayout);
         }
     }
 
@@ -551,7 +554,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         List<Note> list = finalDb.findAll(Note.class);
                         if (notes != null && notes.size() >= 1){
                             cloudNote = notes.get(0);
-                            long localVersion = preferenceUtils.getLongParam(PreferenceUtils.NOTE_VERSION_KEY);
+                            long localVersion = preferenceUtils.getLongParam(account);
                             if (cloudNote.getVersion() > localVersion){
                                 //pull notes
                                 preferenceUtils.saveParam(PreferenceUtils.NOTE_TYPE_KEY, cloudNote.getNoteType());
@@ -566,7 +569,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                                     log.setNote(note);
                                     finalDb.save(log);
                                 }
-                                preferenceUtils.saveParam(PreferenceUtils.NOTE_VERSION_KEY, cloudNote.getVersion());
+                                preferenceUtils.saveParam(account, cloudNote.getVersion());
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -579,7 +582,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                             }else {
                                 //upload notes
                                 cloudNote.setVersion(++localVersion);
-
                             }
                         }else {
                             cloudNote = new CloudNote();
@@ -597,7 +599,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                             cloudNote.save(MainActivity.this, new SaveListenerImpl() {
                                 @Override
                                 public void onSuccess() {
-                                    preferenceUtils.saveParam(PreferenceUtils.NOTE_VERSION_KEY, cloudNote.getVersion());
+                                    preferenceUtils.saveParam(account, cloudNote.getVersion());
                                     onSyncSuccess();
                                 }
 
@@ -611,7 +613,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                             cloudNote.update(MainActivity.this, new UpdateListenerImpl() {
                                 @Override
                                 public void onSuccess() {
-                                    preferenceUtils.saveParam(PreferenceUtils.NOTE_VERSION_KEY, cloudNote.getVersion());
+                                    preferenceUtils.saveParam(account, cloudNote.getVersion());
                                     onSyncSuccess();
                                 }
 
@@ -627,6 +629,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     @Override
                     public void onError(int i, String s) {
                         super.onError(i, s);
+                        onSyncFail();
                     }
                 });
             }
@@ -634,16 +637,40 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void sync(){
+        if (hasSyncing)
+            return;
         String account = preferenceUtils.getStringParam(getString(R.string.sync_account_key));
         if (TextUtils.isEmpty(account)){
-            SnackbarUtils.show(this, R.string.no_account_tip);
-            if (refreshLayout.isRefreshing()){
-                refreshLayout.setRefreshing(false);
-            }
+            AccountUtils.findValidAccount(getApplicationContext(), new AccountUtils.AccountFinderListener() {
+                @Override
+                protected void onNone() {
+                    if (refreshLayout.isRefreshing()){
+                        refreshLayout.setRefreshing(false);
+                    }
+                    SnackbarUtils.show(MainActivity.this, R.string.no_account_tip);
+                }
+
+                @Override
+                protected void onOne(String account) {
+                    preferenceUtils.saveParam(getString(R.string.sync_account_key), account);
+                    hasSyncing = true;
+                    syncNotes(account);
+                }
+
+                @Override
+                protected void onMore(List<String> accountItems) {
+                    if (refreshLayout.isRefreshing()){
+                        refreshLayout.setRefreshing(false);
+                    }
+                    SnackbarUtils.show(MainActivity.this, R.string.no_account_tip);
+                }
+            });
+
         }else {
             if (!refreshLayout.isRefreshing()){
                 refreshLayout.setRefreshing(true);
             }
+            hasSyncing = true;
             syncNotes(account);
         }
     }
@@ -652,6 +679,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                hasSyncing = false;
                 refreshLayout.setRefreshing(false);
                 SnackbarUtils.show(MainActivity.this, R.string.sync_success);
             }
@@ -662,14 +690,15 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                hasSyncing = false;
                 refreshLayout.setRefreshing(false);
-                SnackbarUtils.show(MainActivity.this, R.string.sync_success);
+                SnackbarUtils.show(MainActivity.this, R.string.sync_fail);
             }
         });
     }
 
     private void changeItemLayout(boolean flow){
-        flowLayout = flow;
+        cardLayout = flow;
         if (!flow){
             recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         }else {
@@ -678,11 +707,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void initItemLayout(){
-        if (preferenceUtils.getBooleanParam(PreferenceUtils.NOTE_LAYOUT_KEY, true)){
-            flowLayout = true;
+        if (preferenceUtils.getBooleanParam(getString(R.string.card_note_item_layout_key), true)){
+            cardLayout = true;
             recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
         }else {
-            flowLayout = false;
+            cardLayout = false;
             recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         }
     }

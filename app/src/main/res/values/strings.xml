@@ -3,7 +3,6 @@
     <string name="setting">设置</string>
     <string name="about">关于</string>
     <string name="exit">退出</string>
-
     <string name="search">搜索</string>
     <string name="more">更多</string>
     <string name="general_settings">常规</string>
@@ -14,8 +13,6 @@
     <string name="show_note_history_log">显示笔记全部操作记录</string>
     <string name="sync">同步</string>
     <string name="show_note_history_log_summary">开启显示笔记全部操作记录，将显示笔记所有的操作记录，否则只显示最新的操作记录</string>
-
-
     <array name="drawer_content">
         <item>学习笔记</item>
         <item>工作笔记</item>
@@ -48,6 +45,7 @@
     <string name="sync_account">同步账号</string>
     <string name="sync_account_key">sync_account_key</string>
     <string name="no_account_tip">请在手机设置中添加一个有效的邮箱账号</string>
+    <string name="multi_account_tip">您的有效邮箱账号多于一个，请在设置中选择</string>
     <string name="multi_account_choose_tip">您的有效邮箱账号多于一个，请点击选择</string>
     <string name="syncing">正在后台同步中</string>
     <string name="sync_success">同步成功</string>
@@ -61,7 +59,6 @@
     <string name="recycle_bin">回收站</string>
     <string name="move_to">移回</string>
     <string name="give_favor_key">give_favor_key</string>
-    <string name="change_note_layout">切换列表布局</string>
-    <string name="flow_note_item_layout">瀑布流呈现列表</string>
-    <string name="flow_note_item_layout_key">flow_note_item_layout_key</string>
+    <string name="card_note_item_layout">卡片式笔记</string>
+    <string name="card_note_item_layout_key">card_note_item_layout_key</string>
 </resources>
