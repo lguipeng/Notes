@@ -4,13 +4,20 @@ def packTime() {
 }
 def projectUrl = "https://github.com/lguipeng/Notes"
 def blogUrl = "http://www.jianshu.com/users/f612d54d668e/latest_articles"
-def bmobAppKey = "4fcb90c69b6642982163dc08edf26e31"
+
+//remember to add your bmob app key in local.properties
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def bmobAppKey = properties.getProperty('BMOB_KEY')
+
 android {
     signingConfigs {
         debug {
         }
         release {
-            //setting you signing.properties
+            //setting your signing.properties
+            //first, add signing.properties to ./app/
+            //second, add property STORE_FILE, STORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD
         }
     }
     compileSdkVersion Integer.parseInt(ANDROID_BUILD_COMPILE_SDK_VERSION)
@@ -71,8 +78,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:recyclerview-v7:21.0.0'
-    compile 'com.android.support:cardview-v7:21.0.3'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.android.support:cardview-v7:22.2.0'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile 'com.melnykov:floatingactionbutton:1.3.0'
