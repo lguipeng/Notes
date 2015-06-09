@@ -87,10 +87,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     * 每一个设置了Toolbar的Activity，设置其返回键功能正常（此处的正常一般是指finish();方法）
-     * 之后不用再给每一个继承了BaseActivity的Activity在设置  ←  这个键的点击事件了，这样好麻烦 （setNavigationOnClickListener）
-     * @param item
-     * @return
+     * 增加了默认的返回finish事件
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -98,9 +95,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         switch (id) {
             case android.R.id.home:
                 finish();
-                break;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+        
     }
 
     protected abstract int getLayoutView();
