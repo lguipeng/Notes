@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.WindowManager;
 
 import com.lguipeng.notes.App;
@@ -25,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private ObjectGraph activityGraph;
 
-    protected   PreferenceUtils preferenceUtils;
+    protected PreferenceUtils preferenceUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +39,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         preferenceUtils = PreferenceUtils.getInstance(this);
     }
 
-    protected int getColor(int res){
+    protected int getColor(int res) {
         if (res <= 0)
             throw new IllegalArgumentException("resource id can not be less 0");
         return getResources().getColor(res);
     }
 
     @TargetApi(19)
-    private void initWindow(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+    private void initWindow() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
@@ -55,25 +56,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void initToolbar(Toolbar toolbar){
+    protected void initToolbar(Toolbar toolbar) {
         if (toolbar == null)
             return;
         toolbar.setTitle(R.string.app_name);
         toolbar.setTitleTextColor(getColor(R.color.action_bar_title_color));
         toolbar.collapseActionView();
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
-    public int getStatusBarColor(){
+    public int getStatusBarColor() {
         return getColorPrimary();
     }
 
-    public int getColorPrimary(){
-        TypedValue typedValue = new  TypedValue();
+    public int getColorPrimary() {
+        TypedValue typedValue = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
         return typedValue.data;
     }
@@ -83,6 +84,24 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         activityGraph = null;
+    }
+
+    /**
+     * 每一个设置了Toolbar的Activity，设置其返回键功能正常（此处的正常一般是指finish();方法）
+     * 之后不用再给每一个继承了BaseActivity的Activity在设置  ←  这个键的点击事件了，这样好麻烦 （setNavigationOnClickListener）
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     protected abstract int getLayoutView();
