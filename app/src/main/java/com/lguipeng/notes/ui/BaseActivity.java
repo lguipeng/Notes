@@ -89,7 +89,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 每一个设置了Toolbar的Activity，设置其返回键功能正常（此处的正常一般是指finish();方法）
      * 之后不用再给每一个继承了BaseActivity的Activity在设置  ←  这个键的点击事件了，这样好麻烦 （setNavigationOnClickListener）
-     *
+     * initToolBar的方法其实也可以优化下，不用每次继承initToolbar的方法
      * @param item
      * @return
      */
