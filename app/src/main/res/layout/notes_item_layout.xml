@@ -12,7 +12,6 @@
     app:mrl_rippleOverlay="true"
     app:mrl_rippleColor="?attr/colorPrimary">
         <LinearLayout
-            android:theme="@style/NotesItemTheme"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -24,19 +23,19 @@
                     android:id="@+id/note_label_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="6dp"
+                    android:paddingBottom="4dp"
                     android:paddingTop="6dp"
                     android:paddingLeft="6dp"
                     android:layout_weight="1.0"
                     tools:text="Label Text"
-                    android:ellipsize="end"
-                    android:textColor="?android:textColorPrimary"
+                    android:lineSpacingExtra="2dp"
+                    android:textColor="@color/dark_grey"
                     android:textSize="@dimen/abc_text_size_medium_material"/>
                 <ImageButton
                     android:id="@+id/note_more"
                     android:clickable="true"
                     android:focusable="true"
-                    android:padding="6dp"
+                    android:padding="4dp"
                     android:alpha="0.7"
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_width="wrap_content"
@@ -49,8 +48,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="6dp"
+                android:lineSpacingExtra="2dp"
                 android:ellipsize="end"
-                android:textColor="?android:textColorSecondary"
+                android:textColor="#848484"
                 android:textSize="@dimen/abc_text_size_small_material"/>
             <TextView
                 android:id="@+id/note_last_edit_text"

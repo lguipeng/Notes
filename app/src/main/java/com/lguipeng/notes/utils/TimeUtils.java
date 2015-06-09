@@ -1,5 +1,9 @@
 package com.lguipeng.notes.utils;
 
+import android.content.Context;
+
+import com.lguipeng.notes.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -7,10 +11,6 @@ import java.util.Date;
  * Created by lgp on 2015/5/25.
  */
 public class TimeUtils {
-    private static final String TODAY = "今天";
-    private static final String BEFORE_TODAY = "天前";
-    private static final String BEFORE_MONTH = "个月前";
-    private static final String BEFORE_YEAR = "年前";
     public static final long DAY_Millis = 24 * 60 * 60 * 1000;
     public static final long MONTH_Millis = 30 * DAY_Millis;
     public static final long YEAR_Millis = 365 * DAY_Millis;
@@ -43,27 +43,29 @@ public class TimeUtils {
     }
 
     @SuppressWarnings("Deprecated")
-    public static String getConciseTime(long timeInMillis, long nowInMillis) {
+    public static String getConciseTime(long timeInMillis, long nowInMillis, Context context) {
+        if (context == null)
+            return "";
         Date date = new Date(timeInMillis);
         Date now = new Date(nowInMillis);
 
         if (now.getYear() == date.getYear()) {
             if (now.getMonth() == date.getMonth()) {
                 if (now.getDate() == date.getDate())
-                    return TODAY + getTime(timeInMillis, DATE_FORMAT_DATE_1);
+                    return context.getString(R.string.today, getTime(timeInMillis, DATE_FORMAT_DATE_1));
                 else{
-                    return now.getDate() - date.getDate() + BEFORE_TODAY;
+                    return context.getString(R.string.before_day, now.getDate() - date.getDate());
                 }
             }else {
-                return now.getMonth() - date.getMonth() + BEFORE_MONTH;
+                return context.getString(R.string.before_month, now.getMonth() - date.getMonth());
             }
         }
-        return now.getYear() - date.getYear() + BEFORE_YEAR;
+        return context.getString(R.string.before_year, now.getYear() - date.getYear());
     }
 
 
-    public static String getConciseTime(long timeInMillis) {
-        return getConciseTime(timeInMillis, getCurrentTimeInLong());
+    public static String getConciseTime(long timeInMillis, Context context) {
+        return getConciseTime(timeInMillis, getCurrentTimeInLong(), context);
     }
     /**
      * get current time in milliseconds

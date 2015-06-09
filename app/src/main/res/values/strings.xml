@@ -19,6 +19,7 @@
         <item>其他笔记</item>
         <item>回收站</item>
     </array>
+    <string name="note_log_text" formatted="false">%s\u0020:\u0020%s</string>
     <string name="edit">编辑</string>
     <string name="move_to_trash">移至回收站</string>
     <string name="delete_forever">永久删除</string>
@@ -62,4 +63,14 @@
     <string name="card_note_item_layout">卡片式笔记</string>
     <string name="card_note_item_layout_key">card_note_item_layout_key</string>
     <string name="not_save_note_leave_tip">笔记已经发生变化，是否保存后再离开</string>
+    <string name="change_theme">更换主题</string>
+    <string name="change_theme_key">chage_theme_key</string>
+    <string name="today" formatted="false">今天\u0020%s</string>
+    <string name="before_day" formatted="false">%d\u0020天前</string>
+    <string name="before_month" formatted="false">%d\u0020个月前</string>
+    <string name="before_year" formatted="false">%d\u0020年前</string>
+    <string name="share_text" formatted="false">极简笔记简洁好用，推荐你也来用用(分享自极简笔记)，下载地址：%s</string>
+    <string name="share">分享</string>
+    <string name="not_install_app">未安装客户端</string>
+
 </resources>

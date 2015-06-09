@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar_layout" />
+    <include layout="@layout/toolbar_shadow_layout"/>
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scroll_view"
@@ -25,6 +26,5 @@
             android:layout_height="wrap_content">
         </LinearLayout>
     </ScrollView>
-
 
 </LinearLayout>

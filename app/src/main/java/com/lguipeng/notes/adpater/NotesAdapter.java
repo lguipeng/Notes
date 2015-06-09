@@ -30,6 +30,11 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filte
         originalList = new ArrayList<>(list);
     }
 
+    public NotesAdapter(List<Note> list, Context context) {
+        super(list, context);
+        originalList = new ArrayList<>(list);
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -46,7 +51,7 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filte
             return;
         holder.setLabelText(note.getLabel());
         holder.setContentText(note.getContent());
-        holder.setTimeText(TimeUtils.getConciseTime(note.getLastOprTime()));
+        holder.setTimeText(TimeUtils.getConciseTime(note.getLastOprTime(), mContext));
         animate(viewHolder, position);
     }
 

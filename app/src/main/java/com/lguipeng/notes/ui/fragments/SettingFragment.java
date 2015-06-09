@@ -10,19 +10,28 @@ import android.os.Bundle;
 import android.preference.PreferenceScreen;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 
 import com.jenzz.materialpreference.CheckBoxPreference;
 import com.jenzz.materialpreference.Preference;
 import com.jenzz.materialpreference.SwitchPreference;
 import com.lguipeng.notes.R;
+import com.lguipeng.notes.adpater.ColorsListAdapter;
 import com.lguipeng.notes.module.DataModule;
 import com.lguipeng.notes.ui.PayActivity;
 import com.lguipeng.notes.utils.AccountUtils;
+import com.lguipeng.notes.utils.NoteConfig;
 import com.lguipeng.notes.utils.PreferenceUtils;
+import com.lguipeng.notes.utils.ThemeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by lgp on 2015/5/26.
@@ -81,6 +90,14 @@ public class SettingFragment extends BaseFragment{
         initAccountPreference();
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        View listView = view.findViewById(android.R.id.list);
+        listView.setHorizontalScrollBarEnabled(false);
+        listView.setVerticalScrollBarEnabled(false);
+    }
+
     public SettingFragment() {
         super();
     }
@@ -103,6 +120,10 @@ public class SettingFragment extends BaseFragment{
         if (TextUtils.equals(key, getString(R.string.show_note_history_log_key))){
             showNoteHistoryLog = !showNoteHistoryLog;
             preferenceUtils.saveParam(getString(R.string.show_note_history_log_key), showNoteHistoryLog);
+        }
+
+        if (TextUtils.equals(key, getString(R.string.change_theme_key))){
+           showThemeChooseDialog();
         }
 
         if (TextUtils.equals(key, getString(R.string.pay_for_me_key))){
@@ -174,8 +195,36 @@ public class SettingFragment extends BaseFragment{
         });
     }
 
+    private void showThemeChooseDialog(){
+        AlertDialog.Builder builder = generateDialogBuilder();
+        builder.setTitle(R.string.change_theme);
+        Integer[] res = new Integer[]{R.drawable.red_round, R.drawable.brown_round, R.drawable.blue_round,
+                R.drawable.blue_grey_round, R.drawable.yellow_round, R.drawable.deep_purple_round,
+                R.drawable.pink_round, R.drawable.green_round};
+        List<Integer> list = Arrays.asList(res);
+        ColorsListAdapter adapter = new ColorsListAdapter(getActivity(), list);
+        adapter.setCheckItem(getCurrentTheme().getIntValue());
+        GridView gridView = (GridView)LayoutInflater.from(getActivity()).inflate(R.layout.colors_panel_layout, null);
+        gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+        gridView.setCacheColorHint(0);
+        gridView.setAdapter(adapter);
+        builder.setView(gridView);
+        final AlertDialog dialog = builder.show();
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                dialog.dismiss();
+                int value = getCurrentTheme().getIntValue();
+                if (value != position){
+                    preferenceUtils.saveParam(getString(R.string.change_theme_key), position);
+                    changeTheme(ThemeUtils.Theme.mapValueToTheme(position));
+                }
+            }
+        });
+    }
+
     private void showAccountChooseDialog(final CharSequence[] text){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+        AlertDialog.Builder builder = generateDialogBuilder();
         builder.setTitle(R.string.choose_account);
         builder.setItems(text, new DialogInterface.OnClickListener() {
             @Override
@@ -199,5 +248,14 @@ public class SettingFragment extends BaseFragment{
         }catch(ActivityNotFoundException e){
             e.printStackTrace();
         }
+    }
+
+    private void changeTheme(ThemeUtils.Theme theme){
+        if (activity == null)
+            return;
+        //ThemeUtils.changTheme(activity, theme);
+        //activity.recreate();
+        EventBus.getDefault().post(NoteConfig.CHANGE_THEME_EVENT);
+        activity.finish();
     }
 }

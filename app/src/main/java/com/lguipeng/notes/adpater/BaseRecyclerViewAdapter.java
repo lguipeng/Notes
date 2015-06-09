@@ -1,6 +1,7 @@
 package com.lguipeng.notes.adpater;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import java.util.Map;
  */
 public abstract class BaseRecyclerViewAdapter<E> extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
+    protected Context mContext;
+
     private int mDuration = 300;
 
     private Interpolator mInterpolator = new LinearInterpolator();
@@ -29,7 +32,12 @@ public abstract class BaseRecyclerViewAdapter<E> extends RecyclerView.Adapter<Re
     protected List<E> list;
     private Map<Integer, onInternalClickListener<E>> canClickItem;
     public BaseRecyclerViewAdapter(List<E> list) {
+        this(list, null);
+    }
+
+    public BaseRecyclerViewAdapter(List<E> list, Context context) {
         this.list = list;
+        this.mContext = context;
     }
 
     public void add(E e) {

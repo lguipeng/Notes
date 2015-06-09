@@ -2,7 +2,6 @@ package com.lguipeng.notes.ui;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.module.DataModule;
@@ -37,15 +36,10 @@ public class SettingActivity extends BaseActivity{
         return Arrays.<Object>asList(new DataModule());
     }
 
-    private void initToolbar(){
+    @Override
+    protected void initToolbar(){
         super.initToolbar(toolbar);
         toolbar.setTitle(R.string.setting);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
     }
 
     private void init(){

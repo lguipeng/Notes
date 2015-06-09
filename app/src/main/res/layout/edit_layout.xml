@@ -4,6 +4,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/EditTextTheme"
     android:paddingTop="10dp"
-    app:met_maxCharacters="6"
     app:met_primaryColor="?attr/colorPrimary"
     app:met_floatingLabelTextColor="?attr/colorPrimary" />

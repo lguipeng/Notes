@@ -30,8 +30,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
-                android:layout_margin="16dp"
-                android:src="@drawable/ic_mode_edit_white"
+                android:layout_margin="20dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_edit_white"
                 fab:fab_colorRipple="?attr/colorPrimary"
                 fab:fab_colorNormal="?attr/colorPrimary"
                 fab:fab_colorPressed="?attr/colorPrimaryDark" />
@@ -43,7 +44,7 @@
                 android:layout_gravity="center"
                 wheel:matProg_spinSpeed="1.2"
                 wheel:matProg_barColor="?attr/colorPrimary"
-                wheel:matProg_progressIndeterminate="false" />
+                wheel:matProg_progressIndeterminate="true" />
             <include layout="@layout/toolbar_shadow_layout"/>
         </FrameLayout>
         <!-- The navigation drawer -->
@@ -66,6 +67,7 @@
                 android:id="@+id/edit_note_type"
                 android:background="?attr/colorPrimary"
                 android:layout_width="180dp"
+                android:textColor="@android:color/white"
                 android:layout_height="?attr/listPreferredItemHeight"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>

@@ -15,5 +15,5 @@ public class NoteConfig {
 
     public final static int NOTE_UPDATE_EVENT = 0x00;
     public final static int NOTE_TYPE_UPDATE_EVENT = 0x01;
-
+    public final static int CHANGE_THEME_EVENT = 0x02;
 }

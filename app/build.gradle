@@ -2,17 +2,23 @@ apply plugin: 'com.android.application'
 def packTime() {
     return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("UTC"))
 }
+
 def projectUrl = "https://github.com/lguipeng/Notes"
 def blogUrl = "http://www.jianshu.com/users/f612d54d668e/latest_articles"
+def appDownloadUrl = "http://notes.55058a091d225.d01.nanoyun.com/release/notes.apk"
 
 //remember to add your bmob app key in local.properties
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def bmobAppKey = properties.getProperty('BMOB_KEY')
-
+def weChatId = properties.getProperty('WECHAT_ID')
 android {
     signingConfigs {
         debug {
+            keyAlias 'notes'
+            keyPassword 'lgp123'
+            storeFile file('C:/Users/lgp/notes.jks')
+            storePassword 'lgp123'
         }
         release {
             //setting your signing.properties
@@ -30,6 +36,8 @@ android {
         versionName VERSION_NAME
 
         buildConfigField "String", "BMOB_KEY", "\"${bmobAppKey}\""
+        buildConfigField "String", "WECHAT_ID", "\"${weChatId}\""
+        buildConfigField "String", "APP_DOWNLOAD_URL", "\"${appDownloadUrl}\""
         buildConfigField "String", "PROJECT_URL", "\"${projectUrl}\""
         buildConfigField "String", "BLOG_URL", "\"${blogUrl}\""
     }
@@ -66,8 +74,10 @@ android {
                 def fileName
                 if (variant.buildType.name == "release") {
                     fileName = "notes_v${defaultConfig.versionName}_${packTime()}.apk"
-                    output.outputFile = new File(outputDirectory, fileName)
+                }else{
+                    fileName = "notes_beta.apk"
                 }
+                output.outputFile = new File(outputDirectory, fileName)
             }
         }
 

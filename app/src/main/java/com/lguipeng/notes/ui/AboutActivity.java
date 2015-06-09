@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,12 @@ import android.widget.TextView;
 import com.lguipeng.notes.BuildConfig;
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.module.DataModule;
+import com.lguipeng.notes.utils.SnackbarUtils;
+import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +42,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
     Button blogButton;
     @InjectView(R.id.project_home_btn)
     Button projectHomeButton;
-
+    private final static String WEIBO_PACKAGENAME = "com.sina.weibo";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +51,8 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
         blogButton.setOnClickListener(this);
         projectHomeButton.setOnClickListener(this);
     }
+
+
 
     @Override
     protected int getLayoutView() {
@@ -69,15 +78,11 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
-    private void initToolbar(){
+    @Override
+    protected void initToolbar(){
         super.initToolbar(toolbar);
         toolbar.setTitle(R.string.about);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+
     }
 
     private void initVersionText(){
@@ -86,16 +91,20 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_about, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-
+            case R.id.share:
+                //shareToWeChatTimeline();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 
     private String getVersion(Context ctx){
@@ -117,6 +126,68 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void share(String packages, Uri uri){
+        Intent intent=new Intent(Intent.ACTION_SEND);
+        if (uri != null){
+            intent.setType("image/png");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        }else {
+            intent.setType("text/plain");
+        }
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share));
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, BuildConfig.APP_DOWNLOAD_URL));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (!TextUtils.isEmpty(packages))
+            intent.setPackage(packages);
+        startActivity(Intent.createChooser(intent, getString(R.string.share)));
+    }
+
+    private void shareToWeChat(int scene){
+        IWXAPI api = WXAPIFactory.createWXAPI(this, BuildConfig.WECHAT_ID, true);
+        api.registerApp(BuildConfig.WECHAT_ID);
+        WXWebpageObject object = new WXWebpageObject();
+        object.extInfo = getString(R.string.share_text, BuildConfig.APP_DOWNLOAD_URL);
+        object.webpageUrl = "http://mp.weixin.qq.com/s?__biz=MzIwMDA4OTQ3MQ==&mid=209579314&idx=1&sn=4a4fced16713b73bc11f5bf08c739d6d&scene=2&from=timeline&isappinstalled=0#rd";
+        WXMediaMessage msg = new WXMediaMessage(object);
+        msg.mediaObject = object;
+        msg.description = getString(R.string.app_name);
+        SendMessageToWX.Req request = new SendMessageToWX.Req();
+        request.message = msg;
+        request.scene = scene;
+        api.sendReq(request);
+    }
+
+    private void shareToWeChatTimeline(){
+        shareToWeChat(SendMessageToWX.Req.WXSceneTimeline);
+    }
+
+    private void shareToWeChatSession(){
+        shareToWeChat(SendMessageToWX.Req.WXSceneSession);
+    }
+
+    private void shareToWeChatFavorite(){
+        shareToWeChat(SendMessageToWX.Req.WXSceneFavorite);
+    }
+
+    private void shareToWeibo(){
+        if (isInstallApplication(WEIBO_PACKAGENAME)){
+            //Uri uri = Uri.parse("file:///sdcard/Pictures/ic_launcher.png");
+            share(WEIBO_PACKAGENAME, null);
+        }else {
+            SnackbarUtils.show(this, R.string.not_install_app);
+        }
+    }
+
+    private boolean isInstallApplication(String packageName){
+        try {
+            PackageManager pm = this.getPackageManager();
+            pm.getApplicationInfo(packageName, PackageManager.GET_UNINSTALLED_PACKAGES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
     }
 }

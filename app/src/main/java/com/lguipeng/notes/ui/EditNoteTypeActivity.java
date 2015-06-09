@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -91,15 +90,11 @@ public class EditNoteTypeActivity extends BaseActivity{
     protected List<Object> getModules() {
         return Arrays.<Object>asList(new DataModule());
     }
-    private void initToolbar(){
+
+    @Override
+    protected void initToolbar(){
         super.initToolbar(toolbar);
         toolbar.setTitle(R.string.edit);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
     }
 
     private void initEditTextView(){

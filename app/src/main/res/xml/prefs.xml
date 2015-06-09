@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    >
     <com.jenzz.materialpreference.PreferenceCategory android:title="@string/general_settings">
         <com.jenzz.materialpreference.SwitchPreference
             android:key="@string/right_hand_mode_key"
@@ -16,6 +17,9 @@
         <com.jenzz.materialpreference.Preference
             android:key="@string/sync_account_key"
             android:title="@string/sync_account"/>
+        <com.jenzz.materialpreference.Preference
+            android:key="@string/change_theme_key"
+            android:title="@string/change_theme"/>
     </com.jenzz.materialpreference.PreferenceCategory>
 
     <com.jenzz.materialpreference.PreferenceCategory android:title="@string/other">

@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            android:theme="@style/NotesItemTheme"
             android:layout_margin="20dp"
             android:orientation="vertical"
             android:focusable="true"
@@ -25,11 +24,11 @@
                 app:met_floatingLabel="highlight"
                 app:met_floatingLabelText="@string/label"
                 app:met_floatingLabelAlwaysShown="true"
-                app:met_floatingLabelTextColor="?attr/colorPrimary"
-                app:met_maxCharacters="25"/>
+                app:met_floatingLabelTextColor="?attr/colorPrimary"/>
             <com.rengwuxian.materialedittext.MaterialEditText
                 style="@style/EditTextTheme"
                 android:id="@+id/content_edit_text"
+                android:lineSpacingExtra="4dp"
                 app:met_hideUnderline="true"
                 app:met_primaryColor="?attr/colorPrimary"
                 app:met_floatingLabel="highlight"
@@ -51,10 +50,10 @@
                     android:layout_marginTop="6dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?android:textColorSecondary"
+                    android:textColor="@color/grey"
                     android:gravity="end"
                     android:textSize="@dimen/abc_text_size_small_material"
-                    android:lineSpacingExtra="6dp"
+                    android:lineSpacingExtra="4dp"
                     android:layout_gravity="right"
                     tool:text="创建: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n" />
             </ScrollView>

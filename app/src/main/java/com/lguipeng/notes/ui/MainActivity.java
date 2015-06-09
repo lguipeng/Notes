@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -58,6 +59,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.InjectView;
+import butterknife.OnClick;
 import cn.bmob.v3.BmobQuery;
 import de.greenrobot.event.EventBus;
 
@@ -110,21 +112,35 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     private boolean hasUpdateNote = false;
 
-    private PreferenceUtils mPreferenceUtils;
-
     private boolean hasEditClick = false;
 
     private  List<String> noteTypelist;
 
     private boolean hasSyncing = false;
+
+    private final String  CURRENT_NOTE_TYPE_KEY = "CURRENT_NOTE_TYPE_KEY";
+
+    private final String  PROGRESS_WHEEL_KEY = "PROGRESS_WHEEL_KEY";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPreferenceUtils = PreferenceUtils.getInstance(getApplicationContext());
+        if (savedInstanceState != null){
+            mCurrentNoteType = savedInstanceState.getInt(CURRENT_NOTE_TYPE_KEY);
+            progressWheel.onRestoreInstanceState(savedInstanceState.getParcelable(PROGRESS_WHEEL_KEY));
+        }
         initToolbar();
         initDrawerView();
         initRecyclerView();
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(CURRENT_NOTE_TYPE_KEY, mCurrentNoteType);
+        Parcelable parcelable = progressWheel.onSaveInstanceState();
+        outState.putParcelable(PROGRESS_WHEEL_KEY, parcelable);
     }
 
     @Override
@@ -171,6 +187,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 break;
             case NoteConfig.NOTE_TYPE_UPDATE_EVENT:
                 initDrawerListView();
+                break;
+            case NoteConfig.CHANGE_THEME_EVENT:
+                this.recreate();
+                break;
         }
     }
 
@@ -230,6 +250,19 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 return true;
             }
         });
+        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                refreshLayout.setEnabled(false);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                refreshLayout.setEnabled(true);
+                return true;
+            }
+        });
         return true;
     }
 
@@ -268,12 +301,13 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         return super.onKeyDown(keyCode, event);
     }
 
-    private void initToolbar(){
+    @Override
+    protected void initToolbar(){
         super.initToolbar(toolbar);
     }
 
     private void initDrawerListView(){
-        String json = mPreferenceUtils.getStringParam(PreferenceUtils.NOTE_TYPE_KEY);
+        String json = preferenceUtils.getStringParam(PreferenceUtils.NOTE_TYPE_KEY);
         if (!TextUtils.isEmpty(json)){
             noteTypelist = JsonUtils.parseNoteType(json);
         }else{
@@ -281,7 +315,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             NoteType type = new NoteType();
             type.setTypes(noteTypelist);
             String text = JsonUtils.jsonNoteType(type);
-            mPreferenceUtils.saveParam(PreferenceUtils.NOTE_TYPE_KEY, text);
+            preferenceUtils.saveParam(PreferenceUtils.NOTE_TYPE_KEY, text);
         }
 
         SimpleListAdapter adapter = new DrawerListAdapter(this, noteTypelist);
@@ -336,22 +370,15 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         if (rightHandOn){
             setMenuListViewGravity(Gravity.END);
         }
-
-        editNoteTypeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hasEditClick = true;
-                openOrCloseDrawer();
-
-            }
-        });
     }
+
+
 
     private void initRecyclerView(){
         showProgressWheel(true);
         initItemLayout();
         recyclerView.setHasFixedSize(true);
-        recyclerAdapter = new NotesAdapter(initItemData(mCurrentNoteType));
+        recyclerAdapter = new NotesAdapter(initItemData(mCurrentNoteType), this);
         recyclerAdapter.setOnInViewClickListener(R.id.notes_item_root,
                 new BaseRecyclerViewAdapter.onInternalClickListenerImpl<Note>() {
                     @Override
@@ -384,18 +411,24 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 recyclerAdapter.setUpFactor();
             }
         });
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Note note = new Note();
-                note.setType(mCurrentNoteType);
-                startNoteActivity(NoteActivity.CREATE_NOTE_TYPE, note);
-            }
-        });
         showProgressWheel(false);
         refreshLayout.setColorSchemeColors(getColorPrimary());
         refreshLayout.setOnRefreshListener(this);
     }
+
+    @OnClick(R.id.fab)
+    public void newNote(View view){
+        Note note = new Note();
+        note.setType(mCurrentNoteType);
+        startNoteActivity(NoteActivity.CREATE_NOTE_TYPE, note);
+    }
+
+    @OnClick(R.id.edit_note_type)
+    public void editNoteType(View view){
+        hasEditClick = true;
+        openOrCloseDrawer();
+    }
+
 
     @Override
     public void onRefresh() {
@@ -406,6 +439,18 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         showProgressWheel(true);
         recyclerAdapter.setList(initItemData(type));
         showProgressWheel(false);
+    }
+
+    private void openDrawer() {
+        if (!mDrawerLayout.isDrawerOpen(drawerRootView)) {
+            mDrawerLayout.openDrawer(drawerRootView);
+        }
+    }
+
+    private void closeDrawer() {
+        if (mDrawerLayout.isDrawerOpen(drawerRootView)) {
+            mDrawerLayout.closeDrawer(drawerRootView);
+        }
     }
 
     private void openOrCloseDrawer() {
@@ -470,7 +515,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void showDeleteForeverDialog(final Note note){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        AlertDialog.Builder builder = autoGenerateDialogBuilder();
         builder.setTitle(R.string.delete_forever_message);
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
@@ -526,6 +571,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void showProgressWheel(boolean visible){
+        progressWheel.setBarColor(getColorPrimary());
         if (visible){
             if (!progressWheel.isSpinning())
                 progressWheel.spin();
@@ -593,7 +639,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                         for (Note note : list){
                             cloudNote.addNote(note);
                         }
-                        String json = mPreferenceUtils.getStringParam(PreferenceUtils.NOTE_TYPE_KEY);
+                        String json = preferenceUtils.getStringParam(PreferenceUtils.NOTE_TYPE_KEY);
                         cloudNote.setNoteType(json);
                         if (TextUtils.isEmpty(cloudNote.getObjectId())){
                             cloudNote.save(MainActivity.this, new SaveListenerImpl() {

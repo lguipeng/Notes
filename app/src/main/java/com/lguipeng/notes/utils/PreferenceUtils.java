@@ -59,6 +59,18 @@ public class PreferenceUtils{
         shareEditor.putBoolean(key, value).commit();
     }
 
+    public int getIntParam(String key){
+        return getIntParam(key, 0);
+    }
+
+    public int getIntParam(String key, int defaultInt){
+        return sharedPreferences.getInt(key, defaultInt);
+    }
+
+    public void saveParam(String key, int value){
+        shareEditor.putInt(key, value).commit();
+    }
+
     public long getLongParam(String key){
         return getLongParam(key, 0);
     }

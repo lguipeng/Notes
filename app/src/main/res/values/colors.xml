@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="light_warm_red">#CCFF6347</color>
-    <color name="warm_red">#FF6347</color>
-    <color name="dark_warm_red">#FF6347</color>
+    <color name="red">#FF6347</color>
+    <color name="dark_red">#F4511E</color>
+    <color name="accent_red">#FF5722</color>
+
+    <color name="brown">#795548</color>
+    <color name="dark_brown">#5D4037</color>
+    <color name="accent_brown">#795548</color>
+
+
+    <color name="blue">#2196F3</color>
+    <color name="dark_blue">#1976D2</color>
+    <color name="accent_blue">#448AFF</color>
+
+    <color name="blue_grey">#607D8B</color>
+    <color name="dark_blue_grey">#455A64</color>
+    <color name="accent_blue_grey">#607D8B</color>
+
+    <color name="yellow">#FF9800</color>
+    <color name="dark_yellow">#F57C00</color>
+    <color name="accent_yellow">#FF9800</color>
+
+    <color name="deep_purple">#673AB7</color>
+    <color name="dark_deep_purple">#512DA8</color>
+    <color name="accent_deep_purple">#7C4DFF</color>
+
+    <color name="pink">#E91E63</color>
+    <color name="dark_pink">#C2185B</color>
+    <color name="accent_pink">#FF5722</color>
+
+    <color name="green">#4CAF50</color>
+    <color name="dark_green">#388E3C</color>
+    <color name="accent_green">#4CAF50</color>
+
+    <color name="text_color_primary">#212121</color>
+    <color name="text_second_color_primary">#727272</color>
+
     <color name="grey" >#ffbebebe</color>
+    <color name="grey_1">#9E9E9E</color>
     <color name="dark_grey">#FF080808</color>
     <color name="light_grey">#ffbebebe</color>
     <color name="light_grey_1">#FFEEEEEE</color>
 
-    <color name="main_color">@color/warm_red</color>
-    <color name="dark_main_color">@color/dark_warm_red</color>
-
-    <color name="drawer_scrim_color">#88eeeeee</color>
+    <color name="drawer_scrim_color">#88EEEEEE</color>
     <color name="action_bar_title_color">@android:color/white</color>
     <color name="window_background">@android:color/white</color>
 </resources>

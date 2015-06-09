@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/MainTheme"
     android:orientation="vertical"
     android:background="?android:attr/activatedBackgroundIndicator"
     android:layout_width="match_parent"
@@ -15,5 +14,6 @@
         android:singleLine="true"
         android:gravity="center_vertical"
         android:padding="10dp"
+        android:textColor="@android:color/white"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>

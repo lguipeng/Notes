@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:theme="@style/AppBaseTheme.Light"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar_layout" />
+    <include layout="@layout/toolbar_shadow_layout"/>
     <ImageView
         android:layout_marginTop="80dp"
         android:layout_width="wrap_content"
@@ -21,6 +21,5 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/pay_for_me_tip"
-        android:id="@+id/textView2"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>
