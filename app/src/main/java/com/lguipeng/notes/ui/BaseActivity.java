@@ -61,9 +61,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
             tintManager.setStatusBarTintColor(getStatusBarColor());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                //tintManager.setStatusBarTintColor(getDarkColorPrimary());
-            }
             tintManager.setStatusBarTintEnabled(true);
         }
     }
@@ -110,30 +107,30 @@ public abstract class BaseActivity extends AppCompatActivity {
         int style = R.style.RedDialogTheme;
         switch (theme){
             case BROWN:
-                builder = new AlertDialog.Builder(this, R.style.BrownDialogTheme);
+                style = R.style.BrownDialogTheme;
                 break;
             case BLUE:
-                builder = new AlertDialog.Builder(this, R.style.BlueDialogTheme);
+                style = R.style.BlueDialogTheme;
                 break;
             case BLUE_GREY:
-                builder = new AlertDialog.Builder(this, R.style.BlueGreyDialogTheme);
+                style = R.style.BlueGreyDialogTheme;
                 break;
             case YELLOW:
-                builder = new AlertDialog.Builder(this, R.style.YellowDialogTheme);
+                style = R.style.YellowDialogTheme;
                 break;
             case DEEP_PURPLE:
-                builder = new AlertDialog.Builder(this, R.style.DeepPurpleDialogTheme);
+                style = R.style.DeepPurpleDialogTheme;
                 break;
             case PINK:
-                builder = new AlertDialog.Builder(this, R.style.PinkDialogTheme);
+                style = R.style.PinkDialogTheme;
                 break;
             case GREEN:
-                builder = new AlertDialog.Builder(this, R.style.GreenDialogTheme);
+                style = R.style.GreenDialogTheme;
                 break;
             default:
-                builder = new AlertDialog.Builder(this, R.style.RedDialogTheme);
                 break;
         }
+        builder = new AlertDialog.Builder(this, style);
         return builder;
     }
 
