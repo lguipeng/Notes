@@ -2,11 +2,15 @@ package com.lguipeng.notes.ui;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -17,8 +21,12 @@ import android.widget.TextView;
 
 import com.lguipeng.notes.BuildConfig;
 import com.lguipeng.notes.R;
+import com.lguipeng.notes.adpater.MaterialSimpleListAdapter;
+import com.lguipeng.notes.model.MaterialSimpleListItem;
 import com.lguipeng.notes.module.DataModule;
 import com.lguipeng.notes.utils.SnackbarUtils;
+import com.lguipeng.notes.utils.TimeUtils;
+import com.lguipeng.notes.utils.WXUtils;
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
@@ -29,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Created by lgp on 2015/5/25.
@@ -42,17 +51,16 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
     Button blogButton;
     @InjectView(R.id.project_home_btn)
     Button projectHomeButton;
+    private int clickCount = 0;
+    private long lastClickTime = 0;
     private final static String WEIBO_PACKAGENAME = "com.sina.weibo";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initToolbar();
         initVersionText();
         blogButton.setOnClickListener(this);
         projectHomeButton.setOnClickListener(this);
     }
-
-
 
     @Override
     protected int getLayoutView() {
@@ -85,6 +93,26 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
 
     }
 
+    @OnClick(R.id.version_text)
+    void versionClick(View view){
+        if (clickCount < 3){
+            if (TimeUtils.getCurrentTimeInLong() - lastClickTime < 500 || lastClickTime <= 0){
+                clickCount ++;
+                if (clickCount >= 3){
+                    startViewAction(BuildConfig.ABOUT_APP_URL);
+                    clickCount = 0;
+                    lastClickTime = 0;
+                    return;
+                }
+            }else {
+                clickCount = 0;
+                lastClickTime = 0;
+                return;
+            }
+            lastClickTime = TimeUtils.getCurrentTimeInLong();
+        }
+    }
+
     private void initVersionText(){
         versionTextView.setText("v" + getVersion(this));
     }
@@ -99,7 +127,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.share:
-                //shareToWeChatTimeline();
+               showShareDialog();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -132,32 +160,42 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
     private void share(String packages, Uri uri){
         Intent intent=new Intent(Intent.ACTION_SEND);
         if (uri != null){
-            intent.setType("image/png");
+            intent.setType("image/*");
             intent.putExtra(Intent.EXTRA_STREAM, uri);
         }else {
             intent.setType("text/plain");
         }
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share));
-        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, BuildConfig.APP_DOWNLOAD_URL));
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, getString(R.string.download_url), BuildConfig.APP_DOWNLOAD_URL));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (!TextUtils.isEmpty(packages))
             intent.setPackage(packages);
         startActivity(Intent.createChooser(intent, getString(R.string.share)));
     }
 
+    private byte[] getLogoBitmapArray(){
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        return WXUtils.bmpToByteArray(bitmap, false);
+    }
+
     private void shareToWeChat(int scene){
         IWXAPI api = WXAPIFactory.createWXAPI(this, BuildConfig.WECHAT_ID, true);
+        if (!api.isWXAppInstalled()){
+            SnackbarUtils.show(this, R.string.not_install_app);
+        }
         api.registerApp(BuildConfig.WECHAT_ID);
         WXWebpageObject object = new WXWebpageObject();
-        object.extInfo = getString(R.string.share_text, BuildConfig.APP_DOWNLOAD_URL);
-        object.webpageUrl = "http://mp.weixin.qq.com/s?__biz=MzIwMDA4OTQ3MQ==&mid=209579314&idx=1&sn=4a4fced16713b73bc11f5bf08c739d6d&scene=2&from=timeline&isappinstalled=0#rd";
+        object.webpageUrl = "http://www.wandoujia.com/apps/com.lguipeng.notes";
         WXMediaMessage msg = new WXMediaMessage(object);
         msg.mediaObject = object;
-        msg.description = getString(R.string.app_name);
+        msg.thumbData = getLogoBitmapArray();
+        msg.title = getString(R.string.app_desc);
+        msg.description = getString(R.string.share_text, "", "");
         SendMessageToWX.Req request = new SendMessageToWX.Req();
         request.message = msg;
         request.scene = scene;
         api.sendReq(request);
+        api.unregisterApp();
     }
 
     private void shareToWeChatTimeline(){
@@ -174,7 +212,6 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
 
     private void shareToWeibo(){
         if (isInstallApplication(WEIBO_PACKAGENAME)){
-            //Uri uri = Uri.parse("file:///sdcard/Pictures/ic_launcher.png");
             share(WEIBO_PACKAGENAME, null);
         }else {
             SnackbarUtils.show(this, R.string.not_install_app);
@@ -190,4 +227,54 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
             return false;
         }
     }
+
+    private void showShareDialog(){
+        AlertDialog.Builder builder = generateDialogBuilder();
+        builder.setTitle(getString(R.string.share));
+        final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(this);
+        String[] array = getResources().getStringArray(R.array.share_dialog_text);
+        adapter.add(new MaterialSimpleListItem.Builder(this)
+                .content(array[0])
+                .icon(R.drawable.ic_wx_logo)
+                .build());
+        adapter.add(new MaterialSimpleListItem.Builder(this)
+                .content(array[1])
+                .icon(R.drawable.ic_wx_moments)
+                .build());
+        adapter.add(new MaterialSimpleListItem.Builder(this)
+                .content(array[2])
+                .icon(R.drawable.ic_wx_collect)
+                .build());
+        adapter.add(new MaterialSimpleListItem.Builder(this)
+                .content(array[3])
+                .icon(R.drawable.ic_sina_logo)
+                .build());
+        adapter.add(new MaterialSimpleListItem.Builder(this)
+                .content(array[4])
+                .icon(R.drawable.ic_share_more)
+                .build());
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case 0:
+                        shareToWeChatSession();
+                        break;
+                    case 1:
+                        shareToWeChatTimeline();
+                        break;
+                    case 2:
+                        shareToWeChatFavorite();
+                        break;
+                    case 3:
+                        shareToWeibo();
+                        break;
+                    default:
+                        share("", null);
+                }
+            }
+        });
+        builder.show();
+    }
+
 }

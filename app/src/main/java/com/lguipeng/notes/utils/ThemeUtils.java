@@ -12,33 +12,33 @@ public class ThemeUtils {
     public static void changTheme(Activity activity, Theme theme){
         if (activity == null)
             return;
-        int resTheme = R.style.RedTheme;
+        int style = R.style.RedTheme;
         switch (theme){
             case BROWN:
-                resTheme = R.style.BrownTheme;
+                style = R.style.BrownTheme;
                 break;
             case BLUE:
-                resTheme = R.style.BlueTheme;
+                style = R.style.BlueTheme;
                 break;
             case BLUE_GREY:
-                resTheme = R.style.BlueGreyTheme;
+                style = R.style.BlueGreyTheme;
                 break;
             case YELLOW:
-                resTheme = R.style.YellowTheme;
+                style = R.style.YellowTheme;
                 break;
             case DEEP_PURPLE:
-                resTheme = R.style.DeepPurpleTheme;
+                style = R.style.DeepPurpleTheme;
                 break;
             case PINK:
-                resTheme = R.style.PinkTheme;
+                style = R.style.PinkTheme;
                 break;
             case GREEN:
-                resTheme = R.style.GreenTheme;
+                style = R.style.GreenTheme;
                 break;
             default:
                 break;
         }
-        activity.setTheme(resTheme);
+        activity.setTheme(style);
     }
 
     public enum Theme{

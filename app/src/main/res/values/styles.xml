@@ -34,6 +34,13 @@
         <item name="selectableItemBackground">@drawable/selectable_background</item>
     </style>
 
+    <style name="BaseDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_second_color_primary</item>
+        <item name="android:windowEnterAnimation">@anim/abc_popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/abc_popup_exit</item>
+    </style>
+
     <style name="AppTheme" parent="AppBaseTheme.Dark">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
@@ -77,7 +84,7 @@
         <item name="colorAccent">@color/accent_red</item>
     </style>
 
-    <style name="RedDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="RedDialogTheme" parent="BaseDialogTheme">
         <item name="colorPrimary">@color/red</item>
         <item name="colorPrimaryDark">@color/dark_red</item>
         <item name="colorAccent">@color/accent_red</item>
@@ -89,7 +96,7 @@
         <item name="colorAccent">@color/accent_brown</item>
     </style>
 
-    <style name="BrownDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="BrownDialogTheme" parent="BaseDialogTheme">
         <item name="colorPrimary">@color/brown</item>
         <item name="colorPrimaryDark">@color/dark_brown</item>
         <item name="colorAccent">@color/accent_brown</item>
@@ -101,7 +108,7 @@
         <item name="colorAccent">@color/accent_blue</item>
     </style>
 
-    <style name="BlueDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="BlueDialogTheme" parent="BaseDialogTheme">
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryDark">@color/dark_blue</item>
         <item name="colorAccent">@color/accent_blue</item>
@@ -113,7 +120,7 @@
         <item name="colorAccent">@color/accent_blue_grey</item>
     </style>
 
-    <style name="BlueGreyDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="BlueGreyDialogTheme" parent="BaseDialogTheme">
         <item name="colorPrimary">@color/blue_grey</item>
         <item name="colorPrimaryDark">@color/dark_blue_grey</item>
         <item name="colorAccent">@color/accent_blue_grey</item>
@@ -125,7 +132,7 @@
         <item name="colorAccent">@color/accent_yellow</item>
     </style>
 
-    <style name="YellowDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="YellowDialogTheme" parent="BaseDialogTheme">
         <item name="colorPrimary">@color/yellow</item>
         <item name="colorPrimaryDark">@color/dark_yellow</item>
         <item name="colorAccent">@color/accent_yellow</item>
@@ -137,7 +144,7 @@
         <item name="colorAccent">@color/accent_deep_purple</item>
     </style>
 
-    <style name="DeepPurpleDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="DeepPurpleDialogTheme" parent="BaseDialogTheme">
         <item name="colorPrimary">@color/deep_purple</item>
         <item name="colorPrimaryDark">@color/dark_deep_purple</item>
         <item name="colorAccent">@color/accent_deep_purple</item>
@@ -149,7 +156,7 @@
         <item name="colorAccent">@color/accent_pink</item>
     </style>
 
-    <style name="PinkDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="PinkDialogTheme" parent="BaseDialogTheme">
         <item name="colorPrimary">@color/pink</item>
         <item name="colorPrimaryDark">@color/dark_pink</item>
         <item name="colorAccent">@color/accent_pink</item>
@@ -161,7 +168,7 @@
         <item name="colorAccent">@color/accent_green</item>
     </style>
 
-    <style name="GreenDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="GreenDialogTheme" parent="BaseDialogTheme">
         <item name="colorPrimary">@color/green</item>
         <item name="colorPrimaryDark">@color/dark_green</item>
         <item name="colorAccent">@color/accent_green</item>

@@ -7,8 +7,8 @@
     <ImageView
         android:id="@+id/img_1"
         android:layout_gravity="center"
-        android:layout_width="40dp"
-        android:layout_height="40dp" />
+        android:layout_width="@dimen/md_simplelist_icon"
+        android:layout_height="@dimen/md_simplelist_icon" />
     <ImageView
         android:id="@+id/img_2"
         android:layout_gravity="center"

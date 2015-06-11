@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">极简笔记</string>
+    <string name="app_desc">极简笔记，简洁精美的记事应用</string>
     <string name="setting">设置</string>
     <string name="about">关于</string>
     <string name="exit">退出</string>
@@ -64,13 +65,21 @@
     <string name="card_note_item_layout_key">card_note_item_layout_key</string>
     <string name="not_save_note_leave_tip">笔记已经发生变化，是否保存后再离开</string>
     <string name="change_theme">更换主题</string>
-    <string name="change_theme_key">chage_theme_key</string>
+    <string name="change_theme_key">change_theme_key</string>
     <string name="today" formatted="false">今天\u0020%s</string>
     <string name="before_day" formatted="false">%d\u0020天前</string>
     <string name="before_month" formatted="false">%d\u0020个月前</string>
     <string name="before_year" formatted="false">%d\u0020年前</string>
-    <string name="share_text" formatted="false">极简笔记简洁好用，推荐你也来用用(分享自极简笔记)，下载地址：%s</string>
-    <string name="share">分享</string>
-    <string name="not_install_app">未安装客户端</string>
-
+    <string name="share_text" formatted="false">极简笔记简洁好用，推荐你也来用用 %s\u0020%s</string>
+    <string name="download_url" >下载地址</string>
+    <string name="share">分享到</string>
+    <string name="not_install_app">请先安装相应客户端</string>
+    <array name="share_dialog_text">
+        <item>微信好友</item>
+        <item>微信朋友圈</item>
+        <item>微信收藏</item>
+        <item>新浪微博</item>
+        <item>更多</item>
+    </array>
+    <string name="about_bottom_text">Created by Lguipeng in Shenzhen</string>
 </resources>

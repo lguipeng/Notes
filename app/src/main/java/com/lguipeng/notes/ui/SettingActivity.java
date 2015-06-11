@@ -23,7 +23,6 @@ public class SettingActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        initToolbar();
     }
 
     @Override

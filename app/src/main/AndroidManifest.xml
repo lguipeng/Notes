@@ -14,6 +14,7 @@
 
         <activity
             android:name=".ui.MainActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.searchable"
@@ -29,26 +30,32 @@
         <activity
             android:name=".ui.SettingActivity"
             android:screenOrientation="portrait"
-            android:launchMode="standard">
+            android:launchMode="singleTop">
         </activity>
 
         <activity
             android:name=".ui.NoteActivity"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait">
 
         </activity>
         <activity
             android:name=".ui.AboutActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".ui.PayActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".ui.EditNoteTypeActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
     </application>

@@ -6,6 +6,7 @@ def packTime() {
 def projectUrl = "https://github.com/lguipeng/Notes"
 def blogUrl = "http://www.jianshu.com/users/f612d54d668e/latest_articles"
 def appDownloadUrl = "http://notes.55058a091d225.d01.nanoyun.com/release/notes.apk"
+def aboutAppUrl = "http://www.jianshu.com/p/640a7f2fe0c5"
 
 //remember to add your bmob app key in local.properties
 Properties properties = new Properties()
@@ -15,10 +16,7 @@ def weChatId = properties.getProperty('WECHAT_ID')
 android {
     signingConfigs {
         debug {
-            keyAlias 'notes'
-            keyPassword 'lgp123'
-            storeFile file('C:/Users/lgp/notes.jks')
-            storePassword 'lgp123'
+
         }
         release {
             //setting your signing.properties
@@ -40,6 +38,7 @@ android {
         buildConfigField "String", "APP_DOWNLOAD_URL", "\"${appDownloadUrl}\""
         buildConfigField "String", "PROJECT_URL", "\"${projectUrl}\""
         buildConfigField "String", "BLOG_URL", "\"${blogUrl}\""
+        buildConfigField "String", "ABOUT_APP_URL", "\"${aboutAppUrl}\""
     }
     buildTypes {
 
@@ -107,7 +106,6 @@ File propFile = file('signing.properties');
 if (propFile.exists()) {
     def Properties props = new Properties()
     props.load(new FileInputStream(propFile))
-
     if (props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
             props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
         android.signingConfigs.release.storeFile = file(props['STORE_FILE'])

@@ -3,17 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar_layout" />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadingEdge="none"
+        android:scrollbars="none"
+        android:cacheColorHint="@android:color/transparent"
+        android:scrollingCache="false"
+        android:overScrollMode="never">
         <LinearLayout
             android:layout_margin="20dp"
             android:orientation="vertical"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <com.rengwuxian.materialedittext.MaterialEditText
@@ -35,29 +45,19 @@
                 app:met_floatingLabelAlwaysShown="true"
                 app:met_floatingLabelTextColor="?attr/colorPrimary"
                 app:met_floatingLabelText="@string/note_content" />
-            <ScrollView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fadingEdge="none"
-                android:scrollbars="none"
-                android:cacheColorHint="@android:color/transparent"
-                android:scrollingCache="false"
-                android:overScrollMode="never">
-                <TextView
-                    android:id="@+id/opr_time_line_text"
-                    android:layout_marginTop="6dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/grey"
-                    android:gravity="end"
-                    android:textSize="@dimen/abc_text_size_small_material"
-                    android:lineSpacingExtra="4dp"
-                    android:layout_gravity="right"
-                    tool:text="创建: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n编辑: 2015-5-25:14:01\n" />
-            </ScrollView>
-        </LinearLayout>
+            <TextView
+                android:id="@+id/opr_time_line_text"
+                android:layout_marginTop="6dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grey"
+                android:gravity="end"
+                android:textSize="@dimen/abc_text_size_small_material"
+                android:lineSpacingExtra="4dp"
+                android:layout_gravity="right"
+                tool:text="015-5-25:14:01" />
+            </LinearLayout>
+        </ScrollView>
         <include layout="@layout/toolbar_shadow_layout"/>
     </FrameLayout>
 

@@ -20,7 +20,7 @@
                 android:id="@+id/refresher"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <android.support.v7.widget.RecyclerView
+                <com.lguipeng.notes.view.FixedRecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
             <ListView android:id="@+id/left_drawer_listview"
-                android:layout_width="180dp"
+                android:layout_width="@dimen/drawer_width"
                 android:layout_height="0dp"
                 android:layout_weight="1.0"
                 android:choiceMode="singleChoice"
@@ -66,7 +66,7 @@
                 android:text="@string/edit"
                 android:id="@+id/edit_note_type"
                 android:background="?attr/colorPrimary"
-                android:layout_width="180dp"
+                android:layout_width="@dimen/drawer_width"
                 android:textColor="@android:color/white"
                 android:layout_height="?attr/listPreferredItemHeight"
                 android:textAppearance="?android:attr/textAppearanceMedium" />

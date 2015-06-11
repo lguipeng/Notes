@@ -2,7 +2,7 @@
 <GridView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:numColumns="4"
-    android:padding="20dp"
+    android:padding="@dimen/md_dialog_frame_margin"
     android:background="@android:color/transparent"
     android:listSelector="@android:color/transparent"
     android:horizontalSpacing="20dp"
