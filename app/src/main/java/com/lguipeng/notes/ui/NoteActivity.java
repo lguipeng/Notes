@@ -177,11 +177,11 @@ public class NoteActivity extends BaseActivity{
                 saveNote();
                 return true;
             case android.R.id.home:
+                hideKeyBoard(labelEditText);
                 if (doneMenuItem.isVisible()){
                     showNotSaveNoteDialog();
                     return true;
                 }
-                hideKeyBoard(labelEditText);
                 finish();
             default:
                 return super.onOptionsItemSelected(item);
