@@ -1,14 +1,16 @@
 #ScreenShot
-<img src="./screenshot/S50603-103314.jpg" width="30%" height="30%">
-<img src="./screenshot/S50605-164248.jpg" width="30%" height="30%">
+<img src="./screenshot/S50719-155319.jpg" width="30%" height="30%">
+<img src="./screenshot/S50719-155344.jpg" width="30%" height="30%">
 
-<img src="./screenshot/S50605-164615.jpg" width="30%" height="30%">
-<img src="./screenshot/S50611-163425.jpg" width="30%" height="30%">
+<img src="./screenshot/S50719-155352.jpg" width="30%" height="30%">
+<img src="./screenshot/S50719-155407.jpg" width="30%" height="30%">
 
-<img src="./screenshot/S50611-163752.jpg" width="30%" height="30%">
-<img src="./screenshot/S50611-164132.jpg" width="30%" height="30%">
+<img src="./screenshot/S50719-155414.jpg" width="30%" height="30%">
+<img src="./screenshot/S50719-155613.jpg" width="30%" height="30%">
 
-<img src="./screenshot/S50611-164146.jpg" width="30%" height="30%">
+
+###感谢我的好朋友为我设计应用 logo，他所在的设计团队是来自中大的火鸡设计室，你可以通过 liaojlin@outlook.com 与他取得联系
+###欢迎加入热心网友建的学习交流群：461259695
 
 #1.2.0
 - 将同步的方式改为绑定印象笔记
