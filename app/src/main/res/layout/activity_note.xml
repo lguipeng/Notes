@@ -32,7 +32,7 @@
                 android:textSize="@dimen/abc_text_size_large_material"
                 app:met_primaryColor="?attr/colorPrimary"
                 app:met_floatingLabel="highlight"
-                app:met_floatingLabelText="@string/label"
+                app:met_floatingLabelText="@string/title"
                 app:met_floatingLabelAlwaysShown="true"
                 app:met_floatingLabelTextColor="?attr/colorPrimary"/>
             <com.rengwuxian.materialedittext.MaterialEditText

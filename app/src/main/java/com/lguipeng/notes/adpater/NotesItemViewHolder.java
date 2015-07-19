@@ -1,5 +1,6 @@
 package com.lguipeng.notes.adpater;
 
+import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -52,7 +53,7 @@ public class NotesItemViewHolder extends RecyclerView.ViewHolder{
         view.setText(text);
     }
 
-    private void setTextView(TextView view, int text){
+    private void setTextView(TextView view, @StringRes int text){
         if (view == null || text <= 0)
             return;
         view.setText(text);

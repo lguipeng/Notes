@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
@@ -85,21 +84,15 @@ public abstract class BaseListAdapter<E> extends BaseAdapter {
 				View inView = itemV.findViewById(key);
 				final onInternalClickListener<E> listener = canClickItem.get(key);
 				if (inView != null && listener != null) {
-					inView.setOnClickListener(new OnClickListener() {
-
-						public void onClick(View v) {
-							listener.OnClickListener(itemV, v, position,
-                                    valuesMap);
-						}
+					inView.setOnClickListener((view) ->
+									listener.OnClickListener(itemV, view, position,
+											valuesMap)
+					);
+					inView.setOnLongClickListener((view) -> {
+						listener.OnLongClickListener(itemV, view, position,
+								valuesMap);
+						return true;
 					});
-                    inView.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                            listener.OnLongClickListener(itemV, v, position,
-                                    valuesMap);
-                            return true;
-                        }
-                    });
 				}
 			}
 		}

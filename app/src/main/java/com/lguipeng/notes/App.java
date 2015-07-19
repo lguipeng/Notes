@@ -2,12 +2,12 @@ package com.lguipeng.notes;
 
 import android.app.Application;
 
+import com.evernote.client.android.EvernoteSession;
 import com.lguipeng.notes.module.AppModule;
 
 import java.util.Arrays;
 import java.util.List;
 
-import cn.bmob.v3.Bmob;
 import dagger.ObjectGraph;
 
 /**
@@ -20,7 +20,20 @@ public class App extends Application{
         super.onCreate();
         objectGraph = ObjectGraph.create(getModules().toArray());
         objectGraph.inject(this);
-        Bmob.initialize(this, BuildConfig.BMOB_KEY);
+        buildEverNoteSession();
+    }
+
+    private void buildEverNoteSession(){
+        EvernoteSession.EvernoteService service;
+        if (BuildConfig.DEBUG)
+            service = EvernoteSession.EvernoteService.SANDBOX;
+        else
+            service = EvernoteSession.EvernoteService.PRODUCTION;
+        new EvernoteSession.Builder(this)
+                .setEvernoteService(service)
+                .setSupportAppLinkedNotebooks(false)
+                .build(BuildConfig.EVER_NOTE_KEY, BuildConfig.EVER_NOTE_SECRET)
+                .asSingleton();
     }
 
     @Override

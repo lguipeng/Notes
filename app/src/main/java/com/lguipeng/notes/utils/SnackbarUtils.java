@@ -1,11 +1,16 @@
 package com.lguipeng.notes.utils;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Color;
+import android.view.View;
 
 import com.lguipeng.notes.ui.BaseActivity;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
+import com.nispok.snackbar.listeners.ActionClickListener;
+import com.nispok.snackbar.listeners.EventListener;
 
 /**
  * Author: lgp
@@ -13,25 +18,99 @@ import com.nispok.snackbar.SnackbarManager;
  */
 public class SnackbarUtils {
 
+    public static final long DURATION = Snackbar.SnackbarDuration.LENGTH_SHORT.getDuration() / 2 ;
+
     public static void show(Activity activity, int message) {
-//        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-//        Toast toast = new Toast(mContext);
-//        View view = LayoutInflater.from(mContext).inflate(R.layout.toast_layout, null, false);
-//        TextView textView = (TextView)view.findViewById(R.id.toast_text);
-//        textView.setText(message);
-//        toast.setView(view);
-//        toast.setDuration(Toast.LENGTH_SHORT);
-//        toast.show();
+        show(activity, message, null);
+    }
+
+    public static void show(Activity activity, int message, View floatButton) {
+
+        EventListener listener = new FloatButtonEventListener(floatButton);
+        SnackbarManager.show(
+                Snackbar.with(activity.getApplicationContext())
+                        .color(0xff323232)
+                        .duration(DURATION)
+                        .eventListener(listener)
+                        .text(message), activity);
+    }
+
+    public static void showAction(Activity activity, int message, int action, ActionClickListener listener) {
+       showAction(activity, message, action, listener, null);
+    }
+
+    public static void showAction(Activity activity, int message, int action, ActionClickListener listener, View floatButton) {
+        EventListener eventListener = new FloatButtonEventListener(floatButton);
+        SnackbarManager.show(Snackbar.with(activity)
+                .text(message)
+                .color(0xff323232)
+                .actionColor(snackbarColor(activity))
+                .actionLabel(action)
+                .duration(DURATION)
+                .eventListener(eventListener)
+                .actionListener(listener), activity);
+    }
+
+    public static void dismiss(){
+        SnackbarManager.dismiss();
+    }
+
+    private static int snackbarColor(Activity activity){
         int color = Color.BLACK;
         if (activity instanceof BaseActivity){
             color = (((BaseActivity) activity)).getColorPrimary();
         }
-        color = color & 0xddffffff;
-        SnackbarManager.show(
-                Snackbar.with(activity.getApplicationContext())
-                        .color(color)
-                        .duration((Snackbar.SnackbarDuration.LENGTH_SHORT.getDuration() / 2))
-                        .text(message), activity);
+        return color;
     }
 
+    private static class FloatButtonEventListener implements EventListener{
+        private View floatButton;
+
+        public FloatButtonEventListener(View floatButton) {
+            this.floatButton = floatButton;
+        }
+
+        @Override
+        public void onShow(Snackbar snackbar) {
+            if (!judgeHasAnim())
+                return;
+            Animator anim = ObjectAnimator.ofFloat(floatButton, "translationY", 0, -snackbar.getHeight());
+            //anim.setInterpolator(new FastOutSlowInInterpolator());
+            anim.setDuration(DURATION / 4).start();
+        }
+
+        @Override
+        public void onShowByReplace(Snackbar snackbar) {
+
+        }
+
+        @Override
+        public void onShown(Snackbar snackbar) {
+
+        }
+
+        @Override
+        public void onDismiss(Snackbar snackbar) {
+            if (!judgeHasAnim())
+                return;
+            Animator anim = ObjectAnimator.ofFloat(floatButton, "translationY", -snackbar.getHeight(), 0);
+            anim.setDuration(DURATION / 2).start();
+        }
+
+        @Override
+        public void onDismissByReplace(Snackbar snackbar) {
+
+        }
+
+        @Override
+        public void onDismissed(Snackbar snackbar) {
+            if (!judgeHasAnim())
+                return;
+            ViewHelper.clear(floatButton);
+        }
+
+        private boolean judgeHasAnim(){
+            return floatButton != null;
+        }
+    }
 }

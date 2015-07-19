@@ -17,7 +17,7 @@ public class ViewHelper {
         ViewCompat.setRotationY(v, 0);
         ViewCompat.setRotationX(v, 0);
         // @TODO https://code.google.com/p/android/issues/detail?id=80863
-//        ViewCompat.setPivotY(v, v.getMeasuredHeight() / 2);
+        ///ViewCompat.setPivotY(v, v.getMeasuredHeight() / 2);
         v.setPivotY(v.getMeasuredHeight() / 2);
         ViewCompat.setPivotX(v, v.getMeasuredWidth() / 2);
         ViewCompat.animate(v).setInterpolator(null);

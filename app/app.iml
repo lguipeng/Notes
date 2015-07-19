@@ -26,9 +26,9 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
-    <output-test url="file://$MODULE_DIR$/build/intermediates/classes/androidTest/debug" />
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/build/retrolambda/debug" />
+    <output-test url="file://$MODULE_DIR$/build/retrolambda/debugAndroidTest" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/debug" isTestSource="false" generated="true" />
@@ -71,12 +71,13 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dependency-cache" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex-cache" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/cardview-v7/22.2.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.evernote/android-sdk/2.0.0-RC2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.melnykov/floatingactionbutton/1.3.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.nispok/snackbar/2.10.10/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.pnikosis/materialish-progress/1.5/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.rengwuxian.materialedittext/library/2.1.3/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/net.vrallev.android/android-task/1.0.4/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jacoco" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javaResources" />
@@ -90,33 +91,35 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/reports" />
-      <excludeFolder url="file://$MODULE_DIR$/build/test-results" />
+      <excludeFolder url="file://$MODULE_DIR$/build/retrolambda" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
-    <orderEntry type="library" exported="" name="fastjson" level="project" />
     <orderEntry type="library" exported="" name="library-2.1.3" level="project" />
     <orderEntry type="library" exported="" name="eventbus-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-22.2.0" level="project" />
+    <orderEntry type="library" exported="" name="scribe-1.3.5" level="project" />
     <orderEntry type="library" exported="" name="dagger-1.2.2" level="project" />
     <orderEntry type="library" exported="" name="libammsdk" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-22.2.0" level="project" />
+    <orderEntry type="library" exported="" name="okhttp-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="materialish-progress-1.5" level="project" />
     <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
     <orderEntry type="library" exported="" name="floatingactionbutton-1.3.0" level="project" />
     <orderEntry type="library" exported="" name="guava-15.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
+    <orderEntry type="library" exported="" name="android-sdk-2.0.0-RC2" level="project" />
+    <orderEntry type="library" exported="" name="android-task-1.0.4" level="project" />
+    <orderEntry type="library" exported="" name="evernote-api-1.25.1" level="project" />
     <orderEntry type="library" exported="" name="butterknife-6.1.0" level="project" />
-    <orderEntry type="library" exported="" name="BmobSDK_V3.3.8_0521" level="project" />
     <orderEntry type="library" exported="" name="javawriter-2.5.0" level="project" />
     <orderEntry type="library" exported="" name="systembartint-1.0.3" level="project" />
     <orderEntry type="library" exported="" name="snackbar-2.10.10" level="project" />
+    <orderEntry type="library" exported="" name="okio-1.4.0" level="project" />
     <orderEntry type="library" exported="" name="dagger-compiler-1.2.2" level="project" />
-    <orderEntry type="library" exported="" name="cardview-v7-22.2.0" level="project" />
     <orderEntry type="module" module-name="MaterialPreference" exported="" />
     <orderEntry type="module" module-name="orm-library" exported="" />
   </component>

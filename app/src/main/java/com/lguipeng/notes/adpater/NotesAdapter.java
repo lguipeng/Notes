@@ -11,7 +11,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import com.lguipeng.notes.R;
-import com.lguipeng.notes.model.Note;
+import com.lguipeng.notes.model.SNote;
 import com.lguipeng.notes.utils.TimeUtils;
 
 import java.util.ArrayList;
@@ -21,16 +21,16 @@ import java.util.List;
 /**
  * Created by lgp on 2015/4/6.
  */
-public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filterable{
-    private final List<Note> originalList;
+public class NotesAdapter extends BaseRecyclerViewAdapter<SNote> implements Filterable{
+    private final List<SNote> originalList;
     private int upDownFactor = 1;
     private boolean isShowScaleAnimate = true;
-    public NotesAdapter(List<Note> list) {
+    public NotesAdapter(List<SNote> list) {
         super(list);
         originalList = new ArrayList<>(list);
     }
 
-    public NotesAdapter(List<Note> list, Context context) {
+    public NotesAdapter(List<SNote> list, Context context) {
         super(list, context);
         originalList = new ArrayList<>(list);
     }
@@ -46,7 +46,7 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filte
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         super.onBindViewHolder(viewHolder, position);
         NotesItemViewHolder holder = (NotesItemViewHolder) viewHolder;
-        Note note = list.get(position);
+        SNote note = list.get(position);
         if (note == null)
             return;
         holder.setLabelText(note.getLabel());
@@ -63,19 +63,19 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filte
     @Override
     protected Animator[] getAnimators(View view) {
         if (view.getMeasuredHeight() <=0 || isShowScaleAnimate){
-            ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "scaleX", 1.1f, 1f);
-            ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "scaleY", 1.1f, 1f);
+            ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "scaleX", 1.05f, 1.0f);
+            ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "scaleY", 1.05f, 1.0f);
             return new ObjectAnimator[]{scaleX, scaleY};
         }
         return new Animator[]{
-                ObjectAnimator.ofFloat(view, "scaleX", 1.1f, 1f),
-                ObjectAnimator.ofFloat(view, "scaleY", 1.1f, 1f),
-                ObjectAnimator.ofFloat(view, "translationY", upDownFactor * 1.5f * view.getMeasuredHeight(), 0)
+                ObjectAnimator.ofFloat(view, "scaleX", 1.05f, 1.0f),
+                ObjectAnimator.ofFloat(view, "scaleY", 1.05f, 1.0f),
+                //ObjectAnimator.ofFloat(view, "translationY", upDownFactor * 1.05f * view.getMeasuredHeight(), 0)
         };
     }
 
     @Override
-    public void setList(List<Note> list) {
+    public void setList(List<SNote> list) {
         super.setList(list);
         this.originalList.clear();
         originalList.addAll(list);
@@ -97,11 +97,11 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filte
 
         private final NotesAdapter adapter;
 
-        private final List<Note> originalList;
+        private final List<SNote> originalList;
 
-        private final List<Note> filteredList;
+        private final List<SNote> filteredList;
 
-        private NoteFilter(NotesAdapter adapter, List<Note> originalList) {
+        private NoteFilter(NotesAdapter adapter, List<SNote> originalList) {
             super();
             this.adapter = adapter;
             this.originalList = new LinkedList<>(originalList);
@@ -115,7 +115,7 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filte
             if (constraint.length() == 0) {
                 filteredList.addAll(originalList);
             } else {
-                for ( Note note : originalList) {
+                for ( SNote note : originalList) {
                     if (note.getContent().contains(constraint) || note.getLabel().contains(constraint)) {
                         filteredList.add(note);
                     }
@@ -129,7 +129,7 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<Note> implements Filte
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             adapter.list.clear();
-            adapter.list.addAll((ArrayList<Note>) results.values);
+            adapter.list.addAll((ArrayList<SNote>) results.values);
             adapter.notifyDataSetChanged();
         }
     }

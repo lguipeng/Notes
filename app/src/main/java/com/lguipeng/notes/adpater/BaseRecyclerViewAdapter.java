@@ -59,7 +59,7 @@ public abstract class BaseRecyclerViewAdapter<E> extends RecyclerView.Adapter<Re
     public void setList(List<E> list) {
         this.list.clear();
         this.list.addAll(list);
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     public List<E> getList() {
@@ -94,20 +94,14 @@ public abstract class BaseRecyclerViewAdapter<E> extends RecyclerView.Adapter<Re
                 View inView = itemV.findViewById(key);
                 final onInternalClickListener<E> listener = canClickItem.get(key);
                 if (inView != null && listener != null) {
-                    inView.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            listener.OnClickListener(itemV, v, position,
-                                    valuesMap);
-
-                        }
-                    });
-                    inView.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                            listener.OnLongClickListener(itemV, v, position,
-                                    valuesMap);
-                            return true;
-                        }
+                    inView.setOnClickListener((view) ->
+                            listener.OnClickListener(itemV, view, position,
+                                    valuesMap)
+                    );
+                    inView.setOnLongClickListener((view) -> {
+                        listener.OnLongClickListener(itemV, view, position,
+                                valuesMap);
+                        return true;
                     });
                 }
             }

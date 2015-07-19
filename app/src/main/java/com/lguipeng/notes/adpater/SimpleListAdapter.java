@@ -1,6 +1,7 @@
 package com.lguipeng.notes.adpater;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,7 @@ public abstract class SimpleListAdapter extends BaseListAdapter<String> {
         return convertView;
     }
 
-    protected abstract int getLayout();
+    protected abstract @LayoutRes int getLayout();
 
     static class Holder {
         TextView textView;

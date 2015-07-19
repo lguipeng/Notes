@@ -22,6 +22,7 @@
                 android:layout_height="match_parent">
                 <com.lguipeng.notes.view.FixedRecyclerView
                     android:id="@+id/recyclerView"
+                    android:padding="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             </android.support.v4.widget.SwipeRefreshLayout>
@@ -62,15 +63,6 @@
                 android:divider="@android:color/transparent"
                 android:dividerHeight="0dp"
                 android:background="?attr/colorPrimary"/>
-            <Button
-                android:text="@string/edit"
-                android:id="@+id/edit_note_type"
-                android:background="?attr/colorPrimary"
-                android:layout_width="@dimen/drawer_width"
-                android:textColor="@android:color/white"
-                android:layout_height="?attr/listPreferredItemHeight"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
-
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

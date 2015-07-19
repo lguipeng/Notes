@@ -1,4 +1,6 @@
+apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
+
 def packTime() {
     return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("UTC"))
 }
@@ -11,8 +13,9 @@ def aboutAppUrl = "http://www.jianshu.com/p/640a7f2fe0c5"
 //remember to add your bmob app key in local.properties
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def bmobAppKey = properties.getProperty('BMOB_KEY')
 def weChatId = properties.getProperty('WECHAT_ID')
+def everNoteKey = properties.getProperty('EVER_NOTE_KEY')
+def everNoteSecret = properties.getProperty('EVER_NOTE_SECRET')
 android {
     signingConfigs {
         debug {
@@ -33,8 +36,9 @@ android {
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
 
-        buildConfigField "String", "BMOB_KEY", "\"${bmobAppKey}\""
         buildConfigField "String", "WECHAT_ID", "\"${weChatId}\""
+        buildConfigField "String", "EVER_NOTE_KEY", "\"${everNoteKey}\""
+        buildConfigField "String", "EVER_NOTE_SECRET", "\"${everNoteSecret}\""
         buildConfigField "String", "APP_DOWNLOAD_URL", "\"${appDownloadUrl}\""
         buildConfigField "String", "PROJECT_URL", "\"${projectUrl}\""
         buildConfigField "String", "BLOG_URL", "\"${blogUrl}\""
@@ -50,7 +54,7 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             zipAlignEnabled false
             shrinkResources true
             signingConfig signingConfigs.release
@@ -81,6 +85,14 @@ android {
         }
 
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+retrolambda {
+    //javaVersion JavaVersion.VERSION_1_6
 }
 
 dependencies {
@@ -88,7 +100,7 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'com.android.support:cardview-v7:22.2.0'
+    //compile 'com.android.support:design:22.2.0'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile 'com.melnykov:floatingactionbutton:1.3.0'
@@ -98,6 +110,9 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.pnikosis:materialish-progress:1.5'
     compile 'com.nispok:snackbar:2.10.10'
+    compile('com.evernote:android-sdk:2.0.0-RC2') {
+        exclude module: 'support-v4'
+    }
     compile project(':orm-library')
     compile project(':MaterialPreference')
 }

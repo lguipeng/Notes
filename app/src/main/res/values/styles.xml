@@ -37,8 +37,8 @@
     <style name="BaseDialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_second_color_primary</item>
-        <item name="android:windowEnterAnimation">@anim/abc_popup_enter</item>
-        <item name="android:windowExitAnimation">@anim/abc_popup_exit</item>
+        <item name="android:windowEnterAnimation">@anim/abc_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/abc_fade_out</item>
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme.Dark">
@@ -174,4 +174,10 @@
         <item name="colorAccent">@color/accent_green</item>
     </style>
 
+    <style name="ShareDialog" parent="BaseDialogTheme">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
 </resources>

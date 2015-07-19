@@ -19,14 +19,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.lguipeng.notes.R;
@@ -34,21 +33,17 @@ import com.lguipeng.notes.adpater.BaseRecyclerViewAdapter;
 import com.lguipeng.notes.adpater.DrawerListAdapter;
 import com.lguipeng.notes.adpater.NotesAdapter;
 import com.lguipeng.notes.adpater.SimpleListAdapter;
-import com.lguipeng.notes.listener.bmob.FindListenerImpl;
-import com.lguipeng.notes.listener.bmob.SaveListenerImpl;
-import com.lguipeng.notes.listener.bmob.UpdateListenerImpl;
-import com.lguipeng.notes.model.CloudNote;
-import com.lguipeng.notes.model.Note;
-import com.lguipeng.notes.model.NoteOperateLog;
-import com.lguipeng.notes.model.NoteType;
+import com.lguipeng.notes.model.SNote;
 import com.lguipeng.notes.module.DataModule;
-import com.lguipeng.notes.utils.AccountUtils;
-import com.lguipeng.notes.utils.JsonUtils;
-import com.lguipeng.notes.utils.NoteConfig;
-import com.lguipeng.notes.utils.PreferenceUtils;
+import com.lguipeng.notes.utils.DialogUtils;
+import com.lguipeng.notes.utils.EverNoteUtils;
 import com.lguipeng.notes.utils.SnackbarUtils;
+import com.lguipeng.notes.utils.ThreadExecutorPool;
+import com.lguipeng.notes.utils.ToolbarUtils;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ScrollDirectionListener;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.ActionClickListener;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import net.tsz.afinal.FinalDb;
@@ -60,13 +55,12 @@ import javax.inject.Inject;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
-import cn.bmob.v3.BmobQuery;
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by lgp on 2015/5/24.
  */
-public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener{
+public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ActionClickListener{
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
@@ -79,9 +73,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @InjectView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
-
-    @InjectView(R.id.edit_note_type)
-    Button editNoteTypeButton;
 
     @InjectView(R.id.left_drawer_listview)
     ListView mDrawerMenuListView;
@@ -98,25 +89,25 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Inject
     FinalDb finalDb;
 
+    @Inject
+    EverNoteUtils mEverNoteUtils;
+
+    @Inject
+    ThreadExecutorPool mThreadExecutorPool;
+
     private ActionBarDrawerToggle mDrawerToggle;
 
     private SearchView searchView;
 
     private NotesAdapter recyclerAdapter;
 
-    private int mCurrentNoteType;
+    private SNote.NoteType mCurrentNoteTypePage = SNote.NoteType.getDefault();
 
     private boolean rightHandOn = false;
 
     private boolean cardLayout = true;
 
-    private boolean hasUpdateNote = false;
-
-    private boolean hasEditClick = false;
-
     private  List<String> noteTypelist;
-
-    private boolean hasSyncing = false;
 
     private final String  CURRENT_NOTE_TYPE_KEY = "CURRENT_NOTE_TYPE_KEY";
 
@@ -126,7 +117,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null){
-            mCurrentNoteType = savedInstanceState.getInt(CURRENT_NOTE_TYPE_KEY);
+            int value = savedInstanceState.getInt(CURRENT_NOTE_TYPE_KEY);
+            mCurrentNoteTypePage = SNote.NoteType.mapValueToStatus(value);
             progressWheel.onRestoreInstanceState(savedInstanceState.getParcelable(PROGRESS_WHEEL_KEY));
         }
         initToolbar();
@@ -138,7 +130,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(CURRENT_NOTE_TYPE_KEY, mCurrentNoteType);
+        outState.putInt(CURRENT_NOTE_TYPE_KEY, mCurrentNoteTypePage.getValue());
         Parcelable parcelable = progressWheel.onSaveInstanceState();
         outState.putParcelable(PROGRESS_WHEEL_KEY, parcelable);
     }
@@ -154,19 +146,20 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 setMenuListViewGravity(Gravity.START);
             }
         }
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (hasUpdateNote){
-            changeToSelectNoteType(mCurrentNoteType);
-            hasUpdateNote = false;
-        }
         if (cardLayout != preferenceUtils.getBooleanParam(getString(R.string.card_note_item_layout_key), true)){
             changeItemLayout(!cardLayout);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        closeDrawer();
     }
 
     @Override
@@ -180,18 +173,77 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         super.onDestroy();
     }
 
-    public void onEvent(Integer event){
+    public void onEventMainThread(MainEvent event){
         switch (event){
-            case NoteConfig.NOTE_UPDATE_EVENT:
-                hasUpdateNote = true;
+            case UPDATE_NOTE:
+                changeToSelectNoteType(mCurrentNoteTypePage);
+                mEverNoteUtils.syncSilence(EverNoteUtils.SyncType.PUSH);
                 break;
-            case NoteConfig.NOTE_TYPE_UPDATE_EVENT:
-                initDrawerListView();
-                break;
-            case NoteConfig.CHANGE_THEME_EVENT:
+            case CHANGE_THEME:
                 this.recreate();
                 break;
         }
+    }
+
+    public void onEventMainThread(EverNoteUtils.SyncResult result){
+        if (result != EverNoteUtils.SyncResult.START)
+            refreshLayout.setRefreshing(false);
+        switch (result){
+            case ERROR_NOT_LOGIN:
+                showSnackbar(R.string.unbind_ever_note_tip, R.string.go_bind);
+                break;
+            case ERROR_EXPUNGE:
+                showSnackbar(R.string.expunge_error);
+                break;
+            case ERROR_DELETE:
+                showSnackbar(R.string.delete_error);
+                break;
+            case ERROR_FREQUENT_API:
+                showSnackbar(R.string.frequent_api_tip);
+                break;
+            case ERROR_AUTH_EXPIRED:
+                showSnackbar(R.string.error_auth_expired_tip);
+                break;
+            case ERROR_PERMISSION_DENIED:
+                showSnackbar(R.string.error_permission_deny);
+                break;
+            case ERROR_QUOTA_EXCEEDED:
+                showSnackbar(R.string.error_permission_deny);
+                break;
+            case ERROR_OTHER:
+                showSnackbar(R.string.sync_fail);
+                break;
+            case START:
+                //SnackbarUtils.show(this, R.string.syncing);
+                break;
+            case SUCCESS_SILENCE:
+                break;
+            case SUCCESS:
+                showSnackbar(R.string.sync_success);
+                changeToSelectNoteType(mCurrentNoteTypePage);
+                break;
+        }
+    }
+
+    private void showSnackbar(int message){
+        SnackbarUtils.show(this, message, fab);
+    }
+
+    private void showSnackbar(int message, int action){
+        SnackbarUtils.showAction(this, message
+                , action, this, fab);
+    }
+
+    @Override
+    public void onActionClicked(Snackbar snackbar) {
+        Intent intent = new Intent(this, SettingActivity.class);
+        startActivity(intent);
+        SnackbarUtils.dismiss();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
@@ -215,12 +267,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
         if (toolbar != null){
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openOrCloseDrawer();
-                }
-            });
+            toolbar.setNavigationOnClickListener((view) -> openOrCloseDrawer());
         }
     }
 
@@ -254,12 +301,18 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             public boolean onMenuItemActionExpand(MenuItem item) {
                 recyclerAdapter.setUpFactor();
                 refreshLayout.setEnabled(false);
+                fab.hide();
+                fab.setVisibility(View.INVISIBLE);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 refreshLayout.setEnabled(true);
+                if (mCurrentNoteTypePage == SNote.NoteType.TRASH)
+                    return true;
+                fab.show();
+                fab.setVisibility(View.VISIBLE);
                 return true;
             }
         });
@@ -278,7 +331,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 startActivity(intent);
                 return true;
             case R.id.sync:
-                sync();
+                //sync();
+                refreshLayout.setRefreshing(true);
+                mEverNoteUtils.sync();
                 return true;
             case R.id.about:
                 intent = new Intent(MainActivity.this, AboutActivity.class);
@@ -291,56 +346,43 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && mDrawerLayout.isDrawerOpen(drawerRootView)){
-            mDrawerLayout.closeDrawer(drawerRootView);
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            if (mDrawerLayout.isDrawerOpen(drawerRootView)){
+                mDrawerLayout.closeDrawer(drawerRootView);
+            }else {
+                moveTaskToBack(true);
+            }
             return true;
         }
-        moveTaskToBack(true);
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     protected void initToolbar(){
-        super.initToolbar(toolbar);
-    }
-
-    private void initDrawerListView(){
-        String json = preferenceUtils.getStringParam(PreferenceUtils.NOTE_TYPE_KEY);
-        if (!TextUtils.isEmpty(json)){
-            noteTypelist = JsonUtils.parseNoteType(json);
-        }else{
-            noteTypelist = Arrays.asList(getResources().getStringArray(R.array.drawer_content));
-            NoteType type = new NoteType();
-            type.setTypes(noteTypelist);
-            String text = JsonUtils.jsonNoteType(type);
-            preferenceUtils.saveParam(PreferenceUtils.NOTE_TYPE_KEY, text);
-        }
-
-        SimpleListAdapter adapter = new DrawerListAdapter(this, noteTypelist);
-        mDrawerMenuListView.setAdapter(adapter);
-        mDrawerMenuListView.setItemChecked(mCurrentNoteType, true);
-        toolbar.setTitle(noteTypelist.get(mCurrentNoteType));
+        ToolbarUtils.initToolbar(toolbar, this);
     }
 
     private void initDrawerView() {
-        initDrawerListView();
-        mDrawerMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mDrawerMenuListView.setItemChecked(position, true);
-                openOrCloseDrawer();
-                mCurrentNoteType = position;
-                changeToSelectNoteType(mCurrentNoteType);
-                if (mCurrentNoteType == NoteConfig.NOTE_TRASH_TYPE) {
-                    fab.hide();
-                    fab.setVisibility(View.INVISIBLE);
-                } else {
-                    fab.setVisibility(View.VISIBLE);
-                    fab.show();
-                }
+        noteTypelist = Arrays.asList(getResources().getStringArray(R.array.drawer_content));
+        SimpleListAdapter adapter = new DrawerListAdapter(this, noteTypelist);
+        mDrawerMenuListView.setAdapter(adapter);
+        toolbar.setTitle(noteTypelist.get(mCurrentNoteTypePage.getValue()));
+        mDrawerMenuListView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
+            mCurrentNoteTypePage = SNote.NoteType.mapValueToStatus(position);
+            changeToSelectNoteType(mCurrentNoteTypePage);
+            mDrawerMenuListView.setItemChecked(position, true);
+            if (mCurrentNoteTypePage == SNote.NoteType.TRASH) {
+                fab.hide();
+                fab.setVisibility(View.INVISIBLE);
+                refreshLayout.setEnabled(false);
+            } else {
+                fab.setVisibility(View.VISIBLE);
+                fab.show();
+                refreshLayout.setEnabled(true);
             }
         });
 
+        mDrawerMenuListView.setItemChecked(mCurrentNoteTypePage.getValue(), true);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0){
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -353,12 +395,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 invalidateOptionsMenu();
-                toolbar.setTitle(noteTypelist.get(mCurrentNoteType));
-                if (hasEditClick){
-                    Intent intent = new Intent(MainActivity.this, EditNoteTypeActivity.class);
-                    startActivity(intent);
-                    hasEditClick = false;
-                }
+                toolbar.setTitle(noteTypelist.get(mCurrentNoteTypePage.getValue()));
             }
         };
         mDrawerToggle.setDrawerIndicatorEnabled(true);
@@ -370,27 +407,27 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         }
     }
 
-
-
     private void initRecyclerView(){
         showProgressWheel(true);
         initItemLayout();
         recyclerView.setHasFixedSize(true);
-        recyclerAdapter = new NotesAdapter(initItemData(mCurrentNoteType), this);
+        recyclerAdapter = new NotesAdapter(initItemData(mCurrentNoteTypePage.getValue()), this);
         recyclerAdapter.setOnInViewClickListener(R.id.notes_item_root,
-                new BaseRecyclerViewAdapter.onInternalClickListenerImpl<Note>() {
+                new BaseRecyclerViewAdapter.onInternalClickListenerImpl<SNote>() {
                     @Override
-                    public void OnClickListener(View parentV, View v, Integer position, Note values) {
+                    public void OnClickListener(View parentV, View v, Integer position, SNote values) {
                         super.OnClickListener(parentV, v, position, values);
-                        if (mCurrentNoteType == NoteConfig.NOTE_TRASH_TYPE)
+                        if (mCurrentNoteTypePage == SNote.NoteType.TRASH){
                             return;
+                        }
+                        refreshLayout.setEnabled(true);
                         startNoteActivity(NoteActivity.VIEW_NOTE_TYPE, values);
                     }
                 });
         recyclerAdapter.setOnInViewClickListener(R.id.note_more,
-                new BaseRecyclerViewAdapter.onInternalClickListenerImpl<Note>() {
+                new BaseRecyclerViewAdapter.onInternalClickListenerImpl<SNote>() {
                     @Override
-                    public void OnClickListener(View parentV, View v, Integer position, Note values) {
+                    public void OnClickListener(View parentV, View v, Integer position, SNote values) {
                         super.OnClickListener(parentV, v, position, values);
                         showPopupMenu(v, values);
                     }
@@ -416,26 +453,26 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @OnClick(R.id.fab)
     public void newNote(View view){
-        Note note = new Note();
-        note.setType(mCurrentNoteType);
+        SNote note = new SNote();
+        note.setType(mCurrentNoteTypePage);
         startNoteActivity(NoteActivity.CREATE_NOTE_TYPE, note);
     }
 
-    @OnClick(R.id.edit_note_type)
-    public void editNoteType(View view){
-        hasEditClick = true;
-        openOrCloseDrawer();
-    }
-
-
     @Override
     public void onRefresh() {
-        sync();
+        mEverNoteUtils.sync();
     }
 
-    private void changeToSelectNoteType(int type){
+    private void changeToSelectNoteType(final SNote.NoteType type){
         showProgressWheel(true);
-        recyclerAdapter.setList(initItemData(type));
+        mThreadExecutorPool.execute(() -> {
+            final List<SNote> list = initItemData(type.getValue());
+            recyclerAdapter.setList(list);
+            runOnUiThread(() -> {
+                recyclerAdapter.notifyDataSetChanged();
+                closeDrawer();
+            });
+        });
         showProgressWheel(false);
     }
 
@@ -459,78 +496,93 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         }
     }
 
-    private void showPopupMenu(View view, final Note note) {
+    private void showPopupMenu(View view, final SNote note) {
         PopupMenu popup = new PopupMenu(this, view);
         //Inflating the Popup using xml file
-        String move = getString(R.string.move_to);
-        if (mCurrentNoteType == NoteConfig.NOTE_TRASH_TYPE){
-            for (int i=0; i< noteTypelist.size()-1; i++){
-                popup.getMenu().add(Menu.NONE, i, Menu.NONE, move + noteTypelist.get(i));
-            }
-            popup.getMenu().add(Menu.NONE, noteTypelist.size()-1, Menu.NONE, getString(R.string.delete_forever));
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int id = item.getItemId();
-                    if (id < noteTypelist.size() - 1) {
-                        note.setType(id);
-                        finalDb.update(note);
-                        changeToSelectNoteType(mCurrentNoteType);
-                    } else {
+        if (mCurrentNoteTypePage == SNote.NoteType.TRASH){
+            popup.getMenuInflater()
+                    .inflate(R.menu.menu_notes_trash_more, popup.getMenu());
+            popup.setOnMenuItemClickListener((item) -> {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.delete:
                         showDeleteForeverDialog(note);
-                    }
-                    return true;
+                        break;
+                    case R.id.recover:
+                        note.setType(SNote.NoteType.NORMAL);
+                        note.setStatus(SNote.Status.NEED_PUSH);
+                        finalDb.update(note);
+                        changeToSelectNoteType(mCurrentNoteTypePage);
+                        try {
+                            mEverNoteUtils.syncSilence(EverNoteUtils.SyncType.PUSH);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            EventBus.getDefault().post(EverNoteUtils.SyncResult.ERROR_RECOVER);
+                        }
+                        break;
+                    default:
+                        break;
                 }
+                return true;
             });
 
         } else {
             popup.getMenuInflater()
                     .inflate(R.menu.menu_notes_more, popup.getMenu());
-            popup.setOnMenuItemClickListener(
-                    new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.delete_forever:
-                                    showDeleteForeverDialog(note);
-                                    break;
-                                case R.id.edit:
-                                    startNoteActivity(NoteActivity.EDIT_NOTE_TYPE, note);
-                                    break;
-                                case R.id.move_to_trash:
-                                    note.setType(NoteConfig.NOTE_TRASH_TYPE);
-                                    finalDb.update(note);
-                                    changeToSelectNoteType(mCurrentNoteType);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            return true;
-                        }
-                    });
-        }
-        popup.show(); //showing popup menu
-    }
-
-    private void showDeleteForeverDialog(final Note note){
-        AlertDialog.Builder builder = generateDialogBuilder();
-        builder.setTitle(R.string.delete_forever_message);
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        for (NoteOperateLog log : note.getLogs().getList()){
-                            finalDb.delete(log);
-                        }
-                        finalDb.delete(note);
-                        changeToSelectNoteType(mCurrentNoteType);
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.edit:
+                        startNoteActivity(NoteActivity.EDIT_NOTE_TYPE, note);
                         break;
-                    case DialogInterface.BUTTON_NEGATIVE:
+                    case R.id.move_to_trash:
+                        note.setType(SNote.NoteType.TRASH);
+                        note.setStatus(SNote.Status.NEED_REMOVE);
+                        finalDb.update(note);
+                        changeToSelectNoteType(mCurrentNoteTypePage);
+                        try {
+                            mEverNoteUtils.syncSilence(EverNoteUtils.SyncType.PUSH);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            EventBus.getDefault().post(EverNoteUtils.SyncResult.ERROR_DELETE);
+                        }
                         break;
                     default:
                         break;
                 }
+                return true;
+            });
+        }
+        popup.show(); //showing popup menu
+    }
+
+    private void showDeleteForeverDialog(final SNote note){
+        AlertDialog.Builder builder = DialogUtils.makeDialogBuilderByTheme(this);
+        builder.setTitle(R.string.delete_tip);
+        DialogInterface.OnClickListener listener = (DialogInterface dialog, int which) -> {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    finalDb.delete(note);
+                    changeToSelectNoteType(mCurrentNoteTypePage);
+                    // ever note permission denny, so remove
+                        /*
+                        mThreadExecutorPool.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    mEverNoteUtils.expungeNote(guid);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }finally {
+                                    EventBus.getDefault().post(EverNoteUtils.SyncResult.ERROR_EXPUNGE);
+                                }
+                            }
+                        });
+                        */
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+                default:
+                    break;
             }
         };
         builder.setPositiveButton(R.string.sure, listener);
@@ -538,7 +590,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         builder.show();
     }
 
-    private void startNoteActivity(int oprType, Note value){
+    private void startNoteActivity(int oprType, SNote value){
         Intent intent = new Intent(this, NoteActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt(NoteActivity.OPERATE_NOTE_TYPE_KEY, oprType);
@@ -553,18 +605,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         drawerRootView.setLayoutParams(params);
     }
 
-    private List<Note> initItemData(int noteType) {
-        List<Note> itemList = null;
-        switch (noteType){
-            case NoteConfig.NOTE_STUDY_TYPE:
-            case NoteConfig.NOTE_WORK_TYPE:
-            case NoteConfig.NOTE_OTHER_TYPE:
-            case NoteConfig.NOTE_TRASH_TYPE:
-                itemList = finalDb.findAllByWhere(Note.class, "type = " + noteType, "lastOprTime", true);
-                break;
-            default:
-                break;
-        }
+    private List<SNote> initItemData(int type) {
+        List<SNote> itemList;
+        itemList = finalDb.findAllByWhere(SNote.class, "type = " + type
+                , "lastOprTime", true);
         return itemList;
     }
 
@@ -574,17 +618,42 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             if (!progressWheel.isSpinning())
                 progressWheel.spin();
         }else{
-            progressWheel.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (progressWheel.isSpinning()) {
-                        progressWheel.stopSpinning();
-                    }
+            progressWheel.postDelayed(() -> {
+                if (progressWheel.isSpinning()) {
+                    progressWheel.stopSpinning();
                 }
-            }, 500);
+            }, 300);
         }
     }
 
+    private void onSyncSuccess(){
+        runOnUiThread(() -> showSnackbar(R.string.sync_success));
+    }
+
+    private void onSyncFail(){
+        runOnUiThread(() -> showSnackbar( R.string.sync_fail));
+    }
+
+    private void changeItemLayout(boolean flow){
+        cardLayout = flow;
+        if (!flow){
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        }else {
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
+        }
+    }
+
+    private void initItemLayout(){
+        if (preferenceUtils.getBooleanParam(getString(R.string.card_note_item_layout_key), true)){
+            cardLayout = true;
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
+        }else {
+            cardLayout = false;
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        }
+    }
+
+    /*
     private void syncNotes(final String account){
         new Thread(){
             @Override
@@ -595,7 +664,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     CloudNote cloudNote;
                     @Override
                     public void onSuccess(List<CloudNote> notes) {
-                        List<Note> list = finalDb.findAll(Note.class);
+                        List<SNote> list = finalDb.findAll(SNote.class);
                         if (notes != null && notes.size() >= 1){
                             cloudNote = notes.get(0);
                             long localVersion = preferenceUtils.getLongParam(account);
@@ -603,7 +672,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                                 //pull notes
                                 preferenceUtils.saveParam(PreferenceUtils.NOTE_TYPE_KEY, cloudNote.getNoteType());
                                 for (String string : cloudNote.getNoteList()) {
-                                    Note note = JsonUtils.parseNote(string);
+                                    SNote note = JsonUtils.parseNote(string);
                                     if (note == null)
                                         continue;
                                     finalDb.saveBindId(note);
@@ -618,7 +687,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                                     @Override
                                     public void run() {
                                         initDrawerListView();
-                                        changeToSelectNoteType(mCurrentNoteType);
+                                        changeToSelectNoteType(mCurrentNoteTypePage);
                                         onSyncSuccess();
                                     }
                                 });
@@ -634,7 +703,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
                         }
                         cloudNote.clearNotes();
-                        for (Note note : list){
+                        for (SNote note : list){
                             cloudNote.addNote(note);
                         }
                         String json = preferenceUtils.getStringParam(PreferenceUtils.NOTE_TYPE_KEY);
@@ -718,45 +787,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             syncNotes(account);
         }
     }
+    */
 
-    private void onSyncSuccess(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                hasSyncing = false;
-                refreshLayout.setRefreshing(false);
-                SnackbarUtils.show(MainActivity.this, R.string.sync_success);
-            }
-        });
-    }
-
-    private void onSyncFail(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                hasSyncing = false;
-                refreshLayout.setRefreshing(false);
-                SnackbarUtils.show(MainActivity.this, R.string.sync_fail);
-            }
-        });
-    }
-
-    private void changeItemLayout(boolean flow){
-        cardLayout = flow;
-        if (!flow){
-            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        }else {
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
-        }
-    }
-
-    private void initItemLayout(){
-        if (preferenceUtils.getBooleanParam(getString(R.string.card_note_item_layout_key), true)){
-            cardLayout = true;
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
-        }else {
-            cardLayout = false;
-            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        }
+    public enum MainEvent{
+        UPDATE_NOTE,
+        CHANGE_THEME
     }
 }

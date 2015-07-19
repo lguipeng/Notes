@@ -15,6 +15,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.searchable"
@@ -36,7 +37,7 @@
         <activity
             android:name=".ui.NoteActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait">
 
         </activity>
@@ -52,12 +53,8 @@
             android:screenOrientation="portrait">
         </activity>
 
-        <activity
-            android:name=".ui.EditNoteTypeActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait">
-        </activity>
+        <activity android:name="com.evernote.client.android.EvernoteOAuthActivity" />
+        <activity android:name="com.evernote.client.android.login.EvernoteLoginActivity"/>
     </application>
 
 </manifest>

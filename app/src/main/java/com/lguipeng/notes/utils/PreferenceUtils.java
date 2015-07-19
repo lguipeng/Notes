@@ -18,6 +18,10 @@ public class PreferenceUtils{
 
     public static final String NOTE_TYPE_KEY = "NOTE_TYPE_KEY";
 
+    public static final String EVERNOTE_ACCOUNT_KEY = "EVERNOTE_ACCOUNT_KEY";
+
+    public static final String EVERNOTE_NOTEBOOK_GUID_KEY = "EVERNOTE_NOTEBOOK_GUID_KEY";
+
     private PreferenceUtils(Context context){
         sharedPreferences = context.getSharedPreferences(SettingFragment.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         shareEditor = sharedPreferences.edit();
@@ -81,5 +85,9 @@ public class PreferenceUtils{
 
     public void saveParam(String key, long value){
         shareEditor.putLong(key, value).commit();
+    }
+
+    public void removeKey(String key){
+        shareEditor.remove(key).commit();
     }
 }

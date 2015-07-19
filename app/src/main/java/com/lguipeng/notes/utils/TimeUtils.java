@@ -11,6 +11,8 @@ import java.util.Date;
  * Created by lgp on 2015/5/25.
  */
 public class TimeUtils {
+    public static final long HOUR_Millis = 60 * 60 * 1000;
+    public static final long HALF_HOUR_Millis = HOUR_Millis / 2;
     public static final long DAY_Millis = 24 * 60 * 60 * 1000;
     public static final long MONTH_Millis = 30 * DAY_Millis;
     public static final long YEAR_Millis = 365 * DAY_Millis;
@@ -46,21 +48,30 @@ public class TimeUtils {
     public static String getConciseTime(long timeInMillis, long nowInMillis, Context context) {
         if (context == null)
             return "";
-        Date date = new Date(timeInMillis);
-        Date now = new Date(nowInMillis);
-
-        if (now.getYear() == date.getYear()) {
-            if (now.getMonth() == date.getMonth()) {
-                if (now.getDate() == date.getDate())
-                    return context.getString(R.string.today, getTime(timeInMillis, DATE_FORMAT_DATE_1));
-                else{
-                    return context.getString(R.string.before_day, now.getDate() - date.getDate());
-                }
-            }else {
-                return context.getString(R.string.before_month, now.getMonth() - date.getMonth());
-            }
+        long diff = nowInMillis - timeInMillis;
+        if (diff >= YEAR_Millis){
+            int year = (int)(diff / YEAR_Millis);
+            return context.getString(R.string.before_year, year);
         }
-        return context.getString(R.string.before_year, now.getYear() - date.getYear());
+        if (diff >= MONTH_Millis){
+            int month = (int)(diff / MONTH_Millis);
+            return context.getString(R.string.before_month, month);
+        }
+
+        if (diff >= DAY_Millis){
+            int day = (int)(diff / DAY_Millis);
+            return context.getString(R.string.before_day, day);
+        }
+
+        if (diff >= HOUR_Millis){
+            int hour = (int)(diff / HOUR_Millis);
+            return context.getString(R.string.before_hour, hour);
+        }
+
+        if (diff >= HALF_HOUR_Millis){
+            return context.getString(R.string.before_half_hour);
+        }
+        return context.getString(R.string.just_now);
     }
 
 

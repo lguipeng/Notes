@@ -1,21 +1,27 @@
 package com.lguipeng.notes.ui;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -229,7 +235,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void showShareDialog(){
-        AlertDialog.Builder builder = generateDialogBuilder();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ShareDialog);
         builder.setTitle(getString(R.string.share));
         final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(this);
         String[] array = getResources().getStringArray(R.array.share_dialog_text);
@@ -253,28 +259,42 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
                 .content(array[4])
                 .icon(R.drawable.ic_share_more)
                 .build());
-        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case 0:
-                        shareToWeChatSession();
-                        break;
-                    case 1:
-                        shareToWeChatTimeline();
-                        break;
-                    case 2:
-                        shareToWeChatFavorite();
-                        break;
-                    case 3:
-                        shareToWeibo();
-                        break;
-                    default:
-                        share("", null);
-                }
+        builder.setAdapter(adapter, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    shareToWeChatSession();
+                    break;
+                case 1:
+                    shareToWeChatTimeline();
+                    break;
+                case 2:
+                    shareToWeChatFavorite();
+                    break;
+                case 3:
+                    shareToWeibo();
+                    break;
+                default:
+                    share("", null);
             }
         });
-        builder.show();
+        AlertDialog dialog = builder.create();
+        Window window = dialog.getWindow();
+        window.setGravity(Gravity.BOTTOM);
+        WindowManager.LayoutParams lp = window.getAttributes();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point out = new Point();
+        display.getSize(out);
+        lp.width = out.x;
+        window.setAttributes(lp);
+        View decorView = window.getDecorView();
+        decorView.setBackgroundColor(getResources().getColor(R.color.window_background));
+        dialog.setOnShowListener((dialog1 -> {
+            Animator animator = ObjectAnimator
+                    .ofFloat(decorView, "translationY", decorView.getMeasuredHeight() / 1.5F, 0);
+            animator.setDuration(200);
+            animator.start();
+        }));
+        dialog.show();
     }
 
 }
