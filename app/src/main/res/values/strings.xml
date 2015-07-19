@@ -81,5 +81,5 @@
         <item>新浪微博</item>
         <item>更多</item>
     </array>
-    <string name="about_bottom_text">Created by Lguipeng in Shenzhen</string>
+    <string name="about_bottom_text">Copyright © 2015 Liaoguipeng.\nAll Rights Reserved.</string>
 </resources>
