@@ -33,4 +33,9 @@ public class BetterFab extends FloatingActionButton{
             setVisibility(GONE);
         }
     }
+
+    //if hide，disable animation
+    public boolean canAnimation(){
+        return !isForceHide();
+    }
 }

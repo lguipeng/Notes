@@ -26,6 +26,7 @@ public class FabBehavior extends FloatingActionButton.Behavior{
             new FastOutSlowInInterpolator();
     private boolean mIsAnimatingOut = false;
 
+    //if sdk < 14, just ignore because of min sdk is 14
     private void animateOut(final FloatingActionButton button) {
         if (Build.VERSION.SDK_INT >= 14) {
             int translationY = button.getHeight() + getMarginBottom(button);
@@ -49,6 +50,7 @@ public class FabBehavior extends FloatingActionButton.Behavior{
         }
     }
 
+    //if sdk < 14, just ignore because of min sdk is 14
     private void animateIn(FloatingActionButton button) {
         button.setVisibility(View.VISIBLE);
         if (Build.VERSION.SDK_INT >= 14) {
@@ -68,11 +70,11 @@ public class FabBehavior extends FloatingActionButton.Behavior{
     @Override
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-        boolean forceHide = false;
+        boolean canAnimation = true;
         if (child instanceof BetterFab){
-            forceHide = ((BetterFab) child).isForceHide();
+            canAnimation = ((BetterFab) child).canAnimation();
         }
-        if (forceHide)
+        if (!canAnimation)
             return;
         if (dyConsumed > 0 && !this.mIsAnimatingOut && child.getVisibility() == View.VISIBLE) {
             animateOut(child);
