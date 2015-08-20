@@ -47,7 +47,7 @@ public class App extends Application{
     }
 
     private List<Object> getModules() {
-        return Arrays.<Object>asList(new AppModule(this));
+        return Arrays.asList(new AppModule(this));
     }
 
     public ObjectGraph createScopedGraph(Object... modules) {

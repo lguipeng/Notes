@@ -46,15 +46,14 @@ public abstract class BaseRecyclerViewAdapter<E> extends RecyclerView.Adapter<Re
     }
 
     public void remove(E e) {
-        this.list.remove(e);
-        notifyDataSetChanged();
+        int position = list.indexOf(e);
+        remove(position);
     }
 
     public void remove(int position) {
         this.list.remove(position);
-        notifyDataSetChanged();
+        notifyItemRemoved(position);
     }
-
 
     public void setList(List<E> list) {
         this.list.clear();

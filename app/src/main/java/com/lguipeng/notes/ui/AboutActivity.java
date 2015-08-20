@@ -22,14 +22,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.lguipeng.notes.BuildConfig;
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.adpater.MaterialSimpleListAdapter;
 import com.lguipeng.notes.model.MaterialSimpleListItem;
-import com.lguipeng.notes.module.DataModule;
 import com.lguipeng.notes.utils.SnackbarUtils;
 import com.lguipeng.notes.utils.TimeUtils;
 import com.lguipeng.notes.utils.WXUtils;
@@ -39,24 +37,17 @@ import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import java.util.Arrays;
-import java.util.List;
-
 import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
  * Created by lgp on 2015/5/25.
  */
-public class AboutActivity extends BaseActivity implements View.OnClickListener{
+public class AboutActivity extends BaseActivity{
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
     @InjectView(R.id.version_text)
     TextView versionTextView;
-    @InjectView(R.id.blog_btn)
-    Button blogButton;
-    @InjectView(R.id.project_home_btn)
-    Button projectHomeButton;
     private int clickCount = 0;
     private long lastClickTime = 0;
     private final static String WEIBO_PACKAGENAME = "com.sina.weibo";
@@ -64,32 +55,11 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initVersionText();
-        blogButton.setOnClickListener(this);
-        projectHomeButton.setOnClickListener(this);
     }
 
     @Override
     protected int getLayoutView() {
         return R.layout.activity_about;
-    }
-
-    @Override
-    protected List<Object> getModules() {
-        return Arrays.<Object>asList(new DataModule());
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.blog_btn:
-                startViewAction(BuildConfig.BLOG_URL);
-                break;
-            case R.id.project_home_btn:
-                startViewAction(BuildConfig.PROJECT_URL);
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
@@ -119,6 +89,16 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
+    @OnClick(R.id.project_home_btn)
+    void projectHomeClick(View view){
+        startViewAction(BuildConfig.PROJECT_URL);
+    }
+
+    @OnClick(R.id.blog_btn)
+    void blogClick(View view){
+        startViewAction(BuildConfig.BLOG_URL);
+    }
+
     private void initVersionText(){
         versionTextView.setText("v" + getVersion(this));
     }
@@ -146,8 +126,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener{
             PackageManager pm = ctx.getPackageManager();
             PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(), PackageManager.GET_ACTIVITIES);
             return pi.versionName;
-        }catch (PackageManager.NameNotFoundException e)
-        {
+        }catch (PackageManager.NameNotFoundException e){
             e.printStackTrace();
         }
         return "1.0.0";

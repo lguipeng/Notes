@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -40,10 +41,7 @@ import com.lguipeng.notes.utils.EverNoteUtils;
 import com.lguipeng.notes.utils.SnackbarUtils;
 import com.lguipeng.notes.utils.ThreadExecutorPool;
 import com.lguipeng.notes.utils.ToolbarUtils;
-import com.melnykov.fab.FloatingActionButton;
-import com.melnykov.fab.ScrollDirectionListener;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.listeners.ActionClickListener;
+import com.lguipeng.notes.view.BetterFab;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import net.tsz.afinal.FinalDb;
@@ -60,7 +58,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by lgp on 2015/5/24.
  */
-public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ActionClickListener{
+public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener{
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
@@ -81,7 +79,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     View drawerRootView;
 
     @InjectView(R.id.fab)
-    FloatingActionButton fab;
+    BetterFab fab;
+
+    @InjectView(R.id.coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
 
     @InjectView(R.id.progress_wheel)
     ProgressWheel progressWheel;
@@ -226,19 +227,18 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void showSnackbar(int message){
-        SnackbarUtils.show(this, message, fab);
+        SnackbarUtils.show(fab, message);
     }
 
     private void showSnackbar(int message, int action){
-        SnackbarUtils.showAction(this, message
-                , action, this, fab);
+        SnackbarUtils.showAction(fab, message
+                , action, this);
     }
 
     @Override
-    public void onActionClicked(Snackbar snackbar) {
+    public void onClick(View view) {
         Intent intent = new Intent(this, SettingActivity.class);
         startActivity(intent);
-        SnackbarUtils.dismiss();
     }
 
     @Override
@@ -253,7 +253,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     protected List<Object> getModules() {
-        return Arrays.<Object>asList(new DataModule());
+        return Arrays.asList(new DataModule());
     }
 
     @Override
@@ -299,20 +299,17 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                recyclerAdapter.setUpFactor();
                 refreshLayout.setEnabled(false);
-                fab.hide();
-                fab.setVisibility(View.INVISIBLE);
+                fab.setForceHide(true);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                refreshLayout.setEnabled(true);
                 if (mCurrentNoteTypePage == SNote.NoteType.TRASH)
                     return true;
-                fab.show();
-                fab.setVisibility(View.VISIBLE);
+                refreshLayout.setEnabled(true);
+                fab.setForceHide(false);
                 return true;
             }
         });
@@ -372,12 +369,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             changeToSelectNoteType(mCurrentNoteTypePage);
             mDrawerMenuListView.setItemChecked(position, true);
             if (mCurrentNoteTypePage == SNote.NoteType.TRASH) {
-                fab.hide();
-                fab.setVisibility(View.INVISIBLE);
+                fab.setForceHide(true);
                 refreshLayout.setEnabled(false);
             } else {
-                fab.setVisibility(View.VISIBLE);
-                fab.show();
+                fab.setForceHide(false);
                 refreshLayout.setEnabled(true);
             }
         });
@@ -435,17 +430,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         recyclerAdapter.setFirstOnly(false);
         recyclerAdapter.setDuration(300);
         recyclerView.setAdapter(recyclerAdapter);
-        fab.attachToRecyclerView(recyclerView, new ScrollDirectionListener() {
-            @Override
-            public void onScrollDown() {
-                recyclerAdapter.setDownFactor();
-            }
-
-            @Override
-            public void onScrollUp() {
-                recyclerAdapter.setUpFactor();
-            }
-        });
         showProgressWheel(false);
         refreshLayout.setColorSchemeColors(getColorPrimary());
         refreshLayout.setOnRefreshListener(this);
@@ -498,7 +482,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     private void showPopupMenu(View view, final SNote note) {
         PopupMenu popup = new PopupMenu(this, view);
-        //Inflating the Popup using xml file
         if (mCurrentNoteTypePage == SNote.NoteType.TRASH){
             popup.getMenuInflater()
                     .inflate(R.menu.menu_notes_trash_more, popup.getMenu());
@@ -552,7 +535,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 return true;
             });
         }
-        popup.show(); //showing popup menu
+        popup.show();
     }
 
     private void showDeleteForeverDialog(final SNote note){
@@ -564,20 +547,20 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                     finalDb.delete(note);
                     changeToSelectNoteType(mCurrentNoteTypePage);
                     // ever note permission denny, so remove
-                        /*
-                        mThreadExecutorPool.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    mEverNoteUtils.expungeNote(guid);
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }finally {
-                                    EventBus.getDefault().post(EverNoteUtils.SyncResult.ERROR_EXPUNGE);
-                                }
+                    /*
+                    mThreadExecutorPool.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                mEverNoteUtils.expungeNote(guid);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }finally {
+                                EventBus.getDefault().post(EverNoteUtils.SyncResult.ERROR_EXPUNGE);
                             }
-                        });
-                        */
+                        }
+                    });
+                    */
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     break;
@@ -652,142 +635,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         }
     }
-
-    /*
-    private void syncNotes(final String account){
-        new Thread(){
-            @Override
-            public void run() {
-                BmobQuery<CloudNote> query = new BmobQuery<>();
-                query.addWhereEqualTo("email", account);
-                query.findObjects(MainActivity.this, new FindListenerImpl<CloudNote>(){
-                    CloudNote cloudNote;
-                    @Override
-                    public void onSuccess(List<CloudNote> notes) {
-                        List<SNote> list = finalDb.findAll(SNote.class);
-                        if (notes != null && notes.size() >= 1){
-                            cloudNote = notes.get(0);
-                            long localVersion = preferenceUtils.getLongParam(account);
-                            if (cloudNote.getVersion() > localVersion){
-                                //pull notes
-                                preferenceUtils.saveParam(PreferenceUtils.NOTE_TYPE_KEY, cloudNote.getNoteType());
-                                for (String string : cloudNote.getNoteList()) {
-                                    SNote note = JsonUtils.parseNote(string);
-                                    if (note == null)
-                                        continue;
-                                    finalDb.saveBindId(note);
-                                    NoteOperateLog log = new NoteOperateLog();
-                                    log.setTime(note.getLastOprTime());
-                                    log.setType(NoteConfig.NOTE_CREATE_OPR);
-                                    log.setNote(note);
-                                    finalDb.save(log);
-                                }
-                                preferenceUtils.saveParam(account, cloudNote.getVersion());
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        initDrawerListView();
-                                        changeToSelectNoteType(mCurrentNoteTypePage);
-                                        onSyncSuccess();
-                                    }
-                                });
-                                return;
-                            }else {
-                                //upload notes
-                                cloudNote.setVersion(++localVersion);
-                            }
-                        }else {
-                            cloudNote = new CloudNote();
-                            cloudNote.setEmail(account);
-                            cloudNote.setVersion(1);
-
-                        }
-                        cloudNote.clearNotes();
-                        for (SNote note : list){
-                            cloudNote.addNote(note);
-                        }
-                        String json = preferenceUtils.getStringParam(PreferenceUtils.NOTE_TYPE_KEY);
-                        cloudNote.setNoteType(json);
-                        if (TextUtils.isEmpty(cloudNote.getObjectId())){
-                            cloudNote.save(MainActivity.this, new SaveListenerImpl() {
-                                @Override
-                                public void onSuccess() {
-                                    preferenceUtils.saveParam(account, cloudNote.getVersion());
-                                    onSyncSuccess();
-                                }
-
-                                @Override
-                                public void onFailure(int i, String s) {
-                                    super.onFailure(i, s);
-                                    onSyncFail();
-                                }
-                            });
-                        }else{
-                            cloudNote.update(MainActivity.this, new UpdateListenerImpl() {
-                                @Override
-                                public void onSuccess() {
-                                    preferenceUtils.saveParam(account, cloudNote.getVersion());
-                                    onSyncSuccess();
-                                }
-
-                                @Override
-                                public void onFailure(int i, String s) {
-                                    super.onFailure(i, s);
-                                    onSyncFail();
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onError(int i, String s) {
-                        super.onError(i, s);
-                        onSyncFail();
-                    }
-                });
-            }
-        }.start();
-    }
-
-    private void sync(){
-        if (hasSyncing)
-            return;
-        String account = preferenceUtils.getStringParam(getString(R.string.sync_account_key));
-        if (TextUtils.isEmpty(account)){
-            AccountUtils.findValidAccount(getApplicationContext(), new AccountUtils.AccountFinderListener() {
-                @Override
-                protected void onNone() {
-                    if (refreshLayout.isRefreshing()){
-                        refreshLayout.setRefreshing(false);
-                    }
-                    SnackbarUtils.show(MainActivity.this, R.string.no_account_tip);
-                }
-
-                @Override
-                protected void onOne(String account) {
-                    preferenceUtils.saveParam(getString(R.string.sync_account_key), account);
-                    hasSyncing = true;
-                    syncNotes(account);
-                }
-
-                @Override
-                protected void onMore(List<String> accountItems) {
-                    if (refreshLayout.isRefreshing()){
-                        refreshLayout.setRefreshing(false);
-                    }
-                    SnackbarUtils.show(MainActivity.this, R.string.no_account_tip);
-                }
-            });
-
-        }else {
-            if (!refreshLayout.isRefreshing()){
-                refreshLayout.setRefreshing(true);
-            }
-            hasSyncing = true;
-            syncNotes(account);
-        }
-    }
-    */
 
     public enum MainEvent{
         UPDATE_NOTE,

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceScreen;
@@ -14,6 +15,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.evernote.client.android.asyncclient.EvernoteCallback;
@@ -97,9 +99,13 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        View listView = view.findViewById(android.R.id.list);
+        ListView listView = (ListView)view.findViewById(android.R.id.list);
         listView.setHorizontalScrollBarEnabled(false);
         listView.setVerticalScrollBarEnabled(false);
+        listView.setDivider(new ColorDrawable(getResources().getColor(R.color.grey)));
+        listView.setDividerHeight((int) getResources().getDimension(R.dimen.preference_divider_height));
+        listView.setFooterDividersEnabled(false);
+        listView.setHeaderDividersEnabled(false);
     }
 
     public SettingFragment() {

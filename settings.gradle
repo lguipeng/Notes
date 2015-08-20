@@ -1,1 +1,1 @@
-include ':app', ':orm-library', ':MaterialPreference'
+include ':app', ':orm-library', ':md-preference'

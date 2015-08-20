@@ -46,9 +46,6 @@
     <string name="choose_account">请选择账号</string>
     <string name="sync_account">同步账号</string>
     <string name="sync_account_key">sync_account_key</string>
-    <string name="no_account_tip">请在手机设置中添加一个有效的邮箱账号</string>
-    <string name="multi_account_tip">您的有效邮箱账号多于一个，请在设置中选择</string>
-    <string name="multi_account_choose_tip">您的有效邮箱账号多于一个，请点击选择</string>
     <string name="syncing">正在后台同步中</string>
     <string name="sync_success">同步成功</string>
     <string name="sync_fail">同步失败，建议在网络好的时候进行同步</string>
@@ -90,7 +87,7 @@
     <string name="has_unbind_ever_note_tip">是否要解除印象笔记的绑定？</string>
     <string name="all_notes">全部笔记</string>
     <string name="expunge_error">云端彻底删除失败，请到PC端操作！</string>
-    <string name="unbind_ever_note_tip">还没绑定印象笔记，是否到设置中绑定</string>
+    <string name="unbind_ever_note_tip">未绑定印象笔记，请到设置中绑定</string>
     <string name="go_bind">去绑定</string>
     <string name="delete_error">云端删除失败，请到PC端操作！</string>
     <string name="recovering">恢复中，请耐心等待</string>

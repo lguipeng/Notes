@@ -3,11 +3,8 @@ package com.lguipeng.notes.module;
 import android.content.Context;
 
 import com.lguipeng.notes.BuildConfig;
-import com.lguipeng.notes.ui.AboutActivity;
 import com.lguipeng.notes.ui.MainActivity;
 import com.lguipeng.notes.ui.NoteActivity;
-import com.lguipeng.notes.ui.PayActivity;
-import com.lguipeng.notes.ui.SettingActivity;
 import com.lguipeng.notes.ui.fragments.SettingFragment;
 import com.lguipeng.notes.utils.EverNoteUtils;
 import com.lguipeng.notes.utils.FileUtils;
@@ -25,15 +22,11 @@ import dagger.Provides;
  */
 @Module(
         injects = {
-                AboutActivity.class,
                 MainActivity.class,
                 NoteActivity.class,
-                SettingActivity.class,
                 SettingFragment.class,
-                PayActivity.class,
         },
-        addsTo = AppModule.class,
-        library = true
+        addsTo = AppModule.class
 )
 public class DataModule {
 

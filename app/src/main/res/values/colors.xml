@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="red">#FF6347</color>
+    <color name="red">#FF5722</color>
     <color name="dark_red">#F4511E</color>
-    <color name="accent_red">#FF5722</color>
+    <color name="accent_red">#FF6347</color>
 
     <color name="brown">#795548</color>
     <color name="dark_brown">#5D4037</color>
@@ -27,7 +27,7 @@
 
     <color name="pink">#E91E63</color>
     <color name="dark_pink">#C2185B</color>
-    <color name="accent_pink">#FF5722</color>
+    <color name="accent_pink">#FF4081</color>
 
     <color name="green">#4CAF50</color>
     <color name="dark_green">#388E3C</color>

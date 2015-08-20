@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,10 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <!--The main content view-->
-        <FrameLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:fab="http://schemas.android.com/apk/res-auto"
-            xmlns:wheel="http://schemas.android.com/apk/res-auto"
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinator_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <android.support.v4.widget.SwipeRefreshLayout
@@ -26,17 +28,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             </android.support.v4.widget.SwipeRefreshLayout>
-            <com.melnykov.fab.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
-                android:layout_margin="20dp"
-                android:padding="4dp"
-                android:src="@drawable/ic_edit_white"
-                fab:fab_colorRipple="?attr/colorPrimary"
-                fab:fab_colorNormal="?attr/colorPrimary"
-                fab:fab_colorPressed="?attr/colorPrimaryDark" />
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_wheel"
                 android:layout_width="75dp"
@@ -47,7 +38,17 @@
                 wheel:matProg_barColor="?attr/colorPrimary"
                 wheel:matProg_progressIndeterminate="true" />
             <include layout="@layout/toolbar_shadow_layout"/>
-        </FrameLayout>
+            <com.lguipeng.notes.view.BetterFab
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fabSize="normal"
+                app:layout_anchor="@id/refresher"
+                app:layout_anchorGravity="bottom|right|end"
+                android:layout_margin="16dp"
+                app:layout_behavior="com.lguipeng.notes.view.behavior.FabBehavior"
+                android:src="@drawable/ic_edit_white"/>
+        </android.support.design.widget.CoordinatorLayout>
         <!-- The navigation drawer -->
         <LinearLayout
             android:id="@+id/left_drawer"

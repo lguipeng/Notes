@@ -5,11 +5,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.evernote.client.android.login.EvernoteLoginFragment;
 import com.lguipeng.notes.R;
-import com.lguipeng.notes.module.DataModule;
 import com.lguipeng.notes.ui.fragments.SettingFragment;
-
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
@@ -30,11 +26,6 @@ public class SettingActivity extends BaseActivity implements EvernoteLoginFragme
     @Override
     protected int getLayoutView() {
         return R.layout.activity_setting;
-    }
-
-    @Override
-    protected List<Object> getModules() {
-        return Arrays.<Object>asList(new DataModule());
     }
 
     @Override

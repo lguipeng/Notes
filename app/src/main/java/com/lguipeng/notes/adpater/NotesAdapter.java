@@ -22,9 +22,9 @@ import java.util.List;
  * Created by lgp on 2015/4/6.
  */
 public class NotesAdapter extends BaseRecyclerViewAdapter<SNote> implements Filterable{
+
     private final List<SNote> originalList;
-    private int upDownFactor = 1;
-    private boolean isShowScaleAnimate = true;
+
     public NotesAdapter(List<SNote> list) {
         super(list);
         originalList = new ArrayList<>(list);
@@ -62,7 +62,7 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<SNote> implements Filt
 
     @Override
     protected Animator[] getAnimators(View view) {
-        if (view.getMeasuredHeight() <=0 || isShowScaleAnimate){
+        if (view.getMeasuredHeight() <=0){
             ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "scaleX", 1.05f, 1.0f);
             ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "scaleY", 1.05f, 1.0f);
             return new ObjectAnimator[]{scaleX, scaleY};
@@ -70,7 +70,6 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<SNote> implements Filt
         return new Animator[]{
                 ObjectAnimator.ofFloat(view, "scaleX", 1.05f, 1.0f),
                 ObjectAnimator.ofFloat(view, "scaleY", 1.05f, 1.0f),
-                //ObjectAnimator.ofFloat(view, "translationY", upDownFactor * 1.05f * view.getMeasuredHeight(), 0)
         };
     }
 
@@ -79,18 +78,6 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<SNote> implements Filt
         super.setList(list);
         this.originalList.clear();
         originalList.addAll(list);
-        setUpFactor();
-        isShowScaleAnimate = true;
-    }
-
-    public void setDownFactor(){
-        upDownFactor = -1;
-        isShowScaleAnimate = false;
-    }
-
-    public void setUpFactor(){
-        upDownFactor = 1;
-        isShowScaleAnimate = false;
     }
 
     private static class NoteFilter extends Filter{

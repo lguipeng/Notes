@@ -18,6 +18,7 @@
 
 -keep class * extends android..app.Activity {*;}
 -keep class * extends android.app.Fragment {*;}
+-keep class android.support.design.** { *;}
 -keep class android.support.v7.** { *; }
 -keep class android.support.v4.** { *; }
 -keep class com.lguipeng.notes.ui.** {*;}

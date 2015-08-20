@@ -55,7 +55,7 @@ android {
         }
         release {
             minifyEnabled true
-            zipAlignEnabled false
+            zipAlignEnabled true
             shrinkResources true
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -97,24 +97,22 @@ retrolambda {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
-    //compile 'com.android.support:design:22.2.0'
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'com.android.support:design:22.2.1'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
-    compile 'com.melnykov:floatingactionbutton:1.3.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.3'
     compile 'com.squareup.dagger:dagger:1.2.2'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.pnikosis:materialish-progress:1.5'
-    compile 'com.nispok:snackbar:2.10.10'
     compile('com.evernote:android-sdk:2.0.0-RC2') {
         exclude module: 'support-v4'
     }
     compile project(':orm-library')
-    compile project(':MaterialPreference')
+    compile project(':md-preference')
 }
 
 File propFile = file('signing.properties');

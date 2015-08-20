@@ -40,27 +40,18 @@ import de.greenrobot.event.EventBus;
 public class NoteActivity extends BaseActivity{
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
-
     @InjectView(R.id.label_edit_text)
     MaterialEditText labelEditText;
-
     @InjectView(R.id.content_edit_text)
     MaterialEditText contentEditText;
-
     @InjectView(R.id.opr_time_line_text)
     TextView oprTimeLineTextView;
-
     @Inject
     FinalDb finalDb;
-
     private MenuItem doneMenuItem;
-
     private int operateNoteType = 0;
-
     private SNote note;
-
     public final static String OPERATE_NOTE_TYPE_KEY = "OPERATE_NOTE_TYPE_KEY";
-
     public final static int VIEW_NOTE_TYPE = 0x00;
     public final static int EDIT_NOTE_TYPE = 0x01;
     public final static int CREATE_NOTE_TYPE = 0x02;
@@ -69,6 +60,7 @@ public class NoteActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         parseIntent(getIntent());
         EventBus.getDefault().registerSticky(this);
+        showActivityInAnim();
     }
 
     @Override
@@ -80,7 +72,6 @@ public class NoteActivity extends BaseActivity{
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-
         super.onDestroy();
     }
 
@@ -92,7 +83,7 @@ public class NoteActivity extends BaseActivity{
 
     @Override
     protected List<Object> getModules() {
-        return Arrays.<Object>asList(new DataModule());
+        return Arrays.asList(new DataModule());
     }
 
     public void onEventMainThread(SNote note) {
@@ -130,7 +121,7 @@ public class NoteActivity extends BaseActivity{
     private void initEditText(){
         switch (operateNoteType){
             case EDIT_NOTE_TYPE:
-                showKeyBorad();
+                showKeyBoard();
                 labelEditText.requestFocus();
                 labelEditText.setText(note.getLabel());
                 contentEditText.setText(note.getContent());
@@ -240,6 +231,12 @@ public class NoteActivity extends BaseActivity{
         finish();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        showActivityExitAnim();
+    }
+
     class SimpleTextWatcher implements TextWatcher {
 
         @Override
@@ -302,8 +299,15 @@ public class NoteActivity extends BaseActivity{
         inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
-    private void showKeyBorad(){
+    private void showKeyBoard(){
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    private void showActivityInAnim(){
+        overridePendingTransition(R.anim.activity_down_up_anim, R.anim.activity_exit_anim);
+    }
+    private void showActivityExitAnim(){
+        overridePendingTransition(R.anim.activity_exit_anim, R.anim.activity_up_down_anim);
     }
 }
