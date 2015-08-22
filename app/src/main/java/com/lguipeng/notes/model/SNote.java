@@ -106,17 +106,11 @@ public class SNote implements Serializable{
     }
 
     public boolean hasReadyRemove(){
-        if (getStatusEnum() == Status.NEED_REMOVE){
-            return true;
-        }
-        return false;
+        return getStatusEnum() == Status.NEED_REMOVE;
     }
 
     private boolean hasReadyPush(){
-        if (getStatusEnum() == Status.NEED_PUSH){
-            return true;
-        }
-        return false;
+        return getStatusEnum() == Status.NEED_PUSH;
     }
 
     public boolean hasReadyNewPush(){

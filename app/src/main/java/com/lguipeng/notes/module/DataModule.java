@@ -49,6 +49,8 @@ public class DataModule {
                         "WHERE type = 1 OR type = 2;");
                 db.execSQL("UPDATE '" + "notes" + "' SET type = 1 " +
                         "WHERE type = 3;");
+                db.execSQL("UPDATE '" + "notes" + "' SET status = 2 " +
+                        "WHERE type = 1;");
             }
         });
         return config;
