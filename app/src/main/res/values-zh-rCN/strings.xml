@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">极简笔记</string>
+    <string name="app_desc">极简笔记，简洁的记事应用</string>
+    <string name="setting">设置</string>
+    <string name="bind_ever_note">绑定印象笔记</string>
+    <string name="unbind_ever_note">解除印象笔记绑定</string>
+    <string name="about">关于</string>
+    <string name="exit">退出</string>
+    <string name="search">搜索</string>
+    <string name="more">更多</string>
+    <string name="general_settings">常规</string>
+    <string name="other">其他</string>
+    <string name="advice_feedback">意见反馈</string>
+    <string name="give_favor">给应用点赞</string>
+    <string name="sync">同步</string>
+    <array name="drawer_content">
+        <item>SNotes</item>
+        <item>回收站</item>
+    </array>
+    <string name="note_log_text" formatted="false">%s\u0020:\u0020%s</string>
+    <string name="edit">编辑</string>
+    <string name="trash">回收站</string>
+    <string name="delete">删除</string>
+    <string name="right_hand_mode">右手操作模式</string>
+    <string name="right_hand_mode_summary">开启右手操作模式，侧边栏将从右边划开，默认从左边划开</string>
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+    <string name="delete_tip">是否要从本地删除了该条笔记</string>
+    <string name="done">完成</string>
+    <string name="label">标签</string>
+    <string name="note_content">笔记内容</string>
+    <string name="new_note">新的笔记</string>
+    <string name="search_note">搜索笔记</string>
+    <string name="edit_note">编辑笔记</string>
+    <string name="view_note">查看笔记</string>
+    <string name="show_note_history_log_key">show_note_history_log_key</string>
+    <string name="right_hand_mode_key">right_hand_mode_key</string>
+    <string name="move_success">成功移除</string>
+    <string name="recover">恢复</string>
+    <string name="create">创建</string>
+    <string name="advice_feedback_key">advice_feedback_key</string>
+    <string name="no_email_app_tip">请先安装邮件应用并设置账户,或直接发送邮件至 lgpszu@163.com</string>
+    <string name="sync_account_key">sync_account_key</string>
+    <string name="sync_success">同步成功</string>
+    <string name="sync_fail">同步失败，建议在网络好的时候进行同步</string>
+    <string name="pay_for_me_title">觉得不错，随意打赏</string>
+    <string name="jianshu_blog">简书博客</string>
+    <string name="project_home">项目主页</string>
+    <string name="pay_for_me_tip">如果觉得极简笔记对您有用，请随意打赏。</string>
+    <string name="pay_for_me">随意打赏</string>
+    <string name="pay_for_me_key">pay_for_me_key</string>
+    <string name="recycle_bin">回收站</string>
+    <string name="give_favor_key">give_favor_key</string>
+    <string name="card_note_item_layout">卡片式笔记</string>
+    <string name="card_note_item_layout_key">card_note_item_layout_key</string>
+    <string name="not_save_note_leave_tip">笔记已经发生变化，是否保存后再离开</string>
+    <string name="change_theme">更换主题</string>
+    <string name="change_theme_key">change_theme_key</string>
+    <string name="before_hour" formatted="false">%d\u0020小时之前</string>
+    <string name="before_day" formatted="false">%d\u0020天之前</string>
+    <string name="before_month" formatted="false">%d\u0020个月之前</string>
+    <string name="before_year" formatted="false">%d\u0020年之前</string>
+    <string name="share_text" formatted="false">极简笔记简洁好用，推荐你也来用用 %s\u0020%s</string>
+    <string name="download_url" >下载地址</string>
+    <string name="share">分享到</string>
+    <string name="not_install_app">请先安装相应客户端</string>
+    <array name="share_dialog_text">
+        <item>微信好友</item>
+        <item>微信朋友圈</item>
+        <item>微信收藏</item>
+        <item>新浪微博</item>
+        <item>更多</item>
+    </array>
+    <string name="about_bottom_text">Copyright © 2015 Liaoguipeng.\nAll Rights Reserved.</string>
+    <string name="bind_ever_note_fail">绑定印象笔记失败</string>
+    <string name="bind_ever_note_success">绑定印象笔记成功</string>
+    <string name="ever_note_account">印象笔记账号</string>
+    <string name="ever_note_account_key">ever_note_accout_key</string>
+    <string name="has_unbind_ever_note_tip">是否要解除印象笔记的绑定？</string>
+    <string name="expunge_error">云端彻底删除失败，请到PC端操作！</string>
+    <string name="unbind_ever_note_tip">未绑定印象笔记，请到设置中绑定</string>
+    <string name="go_bind">去绑定</string>
+    <string name="delete_error">云端删除失败，请到PC端操作！</string>
+    <string name="recovering">恢复中，请耐心等待</string>
+    <string name="frequent_api_tip">接口调频繁，请稍后再重试</string>
+    <string name="view">查看</string>
+    <string name="last_update">最后更新</string>
+    <string name="error_auth_expired_tip">授权期限过期，请重新授权</string>
+    <string name="error_permission_deny">操作权限不够</string>
+    <string name="error_quota_reached">本月流量超出限制，同步失败</string>
+    <string name="title">标题</string>
+    <string name="backup_local_key">backup_local_key</string>
+    <string name="backup_local_summary">备份笔记到存储卡/SNote/notes.txt</string>
+    <string name="backup_local">备份到本地</string>
+    <string name="backup_local_done">备份完成</string>
+    <string name="just_now">刚刚</string>
+    <string name="before_half_hour">半个小时之前</string>
+</resources>
