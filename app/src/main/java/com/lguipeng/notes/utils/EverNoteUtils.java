@@ -1,7 +1,7 @@
 package com.lguipeng.notes.utils;
 
+import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 
 import com.evernote.client.android.EvernoteSession;
@@ -68,7 +68,7 @@ public class EverNoteUtils {
         return mEvernoteSession != null && mEvernoteSession.isLoggedIn();
     }
 
-    public void auth(FragmentActivity activity){
+    public void auth(Activity activity){
         if (activity == null)
             return;
         mEvernoteSession.authenticate(activity);

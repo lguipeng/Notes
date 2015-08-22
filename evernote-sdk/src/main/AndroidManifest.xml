@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.evernote.androidsdk">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application>
+        <activity android:name="com.evernote.client.android.EvernoteOAuthActivity"/>
+        <activity android:name="com.evernote.client.android.login.EvernoteLoginActivity"/>
+    </application>
+
+</manifest>

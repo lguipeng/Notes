@@ -108,10 +108,8 @@ dependencies {
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.pnikosis:materialish-progress:1.5'
-    compile('com.evernote:android-sdk:2.0.0-RC3') {
-        exclude module: 'support-v4'
-    }
     compile project(':orm-library')
+    compile project(':evernote-sdk')
     compile project(':md-preference')
 }
 

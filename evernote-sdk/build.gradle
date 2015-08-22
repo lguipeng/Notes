@@ -1,0 +1,31 @@
+apply plugin: 'com.android.library'
+
+dependencies {
+    compile 'com.evernote:evernote-api:1.25.1'
+    compile 'org.scribe:scribe:1.3.5'
+    compile 'net.vrallev.android:android-task:1.0.4'
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
+}
+
+android {
+    compileSdkVersion Integer.parseInt(ANDROID_BUILD_COMPILE_SDK_VERSION)
+    buildToolsVersion ANDROID_BUILD_TOOLS_VERSION
+
+    resourcePrefix 'esdk_'
+
+    defaultConfig {
+        minSdkVersion Integer.parseInt(MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(ANDROID_BUILD_TARGET_SDK_VERSION)
+        versionName VERSION_NAME
+        versionCode Integer.parseInt(VERSION_CODE)
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    lintOptions {
+        abortOnError true
+    }
+}

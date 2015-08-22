@@ -1,9 +1,10 @@
 package com.lguipeng.notes.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import com.evernote.client.android.login.EvernoteLoginFragment;
+import com.evernote.client.android.EvernoteSession;
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.ui.fragments.SettingFragment;
 
@@ -13,7 +14,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by lgp on 2015/5/24.
  */
-public class SettingActivity extends BaseActivity implements EvernoteLoginFragment.ResultCallback{
+public class SettingActivity extends BaseActivity{
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -40,8 +41,11 @@ public class SettingActivity extends BaseActivity implements EvernoteLoginFragme
     }
 
     @Override
-    public void onLoginFinished(boolean result) {
-        EventBus.getDefault().post(result);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EvernoteSession.REQUEST_CODE_LOGIN){
+            boolean result = resultCode == RESULT_OK;
+            EventBus.getDefault().post(result);
+        }
     }
-
 }

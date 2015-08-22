@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="esdk_loading">Loading…</string>
+    <string name="esdk_switch_to">Switch to %s</string>
+</resources>

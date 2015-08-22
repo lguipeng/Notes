@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Notes.iml" filepath="$PROJECT_DIR$/Notes.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/evernote-sdk/evernote-sdk.iml" filepath="$PROJECT_DIR$/evernote-sdk/evernote-sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/md-preference/md-preference.iml" filepath="$PROJECT_DIR$/md-preference/md-preference.iml" />
       <module fileurl="file://$PROJECT_DIR$/orm-library/orm-library.iml" filepath="$PROJECT_DIR$/orm-library/orm-library.iml" />
     </modules>

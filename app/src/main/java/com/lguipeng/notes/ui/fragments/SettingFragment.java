@@ -243,6 +243,10 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
     }
 
     public void onEventMainThread(Boolean result){
+        handleLoginResult(result);
+    }
+
+    private void handleLoginResult(boolean result){
         if (result && activity != null){
             try {
                 initEverAccount();
