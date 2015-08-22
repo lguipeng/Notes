@@ -72,13 +72,13 @@
         <item>More</item>
     </array>
     <string name="about_bottom_text">Copyright © 2015 Liaoguipeng.\nAll Rights Reserved.</string>
-    <string name="bind_ever_note_fail">Bind EverNote Fail</string>
-    <string name="bind_ever_note_success">Bind EverNote Success</string>
+    <string name="bind_ever_note_fail">Bind EverNote fail</string>
+    <string name="bind_ever_note_success">Bind EverNote success</string>
     <string name="ever_note_account">EverNote Account</string>
     <string name="ever_note_account_key">ever_note_account_key</string>
     <string name="has_unbind_ever_note_tip">Are you sure to unbind EverNote</string>
     <string name="expunge_error">Expunge Delete Error</string>
-    <string name="unbind_ever_note_tip">Go to settings to bind EverNote</string>
+    <string name="unbind_ever_note_tip">Go to settings and bind EverNote</string>
     <string name="go_bind">Bind</string>
     <string name="delete_error">Delete error</string>
     <string name="recovering">Recovering</string>
