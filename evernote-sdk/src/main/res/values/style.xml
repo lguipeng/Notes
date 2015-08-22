@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="esdk_GreenDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">#4CAF50</item>
+        <item name="colorPrimaryDark">#388E3C</item>
+        <item name="colorAccent">#4CAF50</item>
+        <item name="android:minWidth">200dp</item>
+    </style>
+</resources>

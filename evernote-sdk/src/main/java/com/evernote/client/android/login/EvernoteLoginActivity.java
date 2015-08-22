@@ -1,7 +1,6 @@
 package com.evernote.client.android.login;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +13,7 @@ import android.widget.Button;
 import com.evernote.androidsdk.R;
 import com.evernote.client.android.EvernoteOAuthHelper;
 import com.evernote.client.android.EvernoteSession;
+import com.evernote.client.view.ProgressDialog;
 
 import net.vrallev.android.task.TaskExecutor;
 import net.vrallev.android.task.TaskResult;
@@ -129,8 +129,6 @@ public class EvernoteLoginActivity extends Activity implements EvernoteLoginTask
         };
 
         mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setMessage(getString(R.string.esdk_loading));
         mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(android.R.string.cancel), onClickListener);
         mProgressDialog.setCancelable(false);
 
