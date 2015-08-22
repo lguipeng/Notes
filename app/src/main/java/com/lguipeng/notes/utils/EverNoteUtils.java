@@ -352,6 +352,10 @@ public class EverNoteUtils {
         sync(type, true);
     }
 
+    public void syncSilence(){
+        syncSilence(SyncType.ALL);
+    }
+
     public void sync(final SyncType type, final boolean silence){
         if (!checkLogin(silence)){
             return;

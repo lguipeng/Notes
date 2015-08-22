@@ -247,6 +247,7 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
             try {
                 initEverAccount();
                 SnackbarUtils.show(activity, R.string.bind_ever_note_success);
+                EventBus.getDefault().post(MainActivity.MainEvent.REFRESH_LIST);
             }catch (Exception e){
                 SnackbarUtils.show(activity, R.string.bind_ever_note_fail);
                 e.printStackTrace();
@@ -297,7 +298,7 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
             int value = ThemeUtils.getCurrentTheme(activity).getIntValue();
             if (value != position) {
                 preferenceUtils.saveParam(getString(R.string.change_theme_key), position);
-                changeTheme(ThemeUtils.Theme.mapValueToTheme(position));
+                notifyChangeTheme();
             }
         });
     }
@@ -313,7 +314,7 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
         }
     }
 
-    private void changeTheme(ThemeUtils.Theme theme){
+    private void notifyChangeTheme(){
         if (activity == null)
             return;
         //ThemeUtils.changTheme(activity, theme);

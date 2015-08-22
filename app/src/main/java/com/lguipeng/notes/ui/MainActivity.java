@@ -176,6 +176,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     public void onEventMainThread(MainEvent event){
         switch (event){
+            case REFRESH_LIST:
+                refreshLayout.setRefreshing(true);
+                onRefresh();
+                break;
             case UPDATE_NOTE:
                 changeToSelectNoteType(mCurrentNoteTypePage);
                 mEverNoteUtils.syncSilence(EverNoteUtils.SyncType.PUSH);
@@ -330,7 +334,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             case R.id.sync:
                 //sync();
                 refreshLayout.setRefreshing(true);
-                mEverNoteUtils.sync();
+                onRefresh();
                 return true;
             case R.id.about:
                 intent = new Intent(MainActivity.this, AboutActivity.class);
@@ -637,6 +641,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     public enum MainEvent{
+        REFRESH_LIST,
         UPDATE_NOTE,
         CHANGE_THEME
     }
