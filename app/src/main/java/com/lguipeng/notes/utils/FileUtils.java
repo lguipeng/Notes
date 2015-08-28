@@ -1,8 +1,10 @@
 package com.lguipeng.notes.utils;
 
+import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import com.lguipeng.notes.R;
 import com.lguipeng.notes.model.SNote;
 
 import java.io.File;
@@ -134,12 +136,14 @@ public class FileUtils {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
-    public void backupSNotes(List<SNote> notes) {
+    public void backupSNotes(Context context, List<SNote> notes) {
         createFile(BACKUP_FILE_NAME);
         StringBuilder sb = new StringBuilder();
+        String title = context.getString(R.string.title);
+        String content = context.getString(R.string.note_content);
         for (SNote note : notes){
-            sb.append("Title:" + note.getLabel() + "\n");
-            sb.append("Content:\n" + note.getContent() + "\n\n");
+            sb.append(title + ":" + note.getLabel() + "\n");
+            sb.append(content + ":\n" + note.getContent() + "\n\n");
         }
         writeSNotesFile(sb.toString());
     }

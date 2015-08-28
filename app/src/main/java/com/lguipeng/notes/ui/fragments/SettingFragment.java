@@ -340,7 +340,7 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
                 getString(R.string.backup_local), Toast.LENGTH_SHORT).show();
         mThreadExecutorPool.execute(() -> {
             List<SNote> notes = mFinalDb.findAllByWhere(SNote.class, " type = 0");
-            mFileUtils.backupSNotes(notes);
+            mFileUtils.backupSNotes(activity.getApplicationContext(), notes);
             backuping = false;
             if (activity != null){
                 activity.runOnUiThread(() -> {
