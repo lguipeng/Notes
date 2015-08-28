@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:maxLines="40"
+            android:maxLines="14"
             android:lineSpacingExtra="2dp"
             android:ellipsize="end"
             android:textColor="#848484"
