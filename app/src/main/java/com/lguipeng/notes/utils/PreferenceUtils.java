@@ -3,7 +3,11 @@ package com.lguipeng.notes.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.lguipeng.notes.injector.ContextLifeCycle;
 import com.lguipeng.notes.ui.fragments.SettingFragment;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Created by lgp on 2014/10/30.
@@ -22,7 +26,8 @@ public class PreferenceUtils{
 
     public static final String EVERNOTE_NOTEBOOK_GUID_KEY = "EVERNOTE_NOTEBOOK_GUID_KEY";
 
-    private PreferenceUtils(Context context){
+    @Inject @Singleton
+    protected PreferenceUtils(@ContextLifeCycle("App") Context context){
         sharedPreferences = context.getSharedPreferences(SettingFragment.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         shareEditor = sharedPreferences.edit();
     }

@@ -17,17 +17,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.lguipeng.notes.App;
 import com.lguipeng.notes.R;
+import com.lguipeng.notes.injector.component.DaggerActivityComponent;
+import com.lguipeng.notes.injector.module.ActivityModule;
 import com.lguipeng.notes.model.SNote;
-import com.lguipeng.notes.module.DataModule;
 import com.lguipeng.notes.utils.DialogUtils;
 import com.lguipeng.notes.utils.TimeUtils;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import net.tsz.afinal.FinalDb;
-
-import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -64,6 +63,16 @@ public class NoteActivity extends BaseActivity{
     }
 
     @Override
+    protected void initializeDependencyInjector() {
+        App app = (App) getApplication();
+        mActivityComponent = DaggerActivityComponent.builder()
+                .activityModule(new ActivityModule(this))
+                .appComponent(app.getAppComponent())
+                .build();
+        mActivityComponent.inject(this);
+    }
+
+    @Override
     protected void onStop() {
         hideKeyBoard(labelEditText);
         super.onStop();
@@ -79,11 +88,6 @@ public class NoteActivity extends BaseActivity{
     @Override
     protected int getLayoutView() {
         return R.layout.activity_note;
-    }
-
-    @Override
-    protected List<Object> getModules() {
-        return Arrays.asList(new DataModule());
     }
 
     public void onEventMainThread(SNote note) {

@@ -9,11 +9,11 @@ import android.support.v4.content.ContextCompat;
 /**
  * Created by lgp on 2015/6/10.
  */
-public class MaterialSimpleListItem {
+public class ShareListItem {
 
     private Builder mBuilder;
 
-    private MaterialSimpleListItem(Builder builder) {
+    private ShareListItem(Builder builder) {
         mBuilder = builder;
     }
 
@@ -55,8 +55,8 @@ public class MaterialSimpleListItem {
             return content(mContext.getString(contentRes));
         }
 
-        public MaterialSimpleListItem build() {
-            return new MaterialSimpleListItem(this);
+        public ShareListItem build() {
+            return new ShareListItem(this);
         }
     }
 

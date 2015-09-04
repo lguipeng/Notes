@@ -1,14 +1,10 @@
-package com.lguipeng.notes.module;
+package com.lguipeng.notes.injector.module;
 
 import android.content.Context;
 
+import com.lguipeng.notes.App;
 import com.lguipeng.notes.BuildConfig;
-import com.lguipeng.notes.ui.MainActivity;
-import com.lguipeng.notes.ui.NoteActivity;
-import com.lguipeng.notes.ui.fragments.SettingFragment;
-import com.lguipeng.notes.utils.EverNoteUtils;
-import com.lguipeng.notes.utils.FileUtils;
-import com.lguipeng.notes.utils.ThreadExecutorPool;
+import com.lguipeng.notes.injector.ContextLifeCycle;
 
 import net.tsz.afinal.FinalDb;
 
@@ -20,18 +16,26 @@ import dagger.Provides;
 /**
  * Created by lgp on 2015/5/26.
  */
-@Module(
-        injects = {
-                MainActivity.class,
-                NoteActivity.class,
-                SettingFragment.class,
-        },
-        addsTo = AppModule.class
-)
-public class DataModule {
+@Module
+public class AppModule {
+    private final App app;
+
+    public AppModule(App app) {
+        this.app = app;
+    }
 
     @Provides @Singleton
-    FinalDb.DaoConfig provideDaoConfig(Context context) {
+    App provideApplication() {
+        return app;
+    }
+
+    @Provides @Singleton @ContextLifeCycle("App")
+    Context provideActivityContext() {
+        return app.getApplicationContext();
+    }
+
+    @Provides @Singleton
+    FinalDb.DaoConfig provideDaoConfig(@ContextLifeCycle("App") Context context) {
         FinalDb.DaoConfig config = new FinalDb.DaoConfig();
         config.setDbName("notes.db");
         config.setDbVersion(2);
@@ -59,20 +63,5 @@ public class DataModule {
     @Provides @Singleton
     FinalDb provideFinalDb(FinalDb.DaoConfig config) {
         return FinalDb.create(config);
-    }
-
-    @Provides @Singleton
-    EverNoteUtils provideEverNoteUtils(Context context, ThreadExecutorPool pool, FinalDb finalDb) {
-        return EverNoteUtils.getInstance(context, pool, finalDb);
-    }
-
-    @Provides @Singleton
-    ThreadExecutorPool provideThreadExecutorPool() {
-        return new ThreadExecutorPool();
-    }
-
-    @Provides @Singleton
-    FileUtils provideFileUtils() {
-        return new FileUtils();
     }
 }

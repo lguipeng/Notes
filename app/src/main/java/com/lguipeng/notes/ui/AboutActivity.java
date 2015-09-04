@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.lguipeng.notes.BuildConfig;
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.adpater.MaterialSimpleListAdapter;
-import com.lguipeng.notes.model.MaterialSimpleListItem;
+import com.lguipeng.notes.model.ShareListItem;
 import com.lguipeng.notes.utils.SnackbarUtils;
 import com.lguipeng.notes.utils.TimeUtils;
 import com.lguipeng.notes.utils.WXUtils;
@@ -218,23 +218,23 @@ public class AboutActivity extends BaseActivity{
         builder.setTitle(getString(R.string.share));
         final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(this);
         String[] array = getResources().getStringArray(R.array.share_dialog_text);
-        adapter.add(new MaterialSimpleListItem.Builder(this)
+        adapter.add(new ShareListItem.Builder(this)
                 .content(array[0])
                 .icon(R.drawable.ic_wx_logo)
                 .build());
-        adapter.add(new MaterialSimpleListItem.Builder(this)
+        adapter.add(new ShareListItem.Builder(this)
                 .content(array[1])
                 .icon(R.drawable.ic_wx_moments)
                 .build());
-        adapter.add(new MaterialSimpleListItem.Builder(this)
+        adapter.add(new ShareListItem.Builder(this)
                 .content(array[2])
                 .icon(R.drawable.ic_wx_collect)
                 .build());
-        adapter.add(new MaterialSimpleListItem.Builder(this)
+        adapter.add(new ShareListItem.Builder(this)
                 .content(array[3])
                 .icon(R.drawable.ic_sina_logo)
                 .build());
-        adapter.add(new MaterialSimpleListItem.Builder(this)
+        adapter.add(new ShareListItem.Builder(this)
                 .content(array[4])
                 .icon(R.drawable.ic_share_more)
                 .build());

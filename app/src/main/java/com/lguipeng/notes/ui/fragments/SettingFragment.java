@@ -1,6 +1,6 @@
 package com.lguipeng.notes.ui.fragments;
 
-import android.app.Application;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -25,10 +26,12 @@ import com.jenzz.materialpreference.Preference;
 import com.jenzz.materialpreference.SwitchPreference;
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.adpater.ColorsListAdapter;
+import com.lguipeng.notes.injector.component.DaggerFragmentComponent;
+import com.lguipeng.notes.injector.module.FragmentModule;
 import com.lguipeng.notes.model.SNote;
-import com.lguipeng.notes.module.DataModule;
 import com.lguipeng.notes.ui.MainActivity;
 import com.lguipeng.notes.ui.PayActivity;
+import com.lguipeng.notes.ui.SettingActivity;
 import com.lguipeng.notes.utils.DialogUtils;
 import com.lguipeng.notes.utils.EverNoteUtils;
 import com.lguipeng.notes.utils.FileUtils;
@@ -50,7 +53,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by lgp on 2015/5/26.
  */
-public class SettingFragment extends BaseFragment implements EvernoteCallback<User>{
+public class SettingFragment extends PreferenceFragment implements EvernoteCallback<User>{
     public static final String PREFERENCE_FILE_NAME = "note.settings";
     private SwitchPreference rightHandModeSwitch;
     private Preference feedbackPreference;
@@ -69,16 +72,29 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
     @Inject
     FinalDb mFinalDb;
     @Inject
-    Application app;
+    PreferenceUtils preferenceUtils;
+
+    private SettingActivity activity;
+
     private boolean backuping = false;
+
     public static SettingFragment newInstance(){
         SettingFragment fragment = new SettingFragment();
         return fragment;
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (getActivity() != null && getActivity() instanceof SettingActivity){
+            this.activity = (SettingActivity)getActivity();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeDependencyInjector();
         EventBus.getDefault().register(this);
         addPreferencesFromResource(R.xml.prefs);
         getPreferenceManager().setSharedPreferencesName(PREFERENCE_FILE_NAME);
@@ -110,6 +126,13 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
 
     public SettingFragment() {
         super();
+    }
+
+    private void initializeDependencyInjector() {
+        DaggerFragmentComponent.builder()
+                .fragmentModule(new FragmentModule())
+                .activityComponent(activity.getActivityComponent())
+                .build().inject(this);
     }
 
     @Override
@@ -159,11 +182,6 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
-    }
-
-    @Override
-    protected List<Object> getModules() {
-        return Arrays.<Object>asList(new DataModule());
     }
 
     @Override
@@ -336,7 +354,7 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
         if (backuping)
             return;
         backuping = true;
-        Toast.makeText(app.getApplicationContext(),
+        Toast.makeText(activity,
                 getString(R.string.backup_local), Toast.LENGTH_SHORT).show();
         mThreadExecutorPool.execute(() -> {
             List<SNote> notes = mFinalDb.findAllByWhere(SNote.class, " type = 0");
@@ -344,7 +362,7 @@ public class SettingFragment extends BaseFragment implements EvernoteCallback<Us
             backuping = false;
             if (activity != null){
                 activity.runOnUiThread(() -> {
-                    Toast.makeText(app.getApplicationContext(),
+                    Toast.makeText(activity,
                             getString(R.string.backup_local_done), Toast.LENGTH_SHORT).show();
                 });
             }

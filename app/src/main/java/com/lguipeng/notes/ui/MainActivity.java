@@ -29,15 +29,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.lguipeng.notes.App;
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.adpater.BaseRecyclerViewAdapter;
 import com.lguipeng.notes.adpater.DrawerListAdapter;
 import com.lguipeng.notes.adpater.NotesAdapter;
 import com.lguipeng.notes.adpater.SimpleListAdapter;
+import com.lguipeng.notes.injector.component.DaggerActivityComponent;
+import com.lguipeng.notes.injector.module.ActivityModule;
 import com.lguipeng.notes.model.SNote;
-import com.lguipeng.notes.module.DataModule;
 import com.lguipeng.notes.utils.DialogUtils;
 import com.lguipeng.notes.utils.EverNoteUtils;
+import com.lguipeng.notes.utils.PreferenceUtils;
 import com.lguipeng.notes.utils.SnackbarUtils;
 import com.lguipeng.notes.utils.ThreadExecutorPool;
 import com.lguipeng.notes.utils.ToolbarUtils;
@@ -96,6 +99,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Inject
     ThreadExecutorPool mThreadExecutorPool;
 
+    @Inject
+    PreferenceUtils preferenceUtils;
+
     private ActionBarDrawerToggle mDrawerToggle;
 
     private SearchView searchView;
@@ -126,6 +132,16 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         initDrawerView();
         initRecyclerView();
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void initializeDependencyInjector() {
+        App app = (App) getApplication();
+        mActivityComponent = DaggerActivityComponent.builder()
+                .activityModule(new ActivityModule(this))
+                .appComponent(app.getAppComponent())
+                .build();
+        mActivityComponent.inject(this);
     }
 
     @Override
@@ -253,11 +269,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     protected int getLayoutView() {
         return R.layout.activity_main;
-    }
-
-    @Override
-    protected List<Object> getModules() {
-        return Arrays.asList(new DataModule());
     }
 
     @Override

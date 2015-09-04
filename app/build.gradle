@@ -1,5 +1,6 @@
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 def packTime() {
     return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("UTC"))
@@ -91,26 +92,6 @@ android {
     }
 }
 
-retrolambda {
-    //javaVersion JavaVersion.VERSION_1_6
-}
-
-dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:22.2.1'
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.android.support:recyclerview-v7:22.2.1'
-    compile 'com.android.support:design:22.2.1'
-    compile 'com.jakewharton:butterknife:6.1.0'
-    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
-    compile 'com.rengwuxian.materialedittext:library:2.1.3'
-    compile 'com.squareup.dagger:dagger:1.2.2'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-    compile 'de.greenrobot:eventbus:2.4.0'
-    compile project(':orm-library')
-    compile project(':evernote-sdk')
-    compile project(':md-preference')
-}
 
 File propFile = file('signing.properties');
 if (propFile.exists()) {
@@ -127,4 +108,25 @@ if (propFile.exists()) {
     }
 } else {
     android.buildTypes.release.signingConfig = null
+}
+
+retrolambda {
+    //javaVersion JavaVersion.VERSION_1_6
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    apt 'com.google.dagger:dagger-compiler:2.0.1'
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'com.android.support:design:22.2.1'
+    compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+    compile 'com.rengwuxian.materialedittext:library:2.1.3'
+    compile 'com.google.dagger:dagger:2.0.1'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile project(':orm-library')
+    compile project(':evernote-sdk')
+    compile project(':md-preference')
 }

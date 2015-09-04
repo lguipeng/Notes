@@ -11,37 +11,25 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
-import com.lguipeng.notes.App;
 import com.lguipeng.notes.R;
-import com.lguipeng.notes.utils.PreferenceUtils;
+import com.lguipeng.notes.injector.component.ActivityComponent;
 import com.lguipeng.notes.utils.ThemeUtils;
 import com.lguipeng.notes.utils.ToolbarUtils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
-import java.util.List;
-
 import butterknife.ButterKnife;
-import dagger.ObjectGraph;
 
 /**
  * Created by lgp on 2015/5/24.
  */
 public abstract class BaseActivity extends AppCompatActivity {
-
-    private ObjectGraph activityGraph;
-
-    protected PreferenceUtils preferenceUtils;
-
+    protected ActivityComponent mActivityComponent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        preferenceUtils = PreferenceUtils.getInstance(this);
         initTheme();
         super.onCreate(savedInstanceState);
         initWindow();
-        if (getModules() != null){
-            activityGraph = ((App) getApplication()).createScopedGraph(getModules().toArray());
-            activityGraph.inject(this);
-        }
+        initializeDependencyInjector();
         setContentView(getLayoutView());
         ButterKnife.inject(this);
         initToolbar();
@@ -92,7 +80,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        activityGraph = null;
     }
 
     /**
@@ -111,12 +98,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         
     }
 
+    public ActivityComponent getActivityComponent() {
+        return mActivityComponent;
+    }
+
     protected void initToolbar(){
 
     }
 
-    protected List<Object> getModules(){
-        return null;
+    protected void initializeDependencyInjector(){
+
     }
 
     protected abstract @LayoutRes int getLayoutView();

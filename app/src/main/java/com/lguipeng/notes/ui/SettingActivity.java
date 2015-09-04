@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.evernote.client.android.EvernoteSession;
+import com.lguipeng.notes.App;
 import com.lguipeng.notes.R;
+import com.lguipeng.notes.injector.component.DaggerActivityComponent;
+import com.lguipeng.notes.injector.module.ActivityModule;
 import com.lguipeng.notes.ui.fragments.SettingFragment;
 
 import butterknife.InjectView;
@@ -25,6 +28,16 @@ public class SettingActivity extends BaseActivity{
     }
 
     @Override
+    protected void initializeDependencyInjector() {
+        App app = (App) getApplication();
+        mActivityComponent = DaggerActivityComponent.builder()
+                .activityModule(new ActivityModule(this))
+                .appComponent(app.getAppComponent())
+                .build();
+        mActivityComponent.inject(this);
+    }
+
+    @Override
     protected int getLayoutView() {
         return R.layout.activity_setting;
     }
@@ -39,6 +52,8 @@ public class SettingActivity extends BaseActivity{
         SettingFragment settingFragment = SettingFragment.newInstance();
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, settingFragment).commit();
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

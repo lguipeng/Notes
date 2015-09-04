@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Author: lgp
  * Date: 2014/12/31.
@@ -31,6 +34,10 @@ public class FileUtils {
         }else{
             NotesLog.e("sd card not ready");
         }
+    }
+
+    @Inject @Singleton
+    public FileUtils() {
     }
 
     public void mkdir(String dir){

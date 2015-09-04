@@ -3,23 +3,19 @@ package com.lguipeng.notes;
 import android.app.Application;
 
 import com.evernote.client.android.EvernoteSession;
-import com.lguipeng.notes.module.AppModule;
-
-import java.util.Arrays;
-import java.util.List;
-
-import dagger.ObjectGraph;
+import com.lguipeng.notes.injector.component.AppComponent;
+import com.lguipeng.notes.injector.component.DaggerAppComponent;
+import com.lguipeng.notes.injector.module.AppModule;
 
 /**
  * Created by lgp on 2015/5/24.
  */
 public class App extends Application{
-    private ObjectGraph objectGraph;
+    private AppComponent mAppComponent;
     @Override
     public void onCreate() {
         super.onCreate();
-        objectGraph = ObjectGraph.create(getModules().toArray());
-        objectGraph.inject(this);
+        initializeInjector();
         buildEverNoteSession();
     }
 
@@ -46,11 +42,15 @@ public class App extends Application{
         super.onLowMemory();
     }
 
-    private List<Object> getModules() {
-        return Arrays.asList(new AppModule(this));
+
+    private void initializeInjector() {
+        mAppComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .build();
     }
 
-    public ObjectGraph createScopedGraph(Object... modules) {
-        return objectGraph.plus(modules);
+    public AppComponent getAppComponent() {
+        return mAppComponent;
     }
+
 }

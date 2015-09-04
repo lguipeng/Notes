@@ -8,12 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lguipeng.notes.R;
-import com.lguipeng.notes.model.MaterialSimpleListItem;
+import com.lguipeng.notes.model.ShareListItem;
 
 /**
  * Created by lgp on 2015/6/10.
  */
-public class MaterialSimpleListAdapter extends ArrayAdapter<MaterialSimpleListItem> {
+public class MaterialSimpleListAdapter extends ArrayAdapter<ShareListItem> {
 
     public MaterialSimpleListAdapter(Context context) {
         super(context, R.layout.md_simplelist_item, android.R.id.title);
@@ -22,7 +22,7 @@ public class MaterialSimpleListAdapter extends ArrayAdapter<MaterialSimpleListIt
     @Override
     public View getView(final int index, View convertView, ViewGroup parent) {
         final View view = super.getView(index, convertView, parent);
-        final MaterialSimpleListItem item = getItem(index);
+        final ShareListItem item = getItem(index);
         ImageView ic = (ImageView) view.findViewById(android.R.id.icon);
         if (item.getIcon() != null)
             ic.setImageDrawable(item.getIcon());

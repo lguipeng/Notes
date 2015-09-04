@@ -19,12 +19,16 @@ import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.User;
 import com.lguipeng.notes.BuildConfig;
+import com.lguipeng.notes.injector.ContextLifeCycle;
 import com.lguipeng.notes.model.SNote;
 
 import net.tsz.afinal.FinalDb;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import de.greenrobot.event.EventBus;
 
@@ -45,7 +49,8 @@ public class EverNoteUtils {
 
     private static final String NOTE_BOOK_NAME = "SNotes";
 
-    private EverNoteUtils(Context mContext, ThreadExecutorPool pool, FinalDb mFinalDb) {
+    @Inject @Singleton
+    public EverNoteUtils( @ContextLifeCycle("App") Context mContext, ThreadExecutorPool pool, FinalDb mFinalDb) {
         mEvernoteSession = EvernoteSession.getInstance();
         mPreferenceUtils = PreferenceUtils.getInstance(mContext);
         mThreadExecutorPool = pool;

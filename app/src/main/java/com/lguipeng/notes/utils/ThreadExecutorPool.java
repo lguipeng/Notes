@@ -7,6 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * the thread pool to execute thread better
  * @author lgp on 2015/1/1
@@ -21,6 +24,7 @@ public class ThreadExecutorPool {
         pool = Executors.newFixedThreadPool(size);
     }
 
+    @Inject @Singleton
     public ThreadExecutorPool() {
         this(DEFAULT_SIZE);
     }
