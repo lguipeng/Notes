@@ -63,26 +63,17 @@ public class SettingFragment extends PreferenceFragment implements EvernoteCallb
     private boolean showNoteHistoryLog;
     private boolean rightHandMode;
     private boolean cardLayout;
-    @Inject
-    EverNoteUtils mEverNoteUtils;
-    @Inject
-    ThreadExecutorPool mThreadExecutorPool;
-    @Inject
-    FileUtils mFileUtils;
-    @Inject
-    FinalDb mFinalDb;
-    @Inject
-    PreferenceUtils preferenceUtils;
-
+    @Inject EverNoteUtils mEverNoteUtils;
+    @Inject ThreadExecutorPool mThreadExecutorPool;
+    @Inject FileUtils mFileUtils;
+    @Inject FinalDb mFinalDb;
+    @Inject PreferenceUtils preferenceUtils;
     private SettingActivity activity;
-
     private boolean backuping = false;
-
     public static SettingFragment newInstance(){
         SettingFragment fragment = new SettingFragment();
         return fragment;
     }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

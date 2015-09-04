@@ -30,23 +30,18 @@ import net.tsz.afinal.FinalDb;
 
 import javax.inject.Inject;
 
-import butterknife.InjectView;
+import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by lgp on 2015/5/25.
  */
 public class NoteActivity extends BaseActivity{
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
-    @InjectView(R.id.label_edit_text)
-    MaterialEditText labelEditText;
-    @InjectView(R.id.content_edit_text)
-    MaterialEditText contentEditText;
-    @InjectView(R.id.opr_time_line_text)
-    TextView oprTimeLineTextView;
-    @Inject
-    FinalDb finalDb;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.label_edit_text) MaterialEditText labelEditText;
+    @Bind(R.id.content_edit_text) MaterialEditText contentEditText;
+    @Bind(R.id.opr_time_line_text) TextView oprTimeLineTextView;
+    @Inject FinalDb finalDb;
     private MenuItem doneMenuItem;
     private int operateNoteType = 0;
     private SNote note;

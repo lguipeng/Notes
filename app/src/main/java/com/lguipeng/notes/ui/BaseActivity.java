@@ -31,7 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         initWindow();
         initializeDependencyInjector();
         setContentView(getLayoutView());
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         initToolbar();
     }
 

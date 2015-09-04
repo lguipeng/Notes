@@ -37,17 +37,15 @@ import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import butterknife.InjectView;
+import butterknife.Bind;
 import butterknife.OnClick;
 
 /**
  * Created by lgp on 2015/5/25.
  */
 public class AboutActivity extends BaseActivity{
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
-    @InjectView(R.id.version_text)
-    TextView versionTextView;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.version_text) TextView versionTextView;
     private int clickCount = 0;
     private long lastClickTime = 0;
     private final static String WEIBO_PACKAGENAME = "com.sina.weibo";
@@ -66,7 +64,6 @@ public class AboutActivity extends BaseActivity{
     protected void initToolbar(){
         super.initToolbar(toolbar);
         toolbar.setTitle(R.string.about);
-
     }
 
     @OnClick(R.id.version_text)

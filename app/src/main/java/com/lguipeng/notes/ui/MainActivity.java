@@ -54,7 +54,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.InjectView;
+import butterknife.Bind;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
@@ -62,64 +62,28 @@ import de.greenrobot.event.EventBus;
  * Created by lgp on 2015/5/24.
  */
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener{
-
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
-
-    @InjectView(R.id.refresher)
-    SwipeRefreshLayout refreshLayout;
-
-    @InjectView(R.id.recyclerView)
-    RecyclerView recyclerView;
-
-    @InjectView(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-
-    @InjectView(R.id.left_drawer_listview)
-    ListView mDrawerMenuListView;
-
-    @InjectView(R.id.left_drawer)
-    View drawerRootView;
-
-    @InjectView(R.id.fab)
-    BetterFab fab;
-
-    @InjectView(R.id.coordinator_layout)
-    CoordinatorLayout coordinatorLayout;
-
-    @InjectView(R.id.progress_wheel)
-    ProgressWheel progressWheel;
-
-    @Inject
-    FinalDb finalDb;
-
-    @Inject
-    EverNoteUtils mEverNoteUtils;
-
-    @Inject
-    ThreadExecutorPool mThreadExecutorPool;
-
-    @Inject
-    PreferenceUtils preferenceUtils;
-
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.refresher) SwipeRefreshLayout refreshLayout;
+    @Bind(R.id.recyclerView) RecyclerView recyclerView;
+    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @Bind(R.id.left_drawer_listview) ListView mDrawerMenuListView;
+    @Bind(R.id.left_drawer) View drawerRootView;
+    @Bind(R.id.fab) BetterFab fab;
+    @Bind(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
+    @Bind(R.id.progress_wheel) ProgressWheel progressWheel;
+    @Inject FinalDb finalDb;
+    @Inject EverNoteUtils mEverNoteUtils;
+    @Inject ThreadExecutorPool mThreadExecutorPool;
+    @Inject PreferenceUtils preferenceUtils;
     private ActionBarDrawerToggle mDrawerToggle;
-
     private SearchView searchView;
-
     private NotesAdapter recyclerAdapter;
-
     private SNote.NoteType mCurrentNoteTypePage = SNote.NoteType.getDefault();
-
     private boolean rightHandOn = false;
-
     private boolean cardLayout = true;
-
     private  List<String> noteTypelist;
-
     private final String  CURRENT_NOTE_TYPE_KEY = "CURRENT_NOTE_TYPE_KEY";
-
     private final String  PROGRESS_WHEEL_KEY = "PROGRESS_WHEEL_KEY";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

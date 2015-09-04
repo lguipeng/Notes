@@ -11,16 +11,14 @@ import com.lguipeng.notes.injector.component.DaggerActivityComponent;
 import com.lguipeng.notes.injector.module.ActivityModule;
 import com.lguipeng.notes.ui.fragments.SettingFragment;
 
-import butterknife.InjectView;
+import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by lgp on 2015/5/24.
  */
 public class SettingActivity extends BaseActivity{
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
-
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

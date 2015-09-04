@@ -5,18 +5,16 @@ import android.support.v7.widget.Toolbar;
 
 import com.lguipeng.notes.R;
 
-import butterknife.InjectView;
+import butterknife.Bind;
 
 /**
  * Created by lgp on 2015/6/1.
  */
 public class PayActivity extends BaseActivity{
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        testCode();
     }
 
     @Override
@@ -31,7 +29,4 @@ public class PayActivity extends BaseActivity{
         toolbar.setTitle(R.string.pay_for_me);
     }
 
-    private void testCode(){
-
-    }
 }
