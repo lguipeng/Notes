@@ -143,7 +143,7 @@ public class FileUtils {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
-    public void backupSNotes(Context context, List<SNote> notes) {
+    public boolean backupSNotes(Context context, List<SNote> notes) {
         createFile(BACKUP_FILE_NAME);
         StringBuilder sb = new StringBuilder();
         String title = context.getString(R.string.title);
@@ -152,6 +152,6 @@ public class FileUtils {
             sb.append(title + ":" + note.getLabel() + "\n");
             sb.append(content + ":\n" + note.getContent() + "\n\n");
         }
-        writeSNotesFile(sb.toString());
+        return writeSNotesFile(sb.toString());
     }
 }

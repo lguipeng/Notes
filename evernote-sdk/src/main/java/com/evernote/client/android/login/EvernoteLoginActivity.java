@@ -112,6 +112,9 @@ public class EvernoteLoginActivity extends Activity implements EvernoteLoginTask
         mResultPosted = true;
 
         setResult(result ? RESULT_OK : RESULT_CANCELED);
+        if (mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.hide();
+        }
         finish();
     }
 
@@ -156,6 +159,8 @@ public class EvernoteLoginActivity extends Activity implements EvernoteLoginTask
                     button.setVisibility(View.GONE);
                     button.setOnClickListener(null);
                 }
+                //disable this button
+                button.setVisibility(View.GONE);
             }
         });
     }

@@ -11,6 +11,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import com.lguipeng.notes.R;
+import com.lguipeng.notes.adpater.base.BaseRecyclerViewAdapter;
 import com.lguipeng.notes.model.SNote;
 import com.lguipeng.notes.utils.TimeUtils;
 

@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import de.greenrobot.event.EventBus;
 
@@ -41,32 +40,18 @@ public class EverNoteUtils {
 
     private PreferenceUtils mPreferenceUtils;
 
-    private static  EverNoteUtils  EVER_NOTE_UTILS;
-
     private ThreadExecutorPool mThreadExecutorPool;
 
     private FinalDb mFinalDb;
 
     private static final String NOTE_BOOK_NAME = "SNotes";
 
-    @Inject @Singleton
-    public EverNoteUtils( @ContextLifeCycle("App") Context mContext, ThreadExecutorPool pool, FinalDb mFinalDb) {
+    @Inject
+    public EverNoteUtils( @ContextLifeCycle("App") Context mContext, ThreadExecutorPool pool, FinalDb mFinalDb, PreferenceUtils mPreferenceUtils) {
         mEvernoteSession = EvernoteSession.getInstance();
-        mPreferenceUtils = PreferenceUtils.getInstance(mContext);
-        mThreadExecutorPool = pool;
+        this.mPreferenceUtils = mPreferenceUtils;
+        this.mThreadExecutorPool = pool;
         this.mFinalDb = mFinalDb;
-    }
-
-    public static EverNoteUtils getInstance(Context mContext, ThreadExecutorPool pool
-            , FinalDb mFinalDb){
-        if (EVER_NOTE_UTILS == null) {
-            synchronized (EverNoteUtils.class) {
-                if (EVER_NOTE_UTILS == null) {
-                    EVER_NOTE_UTILS = new EverNoteUtils(mContext, pool, mFinalDb);
-                }
-            }
-        }
-        return EVER_NOTE_UTILS;
     }
 
     public boolean isLogin() {
@@ -114,15 +99,14 @@ public class EverNoteUtils {
                 .getStringParam(PreferenceUtils.EVERNOTE_NOTEBOOK_GUID_KEY);
         if (!TextUtils.isEmpty(guid)){
             Notebook notebook = findNotebook(guid);
-            if (notebook != null && TextUtils.equals(notebook.getName(), NOTE_BOOK_NAME)){
+            if (notebook != null && TextUtils.equals(notebook.getName(), notebookName)){
                 mPreferenceUtils.saveParam(PreferenceUtils.EVERNOTE_NOTEBOOK_GUID_KEY,
                         notebook.getGuid());
-                return;
             }else {
-                tryCreateNoteBook(NOTE_BOOK_NAME);
+                tryCreateNoteBook(notebookName);
             }
         } else {
-            tryCreateNoteBook(NOTE_BOOK_NAME);
+            tryCreateNoteBook(notebookName);
         }
         NotesLog.d("");
     }
@@ -169,7 +153,7 @@ public class EverNoteUtils {
         return books;
     }
 
-    private void tryCreateNoteBook(String bookName) throws Exception{
+    private Notebook tryCreateNoteBook(String bookName) throws Exception{
         Notebook notebook = new Notebook();
         notebook.setName(bookName);
         try {
@@ -177,6 +161,7 @@ public class EverNoteUtils {
                     .getNoteStoreClient().createNotebook(notebook);
             mPreferenceUtils.saveParam(PreferenceUtils.EVERNOTE_NOTEBOOK_GUID_KEY
                     , result.getGuid());
+            return result;
         }catch (EDAMUserException e){
             if (e.getErrorCode() == EDAMErrorCode.DATA_CONFLICT) {
                 List<Notebook> books = listNotebooks();
@@ -184,11 +169,12 @@ public class EverNoteUtils {
                     if (TextUtils.equals(book.getName(), bookName)){
                         mPreferenceUtils.saveParam(PreferenceUtils.EVERNOTE_NOTEBOOK_GUID_KEY
                                 , book.getGuid());
-                        return;
+                        return book;
                     }
                 }
             }
-           handleException(e);
+            handleException(e);
+            return null;
         }
     }
 
@@ -349,18 +335,6 @@ public class EverNoteUtils {
         return true;
     }
 
-    public void sync(){
-        sync(SyncType.ALL, false);
-    }
-
-    public void syncSilence(SyncType type){
-        sync(type, true);
-    }
-
-    public void syncSilence(){
-        syncSilence(SyncType.ALL);
-    }
-
     public void sync(final SyncType type, final boolean silence){
         if (!checkLogin(silence)){
             return;
@@ -370,14 +344,14 @@ public class EverNoteUtils {
         mThreadExecutorPool.execute(() -> {
             try {
                 makeSureNoteBookExist(NOTE_BOOK_NAME);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                if (e instanceof EDAMUserException){
-                    EDAMUserException exception = (EDAMUserException)e;
+                if (e instanceof EDAMUserException) {
+                    EDAMUserException exception = (EDAMUserException) e;
                     EDAMErrorCode errorCode = exception.getErrorCode();
-                    switch (errorCode){
+                    switch (errorCode) {
                         case RATE_LIMIT_REACHED:
-                            if (!BuildConfig.DEBUG){
+                            if (!BuildConfig.DEBUG) {
                                 EventBus.getDefault().post(SyncResult.ERROR_FREQUENT_API);
                             }
                             break;
@@ -400,7 +374,7 @@ public class EverNoteUtils {
                 }
             }
             try {
-                switch (type){
+                switch (type) {
                     case ALL:
                         pushNotes();
                         pullNotes();
@@ -416,11 +390,71 @@ public class EverNoteUtils {
                     EventBus.getDefault().post(SyncResult.SUCCESS_SILENCE);
                 else
                     EventBus.getDefault().post(SyncResult.SUCCESS);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 EventBus.getDefault().post(SyncResult.ERROR_OTHER);
             }
         });
+    }
+
+    public SyncResult checkLogin(){
+        if (!isLogin()){
+            return SyncResult.ERROR_NOT_LOGIN;
+        }
+        return SyncResult.SUCCESS;
+    }
+
+    public SyncResult sync(final SyncType type){
+        if (checkLogin() == SyncResult.ERROR_NOT_LOGIN){
+            return SyncResult.ERROR_NOT_LOGIN;
+        }
+        try {
+            makeSureNoteBookExist(NOTE_BOOK_NAME);
+        }catch (Exception e){
+            e.printStackTrace();
+            if (e instanceof EDAMUserException){
+                EDAMUserException exception = (EDAMUserException)e;
+                EDAMErrorCode errorCode = exception.getErrorCode();
+                switch (errorCode){
+                    case RATE_LIMIT_REACHED:
+                        if (!BuildConfig.DEBUG){
+                            return SyncResult.ERROR_FREQUENT_API;
+                        }
+                        break;
+                    //need to auth again
+                    case AUTH_EXPIRED:
+                        //clear login message
+                        //logout();
+                        return SyncResult.ERROR_AUTH_EXPIRED;
+                    case PERMISSION_DENIED:
+                        return SyncResult.ERROR_PERMISSION_DENIED;
+                    //quota reached max, so fail
+                    case QUOTA_REACHED:
+                        return SyncResult.ERROR_QUOTA_EXCEEDED;
+                    default:
+                        return SyncResult.ERROR_OTHER;
+                }
+            }
+            return SyncResult.ERROR_OTHER;
+        }
+        try {
+            switch (type){
+                case ALL:
+                    pushNotes();
+                    pullNotes();
+                    break;
+                case PULL:
+                    pullNotes();
+                    break;
+                case PUSH:
+                    pushNotes();
+                    break;
+            }
+            return SyncResult.SUCCESS;
+        }catch (Exception e){
+            e.printStackTrace();
+            return SyncResult.ERROR_OTHER;
+        }
     }
 
     private void handleException(Exception e){

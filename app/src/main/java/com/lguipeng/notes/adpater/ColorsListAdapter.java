@@ -7,13 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.lguipeng.notes.R;
+import com.lguipeng.notes.adpater.base.BaseListAdapter;
 
 import java.util.List;
 
 /**
  * Created by lgp on 2015/6/7.
  */
-public class ColorsListAdapter extends BaseListAdapter<Integer>{
+public class ColorsListAdapter extends BaseListAdapter<Integer> {
 
     private int checkItem;
 

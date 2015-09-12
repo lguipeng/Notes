@@ -1,4 +1,4 @@
-package com.lguipeng.notes.adpater;
+package com.lguipeng.notes.adpater.base;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

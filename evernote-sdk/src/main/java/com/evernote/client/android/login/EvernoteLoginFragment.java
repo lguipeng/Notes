@@ -179,6 +179,8 @@ public class EvernoteLoginFragment extends DialogFragment implements EvernoteLog
                     button.setVisibility(View.GONE);
                     button.setOnClickListener(null);
                 }
+                //disable this button
+                button.setVisibility(View.GONE);
             }
         });
     }

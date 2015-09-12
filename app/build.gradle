@@ -125,6 +125,8 @@ dependencies {
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile 'com.rengwuxian.materialedittext:library:2.1.3'
     compile 'com.google.dagger:dagger:2.0.1'
+    compile 'io.reactivex:rxandroid:1.0.1'
+    compile 'io.reactivex:rxjava:1.0.14'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile project(':orm-library')
     compile project(':evernote-sdk')

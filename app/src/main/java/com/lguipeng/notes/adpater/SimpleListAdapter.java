@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lguipeng.notes.R;
+import com.lguipeng.notes.adpater.base.BaseListAdapter;
 
 import java.util.List;
 

@@ -1,18 +1,12 @@
 package com.lguipeng.notes.ui;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,39 +16,35 @@ import com.lguipeng.notes.R;
 import com.lguipeng.notes.injector.component.DaggerActivityComponent;
 import com.lguipeng.notes.injector.module.ActivityModule;
 import com.lguipeng.notes.model.SNote;
+import com.lguipeng.notes.mvp.presenters.impl.NotePresenter;
+import com.lguipeng.notes.mvp.views.impl.NoteView;
 import com.lguipeng.notes.utils.DialogUtils;
-import com.lguipeng.notes.utils.TimeUtils;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
-import net.tsz.afinal.FinalDb;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by lgp on 2015/5/25.
  */
-public class NoteActivity extends BaseActivity{
+public class NoteActivity extends BaseActivity implements NoteView{
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.label_edit_text) MaterialEditText labelEditText;
     @Bind(R.id.content_edit_text) MaterialEditText contentEditText;
     @Bind(R.id.opr_time_line_text) TextView oprTimeLineTextView;
-    @Inject FinalDb finalDb;
+    @Inject NotePresenter notePresenter;
     private MenuItem doneMenuItem;
-    private int operateNoteType = 0;
-    private SNote note;
-    public final static String OPERATE_NOTE_TYPE_KEY = "OPERATE_NOTE_TYPE_KEY";
-    public final static int VIEW_NOTE_TYPE = 0x00;
-    public final static int EDIT_NOTE_TYPE = 0x01;
-    public final static int CREATE_NOTE_TYPE = 0x02;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        parseIntent(getIntent());
-        EventBus.getDefault().registerSticky(this);
-        showActivityInAnim();
+        initializePresenter();
+        notePresenter.onCreate(savedInstanceState);
+    }
+
+    private void initializePresenter() {
+        notePresenter.attachView(this);
+        notePresenter.attachIntent(getIntent());
     }
 
     @Override
@@ -69,13 +59,13 @@ public class NoteActivity extends BaseActivity{
 
     @Override
     protected void onStop() {
-        hideKeyBoard(labelEditText);
+        notePresenter.onStop();
         super.onStop();
     }
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        notePresenter.onDestroy();
         super.onDestroy();
     }
 
@@ -85,66 +75,9 @@ public class NoteActivity extends BaseActivity{
         return R.layout.activity_note;
     }
 
-    public void onEventMainThread(SNote note) {
-        this.note = note;
-        initToolbar();
-        initEditText();
-        initTextView();
-    }
-
-    private void parseIntent(Intent intent){
-        if (intent != null && intent.getExtras() != null){
-            operateNoteType = intent.getExtras().getInt(OPERATE_NOTE_TYPE_KEY, 0);
-        }
-    }
-
     @Override
     protected void initToolbar(){
         super.initToolbar(toolbar);
-        toolbar.setTitle(R.string.view_note);
-        switch (operateNoteType){
-            case CREATE_NOTE_TYPE:
-                toolbar.setTitle(R.string.new_note);
-                break;
-            case EDIT_NOTE_TYPE:
-                toolbar.setTitle(R.string.edit_note);
-                break;
-            case VIEW_NOTE_TYPE:
-                toolbar.setTitle(R.string.view_note);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void initEditText(){
-        switch (operateNoteType){
-            case EDIT_NOTE_TYPE:
-                showKeyBoard();
-                labelEditText.requestFocus();
-                labelEditText.setText(note.getLabel());
-                contentEditText.setText(note.getContent());
-                labelEditText.setSelection(note.getLabel().length());
-                contentEditText.setSelection(note.getContent().length());
-                break;
-            case VIEW_NOTE_TYPE:
-                hideKeyBoard(labelEditText);
-                labelEditText.setText(note.getLabel());
-                contentEditText.setText(note.getContent());
-                labelEditText.setOnFocusChangeListener(new SimpleOnFocusChangeListener());
-                contentEditText.setOnFocusChangeListener(new SimpleOnFocusChangeListener());
-                break;
-            default:
-                labelEditText.requestFocus();
-                break;
-        }
-        labelEditText.addTextChangedListener(new SimpleTextWatcher());
-        contentEditText.addTextChangedListener(new SimpleTextWatcher());
-    }
-
-    private void initTextView(){
-        //boolean all = preferenceUtils.getBooleanParam(getString(R.string.show_note_history_log_key));
-        oprTimeLineTextView.setText(getOprTimeLineText(note));
     }
 
     @Override
@@ -156,79 +89,22 @@ public class NoteActivity extends BaseActivity{
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         doneMenuItem = menu.getItem(0);
-        doneMenuItem.setVisible(false);
+        notePresenter.onPrepareOptionsMenu();
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.done:
-                saveNote();
-                return true;
-            case android.R.id.home:
-                hideKeyBoard(labelEditText);
-                if (doneMenuItem.isVisible()){
-                    showNotSaveNoteDialog();
-                    return true;
-                }
-                finish();
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        if (notePresenter.onOptionsItemSelected(item))
+            return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
-            hideKeyBoard(labelEditText);
-            if (doneMenuItem != null && doneMenuItem.isVisible()){
-                showNotSaveNoteDialog();
-                return true;
-            }
-        }
-        return super.onKeyDown(keyCode, event);
+        return notePresenter.onKeyDown(keyCode) || super.onKeyDown(keyCode, event);
     }
 
-    private void showNotSaveNoteDialog(){
-
-        AlertDialog.Builder builder = DialogUtils.makeDialogBuilderByTheme(this);
-        builder.setTitle(R.string.not_save_note_leave_tip);
-        DialogInterface.OnClickListener listener = (DialogInterface dialog, int which) ->{
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-                    saveNote();
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    NoteActivity.this.finish();
-                    break;
-                default:
-                    break;
-            }
-        };
-        builder.setPositiveButton(R.string.sure, listener);
-        builder.setNegativeButton(R.string.cancel, listener);
-        builder.show();
-    }
-
-    private void saveNote(){
-        hideKeyBoard(labelEditText);
-        note.setLabel(labelEditText.getText().toString());
-        note.setContent(contentEditText.getText().toString());
-        note.setLastOprTime(TimeUtils.getCurrentTimeInLong());
-        note.setStatus(SNote.Status.NEED_PUSH.getValue());
-        switch (operateNoteType){
-            case CREATE_NOTE_TYPE:
-                note.setCreateTime(TimeUtils.getCurrentTimeInLong());
-                finalDb.saveBindId(note);
-                break;
-            default:
-                finalDb.update(note);
-                break;
-        }
-        EventBus.getDefault().post(MainActivity.MainEvent.UPDATE_NOTE);
-        finish();
-    }
 
     @Override
     public void finish() {
@@ -236,77 +112,120 @@ public class NoteActivity extends BaseActivity{
         showActivityExitAnim();
     }
 
-    class SimpleTextWatcher implements TextWatcher {
 
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    @Override
+    public void finishView() {
+        finish();
+    }
 
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (doneMenuItem == null)
-                return;
-            String labelSrc = labelEditText.getText().toString();
-            String contentSrc = contentEditText.getText().toString();
-            String label = labelSrc.replaceAll("\\s*|\t|\r|\n", "");
-            String content = contentSrc.replaceAll("\\s*|\t|\r|\n", "");
-            if (!TextUtils.isEmpty(label) && !TextUtils.isEmpty(content)){
-                if (TextUtils.equals(labelSrc, note.getLabel()) && TextUtils.equals(contentSrc, note.getContent())){
-                    doneMenuItem.setVisible(false);
-                    return;
-                }
-                doneMenuItem.setVisible(true);
-            }else{
-                doneMenuItem.setVisible(false);
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
+    @Override
+    public void setToolbarTitle(String title) {
+        if (toolbar != null){
+            toolbar.setTitle(title);
         }
     }
 
-    class SimpleOnFocusChangeListener implements View.OnFocusChangeListener {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            if (hasFocus && toolbar != null){
-                toolbar.setTitle(R.string.edit_note);
-            }
+    @Override
+    public void setToolbarTitle(int title) {
+        if (toolbar != null){
+            toolbar.setTitle(title);
         }
     }
 
-    private String getOprTimeLineText(SNote note){
-        if (note == null || note.getLastOprTime() == 0)
-            return "";
-        String create = getString(R.string.create);
-        String edit = getString(R.string.last_update);
-        StringBuilder sb = new StringBuilder();
-        if (note.getLastOprTime() <= note.getCreateTime() || note.getCreateTime() == 0){
-            sb.append(getString(R.string.note_log_text, create, TimeUtils.getTime(note.getLastOprTime())));
-            return sb.toString();
+    @Override
+    public void initViewOnEditMode(SNote note) {
+        showKeyBoard();
+        labelEditText.requestFocus();
+        labelEditText.setText(note.getLabel());
+        contentEditText.setText(note.getContent());
+        labelEditText.setSelection(note.getLabel().length());
+        contentEditText.setSelection(note.getContent().length());
+        labelEditText.addTextChangedListener(notePresenter);
+        contentEditText.addTextChangedListener(notePresenter);
+    }
+
+    @Override
+    public void initViewOnViewMode(SNote note) {
+        hideKeyBoard();
+        labelEditText.setText(note.getLabel());
+        contentEditText.setText(note.getContent());
+        labelEditText.setOnFocusChangeListener(notePresenter);
+        contentEditText.setOnFocusChangeListener(notePresenter);
+        labelEditText.addTextChangedListener(notePresenter);
+        contentEditText.addTextChangedListener(notePresenter);
+    }
+
+    @Override
+    public void initViewOnCreateMode(SNote note) {
+        labelEditText.requestFocus();
+        labelEditText.addTextChangedListener(notePresenter);
+        contentEditText.addTextChangedListener(notePresenter);
+    }
+
+    @Override
+    public void setOperateTimeLineTextView(String text) {
+        oprTimeLineTextView.setText(text);
+    }
+
+    @Override
+    public void setDoneMenuItemVisible(boolean visible) {
+        if (doneMenuItem != null){
+            doneMenuItem.setVisible(visible);
         }
-        sb.append(getString(R.string.note_log_text, edit, TimeUtils.getTime(note.getLastOprTime())));
-        sb.append("\n");
-        sb.append(getString(R.string.note_log_text, create, TimeUtils.getTime(note.getCreateTime())));
-        return sb.toString();
+    }
+
+    @Override
+    public boolean isDoneMenuItemVisible() {
+        return doneMenuItem != null && doneMenuItem.isVisible();
+    }
+
+    @Override
+    public boolean isDoneMenuItemNull() {
+        return doneMenuItem == null;
+    }
+
+    @Override
+    public String getLabelText() {
+        return labelEditText.getText().toString();
+    }
+
+    @Override
+    public String getContentText() {
+        return contentEditText.getText().toString();
+    }
+
+    @Override
+    public void showNotSaveNoteDialog(){
+        AlertDialog.Builder builder = DialogUtils.makeDialogBuilderByTheme(this);
+        builder.setTitle(R.string.not_save_note_leave_tip);
+        builder.setPositiveButton(R.string.sure, notePresenter);
+        builder.setNegativeButton(R.string.cancel, notePresenter);
+        builder.show();
+    }
+
+    @Override
+    public void showActivityInAnim(){
+        overridePendingTransition(R.anim.activity_down_up_anim, R.anim.activity_exit_anim);
+    }
+
+    @Override
+    public void showActivityExitAnim(){
+        overridePendingTransition(R.anim.activity_exit_anim, R.anim.activity_up_down_anim);
+    }
+
+    @Override
+    public void hideKeyBoard(){
+        hideKeyBoard(labelEditText);
+    }
+
+    @Override
+    public void showKeyBoard(){
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void hideKeyBoard(EditText editText){
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-    }
-
-    private void showKeyBoard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    private void showActivityInAnim(){
-        overridePendingTransition(R.anim.activity_down_up_anim, R.anim.activity_exit_anim);
-    }
-    private void showActivityExitAnim(){
-        overridePendingTransition(R.anim.activity_exit_anim, R.anim.activity_up_down_anim);
     }
 }

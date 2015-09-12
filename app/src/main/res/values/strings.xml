@@ -93,6 +93,7 @@
     <string name="backup_local_summary">Backup notes to SDCard /SNote/notes.txt</string>
     <string name="backup_local">Backup Local</string>
     <string name="backup_local_done">Backup done</string>
+    <string name="backup_local_fail">Backup fail</string>
     <string name="just_now">just now</string>
     <string name="before_half_hour">a half of hour ago</string>
 </resources>
