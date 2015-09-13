@@ -16,7 +16,6 @@ import com.lguipeng.notes.model.SNote;
 import com.lguipeng.notes.mvp.presenters.Presenter;
 import com.lguipeng.notes.mvp.views.View;
 import com.lguipeng.notes.mvp.views.impl.NoteView;
-import com.lguipeng.notes.ui.MainActivity;
 import com.lguipeng.notes.utils.TimeUtils;
 
 import net.tsz.afinal.FinalDb;
@@ -35,6 +34,7 @@ public class NotePresenter implements Presenter, android.view.View.OnFocusChange
     private FinalDb mFinalDb;
     private SNote note;
     private int operateMode = 0;
+    private MainPresenter.NotifyEvent<SNote> event;
     public final static String OPERATE_NOTE_TYPE_KEY = "OPERATE_NOTE_TYPE_KEY";
     public final static int VIEW_NOTE_MODE = 0x00;
     public final static int EDIT_NOTE_MODE = 0x01;
@@ -90,10 +90,14 @@ public class NotePresenter implements Presenter, android.view.View.OnFocusChange
     @Override
     public void onStop() {
         view.hideKeyBoard();
+
     }
 
     @Override
     public void onDestroy() {
+        if (event != null){
+            EventBus.getDefault().post(event);
+        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -158,16 +162,19 @@ public class NotePresenter implements Presenter, android.view.View.OnFocusChange
         note.setContent(view.getContentText());
         note.setLastOprTime(TimeUtils.getCurrentTimeInLong());
         note.setStatus(SNote.Status.NEED_PUSH.getValue());
+        event = new MainPresenter.NotifyEvent<>();
         switch (operateMode){
             case CREATE_NOTE_MODE:
                 note.setCreateTime(TimeUtils.getCurrentTimeInLong());
+                event.setType(MainPresenter.NotifyEvent.CREATE_NOTE);
                 mFinalDb.saveBindId(note);
                 break;
             default:
+                event.setType(MainPresenter.NotifyEvent.UPDATE_NOTE);
                 mFinalDb.update(note);
                 break;
         }
-        EventBus.getDefault().post(MainActivity.MainEvent.UPDATE_NOTE);
+        event.setData(note);
         view.finishView();
     }
 
@@ -235,5 +242,9 @@ public class NotePresenter implements Presenter, android.view.View.OnFocusChange
             default:
                 break;
         }
+    }
+
+    public void finish(){
+        view.showActivityExitAnim();
     }
 }

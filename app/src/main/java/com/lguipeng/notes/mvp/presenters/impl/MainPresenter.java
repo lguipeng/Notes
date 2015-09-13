@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +21,6 @@ import com.lguipeng.notes.mvp.presenters.Presenter;
 import com.lguipeng.notes.mvp.views.View;
 import com.lguipeng.notes.mvp.views.impl.MainView;
 import com.lguipeng.notes.ui.AboutActivity;
-import com.lguipeng.notes.ui.MainActivity;
 import com.lguipeng.notes.ui.NoteActivity;
 import com.lguipeng.notes.ui.SettingActivity;
 import com.lguipeng.notes.utils.EverNoteUtils;
@@ -82,13 +82,14 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
         outState.putInt(CURRENT_NOTE_TYPE_KEY, mCurrentNoteTypePage.getValue());
     }
 
-    @Override
-    public void onResume() {
-
-    }
 
     @Override
     public void onStart() {
+    }
+
+
+    @Override
+    public void onResume() {
         if (isRightHandMode != mPreferenceUtils.getBooleanParam(mContext
                 .getString(R.string.right_hand_mode_key))){
             isRightHandMode = !isRightHandMode;
@@ -138,7 +139,13 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
     public boolean onOptionsItemSelected(int id){
         switch (id){
             case R.id.setting: startSettingActivity();return true;
-            case R.id.sync: view.startRefresh();onRefresh();return true;
+            case R.id.sync:
+                if (view.isRefreshing()){
+                    return true;
+                }
+                view.startRefresh();
+                onRefresh();
+                return true;
             case R.id.about: startAboutActivity();return true;
         }
         return false;
@@ -218,6 +225,7 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
 
     public void switchNoteTypePage(SNote.NoteType type){
         view.showProgressWheel(true);
+        //TODO 分页，避免数据过多时加载太慢
         mObservableUtils.getLocalNotesByType(mFinalDb, type.getValue())
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -240,13 +248,8 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
     }
 
     public void initItemLayoutManager(){
-        if (mPreferenceUtils.getBooleanParam(mContext.getString(R.string.card_note_item_layout_key), true)){
-            view.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
-            isCardItemLayout = true;
-        }else {
-            view.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-            isCardItemLayout = false;
-        }
+        boolean card = mPreferenceUtils.getBooleanParam(mContext.getString(R.string.card_note_item_layout_key), true);
+        switchItemLayoutManager(card);
     }
 
     private void switchItemLayoutManager(boolean card){
@@ -313,7 +316,7 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
         note.setType(SNote.NoteType.TRASH);
         note.setStatus(SNote.Status.NEED_REMOVE);
         mFinalDb.update(note);
-        refreshNoteTypePage();
+        view.removeNote(note);
         sync(EverNoteUtils.SyncType.PUSH, true);
     }
 
@@ -323,14 +326,14 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
         note.setType(SNote.NoteType.NORMAL);
         note.setStatus(SNote.Status.NEED_PUSH);
         mFinalDb.update(note);
-        refreshNoteTypePage();
+        view.removeNote(note);
         sync(EverNoteUtils.SyncType.PUSH, true);
     }
 
     public void onDeleteForeverDialogClick(SNote note, int which){
         if (which == Dialog.BUTTON_POSITIVE){
             mFinalDb.delete(note);
-            refreshNoteTypePage();
+            view.removeNote(note);
         }
     }
 
@@ -394,19 +397,60 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
         }
     }
 
-    public void onEventMainThread(MainActivity.MainEvent event){
-        switch (event){
-            case REFRESH_LIST:
+    public void onEventMainThread(NotifyEvent event){
+        switch (event.getType()){
+            case NotifyEvent.REFRESH_LIST:
                 view.startRefresh();
                 onRefresh();
                 break;
-            case UPDATE_NOTE:
-                refreshNoteTypePage();
+            case NotifyEvent.CREATE_NOTE:
+                if (event.getData() instanceof SNote){
+                    view.addNote((SNote) event.getData());
+                    view.scrollRecyclerViewToTop();
+                }
                 sync(EverNoteUtils.SyncType.PUSH, true);
                 break;
-            case CHANGE_THEME:
+            case NotifyEvent.UPDATE_NOTE:
+                if (event.getData() instanceof SNote){
+                    view.updateNote((SNote) event.getData());
+                    view.scrollRecyclerViewToTop();
+                }
+                sync(EverNoteUtils.SyncType.PUSH, true);
+                break;
+            case NotifyEvent.CHANGE_THEME:
                 view.reCreate();
                 break;
+        }
+    }
+
+    public static class NotifyEvent<T>{
+        public static final int REFRESH_LIST = 0;
+        public static final int CREATE_NOTE = 1;
+        public static final int UPDATE_NOTE = 2;
+        public static final int CHANGE_THEME = 3;
+        public static final int CHANGE_ITEM_LAYOUT = 4;
+        public static final int CHANGE_MENU_GRAVITY = 5;
+        private int type;
+        private T data;
+        @IntDef({REFRESH_LIST, CREATE_NOTE, UPDATE_NOTE, CHANGE_THEME,
+                CHANGE_ITEM_LAYOUT, CHANGE_MENU_GRAVITY})
+        public @interface Type {
+        }
+
+        public @Type int getType() {
+            return type;
+        }
+
+        public void setType(@Type int type) {
+            this.type = type;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public void setData(T data) {
+            this.data = data;
         }
     }
 }

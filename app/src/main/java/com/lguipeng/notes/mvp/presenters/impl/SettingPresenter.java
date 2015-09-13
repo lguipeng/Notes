@@ -17,7 +17,6 @@ import com.lguipeng.notes.injector.ContextLifeCycle;
 import com.lguipeng.notes.mvp.presenters.Presenter;
 import com.lguipeng.notes.mvp.views.View;
 import com.lguipeng.notes.mvp.views.impl.SettingView;
-import com.lguipeng.notes.ui.MainActivity;
 import com.lguipeng.notes.ui.PayActivity;
 import com.lguipeng.notes.utils.EverNoteUtils;
 import com.lguipeng.notes.utils.FileUtils;
@@ -50,6 +49,7 @@ public class SettingPresenter implements Presenter, DialogInterface.OnClickListe
     private boolean backuping = false;
     private boolean isRightHandMode = false;
     private boolean isCardLayout = false;
+    private MainPresenter.NotifyEvent<Void> event;
     @Inject
     public SettingPresenter(@ContextLifeCycle("Activity") Context mContext, FinalDb mFinalDb, EverNoteUtils mEverNoteUtils,
                             PreferenceUtils mPreferenceUtils, ObservableUtils mObservableUtils, FileUtils mFileUtils) {
@@ -96,6 +96,11 @@ public class SettingPresenter implements Presenter, DialogInterface.OnClickListe
 
     @Override
     public void onDestroy() {
+        //ignore change theme event
+        if (event != null &&
+                event.getType() != MainPresenter.NotifyEvent.CHANGE_THEME){
+            EventBus.getDefault().post(event);
+        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -215,7 +220,11 @@ public class SettingPresenter implements Presenter, DialogInterface.OnClickListe
             try {
                 initEverAccountPreference();
                 view.showSnackbar(R.string.bind_ever_note_success);
-                EventBus.getDefault().post(MainActivity.MainEvent.REFRESH_LIST);
+                if (event == null){
+                    event = new MainPresenter.NotifyEvent<>();
+                }
+                event.setType(MainPresenter.NotifyEvent.REFRESH_LIST);
+                //EventBus.getDefault().post(MainActivity.MainEvent.REFRESH_LIST);
             }catch (Exception e){
                 view.showSnackbar(R.string.bind_ever_note_fail);
                 NotesLog.e(e.getMessage());
@@ -283,7 +292,12 @@ public class SettingPresenter implements Presenter, DialogInterface.OnClickListe
     }
 
     private void notifyChangeTheme(){
-        EventBus.getDefault().post(MainActivity.MainEvent.CHANGE_THEME);
+        if (event == null){
+            event = new MainPresenter.NotifyEvent<>();
+        }
+        event.setType(MainPresenter.NotifyEvent.CHANGE_THEME);
+        //post change theme event immediately
+        EventBus.getDefault().post(event);
         view.finishView();
     }
 }

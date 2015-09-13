@@ -191,6 +191,26 @@ public class MainActivity extends BaseActivity implements MainView{
     }
 
     @Override
+    public void addNote(SNote note) {
+        recyclerAdapter.add(note);
+    }
+
+    @Override
+    public void updateNote(SNote note) {
+        recyclerAdapter.update(note);
+    }
+
+    @Override
+    public void removeNote(SNote note) {
+        recyclerAdapter.remove(note);
+    }
+
+    @Override
+    public void scrollRecyclerViewToTop() {
+        recyclerView.smoothScrollToPosition(0);
+    }
+
+    @Override
     public void closeDrawer() {
         if (mDrawerLayout.isDrawerOpen(drawerRootView)) {
             mDrawerLayout.closeDrawer(drawerRootView);
@@ -251,6 +271,11 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void startRefresh() {
         refreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public boolean isRefreshing() {
+        return refreshLayout.isRefreshing();
     }
 
     @Override
@@ -386,11 +411,5 @@ public class MainActivity extends BaseActivity implements MainView{
         builder.setPositiveButton(R.string.sure, listener);
         builder.setNegativeButton(R.string.cancel, listener);
         builder.show();
-    }
-
-    public enum MainEvent{
-        REFRESH_LIST,
-        UPDATE_NOTE,
-        CHANGE_THEME
     }
 }

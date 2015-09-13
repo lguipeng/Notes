@@ -109,7 +109,7 @@ public class NoteActivity extends BaseActivity implements NoteView{
     @Override
     public void finish() {
         super.finish();
-        showActivityExitAnim();
+        notePresenter.finish();
     }
 
 

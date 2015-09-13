@@ -17,6 +17,10 @@ public interface MainView extends View {
     void setToolbarTitle(String title);
     void showProgressWheel(boolean visible);
     void switchNoteTypePage(List<SNote> notes);
+    void addNote(SNote note);
+    void updateNote(SNote note);
+    void removeNote(SNote note);
+    void scrollRecyclerViewToTop();
     void setDrawerItemChecked(int position);
     boolean isDrawerOpen();
     void closeDrawer();
@@ -25,6 +29,7 @@ public interface MainView extends View {
     void showFab(boolean visible);
     void stopRefresh();
     void startRefresh();
+    boolean isRefreshing();
     void enableSwipeRefreshLayout(boolean enable);
     void setLayoutManager(RecyclerView.LayoutManager manager);
     void initRecyclerView(List<SNote> notes);

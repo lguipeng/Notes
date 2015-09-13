@@ -52,6 +52,7 @@ public class AboutActivity extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        showActivityInAnim();
         initVersionText();
     }
 
@@ -273,4 +274,17 @@ public class AboutActivity extends BaseActivity{
         dialog.show();
     }
 
+    private void showActivityInAnim(){
+        overridePendingTransition(R.anim.activity_right_left_anim, R.anim.activity_exit_anim);
+    }
+
+    private void showActivityExitAnim(){
+        overridePendingTransition(R.anim.activity_exit_anim, R.anim.activity_left_right_anim);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        showActivityExitAnim();
+    }
 }

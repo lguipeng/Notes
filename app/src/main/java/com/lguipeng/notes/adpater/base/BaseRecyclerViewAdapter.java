@@ -45,6 +45,27 @@ public abstract class BaseRecyclerViewAdapter<E> extends RecyclerView.Adapter<Re
         notifyItemInserted(0);
     }
 
+    public void update(E e, int fromPosition, int toPosition){
+        this.list.remove(fromPosition);
+        this.list.add(toPosition, e);
+        if (fromPosition == toPosition){
+            notifyItemChanged(fromPosition);
+        }else {
+            notifyItemRemoved(fromPosition);
+            notifyItemInserted(toPosition);
+        }
+        //notifyItemRangeChanged(fromPosition, toPosition);
+    }
+
+    public void update(E e, int fromPosition){
+        update(e, fromPosition, 0);
+    }
+
+    public void update(E e){
+        int fromPosition = this.list.indexOf(e);
+        update(e, fromPosition);
+    }
+
     public void remove(E e) {
         int position = list.indexOf(e);
         remove(position);
