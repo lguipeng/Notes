@@ -7,13 +7,19 @@
 <img src="./screenshot/screenshot_5.png" width="30%" height="30%">
 <img src="./screenshot/screenshot_6.png" width="30%" height="30%">
 
-**应用下载地址** [apk地址](./apk/notes_v2.0.0_201509130906.apk)
+**应用地址:** [APK](./apk/notes_v2.0.0_201509130906.apk)
 
 **2.0.0 版本改动幅度较大，一些细节的东西可能没注意到，欢迎大家在issue里面讨论**
 
 **感谢我的好朋友为我设计应用 logo，他所在的设计团队是来自中大的火鸡设计室，你可以通过 liaojlin@outlook.com 与他取得联系**
 
 **欢迎加入热心网友建的学习交流群：461259695**
+
+#Development Environment
+- Android Studio 1.4 Beta 2
+- JDK 1.8
+- Android Buid Tool 23
+- Android Compile Sdk 22
 
 #2.0.0
 - MVP
