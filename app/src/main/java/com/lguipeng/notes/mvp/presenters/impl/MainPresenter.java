@@ -24,6 +24,7 @@ import com.lguipeng.notes.ui.AboutActivity;
 import com.lguipeng.notes.ui.NoteActivity;
 import com.lguipeng.notes.ui.SettingActivity;
 import com.lguipeng.notes.utils.EverNoteUtils;
+import com.lguipeng.notes.utils.NotesLog;
 import com.lguipeng.notes.utils.ObservableUtils;
 import com.lguipeng.notes.utils.PreferenceUtils;
 
@@ -317,7 +318,7 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
         note.setStatus(SNote.Status.NEED_REMOVE);
         mFinalDb.update(note);
         view.removeNote(note);
-        sync(EverNoteUtils.SyncType.PUSH, true);
+        pushNote(note);
     }
 
     private void recoverNote(SNote note){
@@ -327,7 +328,7 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
         note.setStatus(SNote.Status.NEED_PUSH);
         mFinalDb.update(note);
         view.removeNote(note);
-        sync(EverNoteUtils.SyncType.PUSH, true);
+        pushNote(note);
     }
 
     public void onDeleteForeverDialogClick(SNote note, int which){
@@ -368,7 +369,20 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
         startNoteActivity(NotePresenter.CREATE_NOTE_MODE, note);
     }
 
-    public void sync(EverNoteUtils.SyncType type, boolean silence){
+    private void pushNote(SNote note){
+        mObservableUtils.pushNote(mEverNoteUtils, note)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((result -> {
+                    if (!result)
+                        NotesLog.e("push note fail");
+                }), (e) ->{
+                    e.printStackTrace();
+                    NotesLog.e("push note fail");
+                });
+    }
+
+    private void sync(EverNoteUtils.SyncType type, boolean silence){
         //mEverNoteUtils.sync();
         mObservableUtils.sync(mEverNoteUtils, type)
                 .subscribeOn(Schedulers.newThread())
@@ -405,17 +419,19 @@ public class MainPresenter implements Presenter, android.view.View.OnClickListen
                 break;
             case NotifyEvent.CREATE_NOTE:
                 if (event.getData() instanceof SNote){
-                    view.addNote((SNote) event.getData());
+                    SNote note = (SNote)event.getData();
+                    view.addNote(note);
                     view.scrollRecyclerViewToTop();
+                    pushNote(note);
                 }
-                sync(EverNoteUtils.SyncType.PUSH, true);
                 break;
             case NotifyEvent.UPDATE_NOTE:
                 if (event.getData() instanceof SNote){
-                    view.updateNote((SNote) event.getData());
+                    SNote note = (SNote)event.getData();
+                    view.updateNote(note);
                     view.scrollRecyclerViewToTop();
+                    pushNote(note);
                 }
-                sync(EverNoteUtils.SyncType.PUSH, true);
                 break;
             case NotifyEvent.CHANGE_THEME:
                 view.reCreate();

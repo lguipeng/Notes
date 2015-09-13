@@ -37,6 +37,10 @@ public class ObservableUtils {
         return create(new SyncFun(everNoteUtils, type));
     }
 
+    public Observable<Boolean> pushNote(EverNoteUtils everNoteUtils, SNote note){
+        return create(new PushNoteFun(everNoteUtils, note));
+    }
+
     private <T> Observable<T> create(Fun<T> fun){
         return Observable.create(new Observable.OnSubscribe<T>() {
             @Override
@@ -64,6 +68,21 @@ public class ObservableUtils {
         @Override
         public EverNoteUtils.SyncResult call() throws Exception{
             return mEverNoteUtils.sync(type);
+        }
+    }
+
+    private class PushNoteFun implements Fun<Boolean>{
+        private EverNoteUtils mEverNoteUtils;
+        private SNote sNote;
+
+        public PushNoteFun(EverNoteUtils mEverNoteUtils, SNote sNote) {
+            this.mEverNoteUtils = mEverNoteUtils;
+            this.sNote = sNote;
+        }
+
+        @Override
+        public Boolean call() throws Exception {
+            return mEverNoteUtils.pushNote(sNote);
         }
     }
 

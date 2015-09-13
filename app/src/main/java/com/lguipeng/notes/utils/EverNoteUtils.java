@@ -253,27 +253,33 @@ public class EverNoteUtils {
                 .getNoteStoreClient().expungeNote(guid);
     }
 
-    private void pushNotes() throws Exception{
+    public boolean pushNote(SNote sNote)throws Exception{
+        if (sNote == null)
+            return false;
+        if (sNote.hasReadyRemove()){
+            if (!TextUtils.isEmpty(sNote.getGuid())){
+                deleteNote(sNote.getGuid());
+            }
+            sNote.setStatus(SNote.Status.IDLE);
+            mFinalDb.update(sNote);
+        }else if(sNote.hasReadyNewPush()){
+            createNote(sNote);
+        }else if (sNote.hasReadyUpdatePush()){
+            pushUpdateNote(sNote);
+        }
+        return true;
+    }
+
+    public void pushNotes() throws Exception{
         NotesLog.d("");
         List<SNote> sNotes = mFinalDb.findAll(SNote.class);
         for (SNote sNote : sNotes){
-            if (sNote.hasReadyRemove()){
-                if (TextUtils.isEmpty(sNote.getGuid()))
-                    continue;
-                deleteNote(sNote.getGuid());
-                sNote.setStatus(SNote.Status.IDLE.getValue());
-                sNote.setType(SNote.NoteType.TRASH);
-                mFinalDb.update(sNote);
-            }else if(sNote.hasReadyNewPush()){
-                createNote(sNote);
-            }else if (sNote.hasReadyUpdatePush()){
-                pushUpdateNote(sNote);
-            }
+            pushNote(sNote);
         }
         NotesLog.d("");
     }
 
-    private void pullNotes() throws Exception{
+    public void pullNotes() throws Exception{
         NotesLog.d("");
         NoteFilter noteFilter = new NoteFilter();
         noteFilter.setOrder(NoteSortOrder.UPDATED.getValue());
@@ -335,68 +341,6 @@ public class EverNoteUtils {
         return true;
     }
 
-    public void sync(final SyncType type, final boolean silence){
-        if (!checkLogin(silence)){
-            return;
-        }
-        if (!silence)
-            EventBus.getDefault().post(SyncResult.START);
-        mThreadExecutorPool.execute(() -> {
-            try {
-                makeSureNoteBookExist(NOTE_BOOK_NAME);
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (e instanceof EDAMUserException) {
-                    EDAMUserException exception = (EDAMUserException) e;
-                    EDAMErrorCode errorCode = exception.getErrorCode();
-                    switch (errorCode) {
-                        case RATE_LIMIT_REACHED:
-                            if (!BuildConfig.DEBUG) {
-                                EventBus.getDefault().post(SyncResult.ERROR_FREQUENT_API);
-                            }
-                            break;
-                        //need to auth again
-                        case AUTH_EXPIRED:
-                            //clear login message
-                            logout();
-                            EventBus.getDefault().post(SyncResult.ERROR_AUTH_EXPIRED);
-                            break;
-                        case PERMISSION_DENIED:
-                            EventBus.getDefault().post(SyncResult.ERROR_PERMISSION_DENIED);
-                            break;
-                        //quota reached max, so fail
-                        case QUOTA_REACHED:
-                            EventBus.getDefault().post(SyncResult.ERROR_QUOTA_EXCEEDED);
-                            break;
-                        default:
-                            EventBus.getDefault().post(SyncResult.ERROR_OTHER);
-                    }
-                }
-            }
-            try {
-                switch (type) {
-                    case ALL:
-                        pushNotes();
-                        pullNotes();
-                        break;
-                    case PULL:
-                        pullNotes();
-                        break;
-                    case PUSH:
-                        pushNotes();
-                        break;
-                }
-                if (silence)
-                    EventBus.getDefault().post(SyncResult.SUCCESS_SILENCE);
-                else
-                    EventBus.getDefault().post(SyncResult.SUCCESS);
-            } catch (Exception e) {
-                e.printStackTrace();
-                EventBus.getDefault().post(SyncResult.ERROR_OTHER);
-            }
-        });
-    }
-
     public SyncResult checkLogin(){
         if (!isLogin()){
             return SyncResult.ERROR_NOT_LOGIN;
@@ -424,7 +368,7 @@ public class EverNoteUtils {
                     //need to auth again
                     case AUTH_EXPIRED:
                         //clear login message
-                        //logout();
+                        logout();
                         return SyncResult.ERROR_AUTH_EXPIRED;
                     case PERMISSION_DENIED:
                         return SyncResult.ERROR_PERMISSION_DENIED;
