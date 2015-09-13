@@ -15,7 +15,7 @@
 
 **欢迎加入热心网友建的学习交流群：461259695**
 
-#Development Environment
+#Develop Environment
 - Android Studio 1.4 Beta 2
 - JDK 1.8
 - Android Buid Tool 23
