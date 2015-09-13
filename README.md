@@ -8,7 +8,7 @@
 <img src="./screenshot/screenshot_5.png" width="30%" height="30%">
 <img src="./screenshot/screenshot_6.png" width="30%" height="30%">
 
-**应用下载地址** [点击下载apk](./apk/notes_v2.0.0_201509130416.apk)
+**应用下载地址** [apk地址](./apk/notes_v2.0.0_201509130416.apk)
 
 **2.0.0 版本改动幅度较大，一些细节的东西可能没注意到，欢迎大家在issue里面讨论**
 
