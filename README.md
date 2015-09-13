@@ -1,16 +1,25 @@
-#ScreenShot
-<img src="./screenshot/S50719-155319.jpg" width="30%" height="30%">
-<img src="./screenshot/S50719-155344.jpg" width="30%" height="30%">
+#Screenshot
+<img src="./screenshot/screenshot_1.png" width="30%" height="30%">
+<img src="./screenshot/screenshot_2.png" width="30%" height="30%">
 
-<img src="./screenshot/S50719-155352.jpg" width="30%" height="30%">
-<img src="./screenshot/S50719-155407.jpg" width="30%" height="30%">
+<img src="./screenshot/screenshot_3.png" width="30%" height="30%">
+<img src="./screenshot/screenshot_4.png" width="30%" height="30%">
 
-<img src="./screenshot/S50719-155414.jpg" width="30%" height="30%">
-<img src="./screenshot/S50719-155613.jpg" width="30%" height="30%">
+<img src="./screenshot/screenshot_5.png" width="30%" height="30%">
+<img src="./screenshot/screenshot_6.png" width="30%" height="30%">
 
+**应用下载地址** [点击下载apk](./apk/notes_v2.0.0_201509130416.apk)
 
-###感谢我的好朋友为我设计应用 logo，他所在的设计团队是来自中大的火鸡设计室，你可以通过 liaojlin@outlook.com 与他取得联系
-###欢迎加入热心网友建的学习交流群：461259695
+**2.0.0 版本改动幅度较大，一些细节的东西可能没注意到，欢迎大家在issue里面讨论**
+
+**感谢我的好朋友为我设计应用 logo，他所在的设计团队是来自中大的火鸡设计室，你可以通过 liaojlin@outlook.com 与他取得联系**
+**欢迎加入热心网友建的学习交流群：461259695**
+
+#2.0.0
+- MVP
+- Dagger2.0
+- RxAndroid
+- 修复bug
 
 #1.2.0
 - 将同步的方式改为绑定印象笔记
