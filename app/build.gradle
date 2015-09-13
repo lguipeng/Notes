@@ -11,7 +11,6 @@ def blogUrl = "http://www.jianshu.com/users/f612d54d668e/latest_articles"
 def appDownloadUrl = "http://notes.55058a091d225.d01.nanoyun.com/release/notes.apk"
 def aboutAppUrl = "http://www.jianshu.com/p/640a7f2fe0c5"
 
-//remember to add your bmob app key in local.properties
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def weChatId = properties.getProperty('WECHAT_ID')
