@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
 import com.lguipeng.notes.R;
@@ -299,5 +300,11 @@ public class SettingPresenter implements Presenter, DialogInterface.OnClickListe
         //post change theme event immediately
         EventBus.getDefault().post(event);
         view.finishView();
+    }
+
+    private String getString(Context context, @StringRes int string){
+        if (context != null)
+            return context.getString(string);
+        return "";
     }
 }

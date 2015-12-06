@@ -1,8 +1,6 @@
 package com.lguipeng.notes.mvp.presenters;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
 
 import com.lguipeng.notes.mvp.views.View;
 
@@ -24,9 +22,4 @@ public interface Presenter {
 
     void attachView (View v);
 
-    default String getString(Context context, @StringRes int string){
-        if (context != null)
-            return context.getString(string);
-        return "";
-    }
 }
