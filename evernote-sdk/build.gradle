@@ -29,4 +29,5 @@ android {
     lintOptions {
         abortOnError false
     }
+    useLibrary 'org.apache.http.legacy'
 }

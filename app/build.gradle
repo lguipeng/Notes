@@ -115,7 +115,7 @@ retrolambda {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    apt 'com.google.dagger:dagger-compiler:2.0.1'
+    apt 'com.google.dagger:dagger-compiler:2.0.2'
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:recyclerview-v7:22.2.1'
@@ -124,7 +124,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile 'com.rengwuxian.materialedittext:library:2.1.3'
-    compile 'com.google.dagger:dagger:2.0.1'
+    compile 'com.google.dagger:dagger:2.0.2'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'de.greenrobot:eventbus:2.4.0'
