@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity implements MainView{
         };
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerLayout.setScrimColor(getColor(R.color.drawer_scrim_color));
+        mDrawerLayout.setScrimColor(getCompactColor(R.color.drawer_scrim_color));
     }
 
     @Override

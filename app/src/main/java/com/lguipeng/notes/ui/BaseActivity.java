@@ -40,9 +40,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         ThemeUtils.changTheme(this, theme);
     }
 
-    public int getColor(@ColorRes int res){
+    public int getCompactColor(@ColorRes int res){
         if (res <= 0)
             throw new IllegalArgumentException("resource id can not be less 0");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            getColor(res);
+        }
         return getResources().getColor(res);
     }
 

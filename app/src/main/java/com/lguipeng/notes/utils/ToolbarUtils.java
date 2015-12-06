@@ -15,7 +15,7 @@ public class ToolbarUtils {
             return;
         toolbar.setBackgroundColor(activity.getColorPrimary());
         toolbar.setTitle(R.string.app_name);
-        toolbar.setTitleTextColor(activity.getColor(R.color.action_bar_title_color));
+        toolbar.setTitleTextColor(activity.getCompactColor(R.color.action_bar_title_color));
         toolbar.collapseActionView();
         activity.setSupportActionBar(toolbar);
         if (activity.getSupportActionBar() != null){
