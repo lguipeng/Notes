@@ -149,7 +149,10 @@ public class SNote implements Serializable{
 
     private String convertContentToEvernote() {
         String evernoteContent = EvernoteUtil.NOTE_PREFIX
-                + getContent().replace("\n", "<br/>")
+                + getContent().
+                replace("<", "&lt;").
+                replace(">", "&gt;").
+                replace("\n", "<br/>")
                 + EvernoteUtil.NOTE_SUFFIX;
         NotesLog.d(evernoteContent);
         return evernoteContent;
