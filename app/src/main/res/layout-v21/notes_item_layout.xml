@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:id="@+id/notes_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/card_margin"
+    app:cardElevation="6dp"
+    app:cardCornerRadius="2dp">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/note_label_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingTop="6dp"
+                android:paddingLeft="6dp"
+                android:layout_weight="1.0"
+                tools:text="Label Text"
+                android:maxLines="14"
+                android:ellipsize="end"
+                android:lineSpacingExtra="2dp"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/abc_text_size_medium_material"/>
+            <ImageButton
+                android:id="@+id/note_more"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_more_grey"/>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/note_content_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:maxLines="14"
+            android:lineSpacingExtra="2dp"
+            android:ellipsize="end"
+            android:textColor="#848484"
+            android:textSize="@dimen/abc_text_size_small_material"/>
+        <TextView
+            android:id="@+id/note_last_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            tools:text="2015-5-24:16:05"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="@dimen/abc_text_size_caption_material"/>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
+

@@ -8,4 +8,5 @@
     <dimen name="md_dialog_frame_margin">24dp</dimen>
     <dimen name="drawer_width">200dp</dimen>
     <dimen name="preference_divider_height">0.6dp</dimen>
+    <dimen name="card_margin">0dp</dimen>
 </resources>
