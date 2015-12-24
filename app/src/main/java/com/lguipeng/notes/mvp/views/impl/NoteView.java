@@ -9,8 +9,6 @@ import com.lguipeng.notes.mvp.views.View;
  * Created by lgp on 2015/9/4.
  */
 public interface NoteView extends View {
-    void showActivityInAnim();
-    void showActivityExitAnim();
     void finishView();
     void setToolbarTitle(String title);
     void setToolbarTitle(@StringRes int title);

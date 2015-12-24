@@ -70,8 +70,7 @@ public class ThreadExecutorPool {
      * execute a thread in thread pool
      * @param runnable the thread
      */
-    public void execute(Runnable runnable)
-    {
+    public void execute(Runnable runnable) {
       if (!pool.isShutdown())
           pool.execute(runnable);
       else

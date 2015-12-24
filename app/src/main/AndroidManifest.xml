@@ -51,6 +51,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".ui.ShadowActivity"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity android:name="com.evernote.client.android.EvernoteOAuthActivity" />
         <activity android:name="com.evernote.client.android.login.EvernoteLoginActivity"/>

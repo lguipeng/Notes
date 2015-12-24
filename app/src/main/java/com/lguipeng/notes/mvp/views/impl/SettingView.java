@@ -23,5 +23,5 @@ public interface SettingView extends View {
     boolean isResume();
     void showUnbindEverNoteDialog();
     void toast(@StringRes int message);
-    void finishView();
+    void reload();
 }

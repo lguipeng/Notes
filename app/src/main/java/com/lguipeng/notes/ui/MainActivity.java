@@ -66,6 +66,7 @@ public class MainActivity extends BaseActivity implements MainView{
     private NotesAdapter recyclerAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        launchWithNoAnim();
         super.onCreate(savedInstanceState);
         initializePresenter();
         mainPresenter.onCreate(savedInstanceState);
@@ -404,7 +405,7 @@ public class MainActivity extends BaseActivity implements MainView{
 
     @Override
     public void showDeleteForeverDialog(final SNote note){
-        AlertDialog.Builder builder = DialogUtils.makeDialogBuilderByTheme(this);
+        AlertDialog.Builder builder = DialogUtils.makeDialogBuilder(this);
         builder.setTitle(R.string.delete_tip);
         DialogInterface.OnClickListener listener = (DialogInterface dialog, int which) ->
             mainPresenter.onDeleteForeverDialogClick(note, which);

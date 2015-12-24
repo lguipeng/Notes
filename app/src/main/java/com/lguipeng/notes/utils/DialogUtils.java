@@ -10,8 +10,7 @@ import com.lguipeng.notes.R;
  */
 public class DialogUtils {
 
-    public static AlertDialog.Builder makeDialogBuilderByTheme(Context context){
-        ThemeUtils.Theme theme = ThemeUtils.getCurrentTheme(context);
+    public static AlertDialog.Builder makeDialogBuilderByTheme(Context context, ThemeUtils.Theme theme){
         AlertDialog.Builder builder;
         int style = R.style.RedDialogTheme;
         switch (theme){
@@ -41,5 +40,10 @@ public class DialogUtils {
         }
         builder = new AlertDialog.Builder(context, style);
         return builder;
+    }
+
+    public static AlertDialog.Builder makeDialogBuilder(Context context){
+        ThemeUtils.Theme theme = ThemeUtils.getCurrentTheme(context);
+        return makeDialogBuilderByTheme(context, theme);
     }
 }

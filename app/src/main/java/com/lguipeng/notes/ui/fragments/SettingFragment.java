@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.jenzz.materialpreference.CheckBoxPreference;
 import com.jenzz.materialpreference.Preference;
-import com.jenzz.materialpreference.SwitchPreference;
 import com.lguipeng.notes.R;
 import com.lguipeng.notes.adpater.ColorsListAdapter;
 import com.lguipeng.notes.injector.component.DaggerFragmentComponent;
@@ -36,7 +35,7 @@ import javax.inject.Inject;
  */
 public class SettingFragment extends PreferenceFragment implements SettingView{
     public static final String PREFERENCE_FILE_NAME = "note.settings";
-    private SwitchPreference rightHandModePreference;
+    private CheckBoxPreference rightHandModePreference;
     private Preference feedbackPreference;
     private CheckBoxPreference cardLayoutPreference;
     private Preference payMePreference;
@@ -101,7 +100,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView{
 
     @Override
     public void findPreference() {
-        rightHandModePreference = (SwitchPreference)findPreference(getString(R.string.right_hand_mode_key));
+        rightHandModePreference = (CheckBoxPreference)findPreference(getString(R.string.right_hand_mode_key));
         cardLayoutPreference = (CheckBoxPreference)findPreference(getString(R.string.card_note_item_layout_key));
         feedbackPreference = (Preference)findPreference(getString(R.string.advice_feedback_key));
         everAccountPreference = (Preference)findPreference(getString(R.string.ever_note_account_key));
@@ -152,7 +151,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView{
 
     @Override
     public void showThemeChooseDialog(){
-        AlertDialog.Builder builder = DialogUtils.makeDialogBuilderByTheme(activity);
+        AlertDialog.Builder builder = DialogUtils.makeDialogBuilder(activity);
         builder.setTitle(R.string.change_theme);
         Integer[] res = new Integer[]{R.drawable.red_round, R.drawable.brown_round, R.drawable.blue_round,
                 R.drawable.blue_grey_round, R.drawable.yellow_round, R.drawable.deep_purple_round,
@@ -174,7 +173,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView{
 
     @Override
     public void showUnbindEverNoteDialog(){
-        AlertDialog.Builder builder = DialogUtils.makeDialogBuilderByTheme(activity);
+        AlertDialog.Builder builder = DialogUtils.makeDialogBuilder(activity);
         builder.setTitle(R.string.has_unbind_ever_note_tip);
         builder.setPositiveButton(R.string.sure, settingPresenter);
         builder.setNegativeButton(R.string.cancel, settingPresenter);
@@ -200,9 +199,9 @@ public class SettingFragment extends PreferenceFragment implements SettingView{
     }
 
     @Override
-    public void finishView() {
+    public void reload() {
         if (activity != null){
-            activity.finish();
+            activity.reload(false);
         }
     }
 }

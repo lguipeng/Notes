@@ -48,7 +48,6 @@ public class NotePresenter implements Presenter, android.view.View.OnFocusChange
     @Override
     public void onCreate(Bundle savedInstanceState) {
         EventBus.getDefault().registerSticky(this);
-        view.showActivityInAnim();
     }
 
     @Override
@@ -158,7 +157,11 @@ public class NotePresenter implements Presenter, android.view.View.OnFocusChange
 
     private void saveNote(){
         view.hideKeyBoard();
-        note.setLabel(view.getLabelText());
+        if (TextUtils.isEmpty(view.getLabelText())){
+            note.setLabel(mContext.getString(R.string.default_label));
+        }else {
+            note.setLabel(view.getLabelText());
+        }
         note.setContent(view.getContentText());
         note.setLastOprTime(TimeUtils.getCurrentTimeInLong());
         note.setStatus(SNote.Status.NEED_PUSH.getValue());
@@ -212,9 +215,9 @@ public class NotePresenter implements Presenter, android.view.View.OnFocusChange
             return;
         String labelSrc = view.getLabelText();
         String contentSrc = view.getContentText();
-        String label = labelSrc.replaceAll("\\s*|\t|\r|\n", "");
+        //String label = labelSrc.replaceAll("\\s*|\t|\r|\n", "");
         String content = contentSrc.replaceAll("\\s*|\t|\r|\n", "");
-        if (!TextUtils.isEmpty(label) && !TextUtils.isEmpty(content)){
+        if (!TextUtils.isEmpty(content)){
             if (TextUtils.equals(labelSrc, note.getLabel()) && TextUtils.equals(contentSrc, note.getContent())){
                 view.setDoneMenuItemVisible(false);
                 return;
@@ -242,9 +245,5 @@ public class NotePresenter implements Presenter, android.view.View.OnFocusChange
             default:
                 break;
         }
-    }
-
-    public void finish(){
-        view.showActivityExitAnim();
     }
 }

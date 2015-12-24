@@ -1,5 +1,6 @@
 package com.lguipeng.notes.mvp.presenters.impl;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -23,6 +24,7 @@ import com.lguipeng.notes.utils.EverNoteUtils;
 import com.lguipeng.notes.utils.FileUtils;
 import com.lguipeng.notes.utils.NotesLog;
 import com.lguipeng.notes.utils.ObservableUtils;
+import com.lguipeng.notes.utils.PermissionRequester;
 import com.lguipeng.notes.utils.PreferenceUtils;
 import com.lguipeng.notes.utils.ThemeUtils;
 
@@ -256,18 +258,28 @@ public class SettingPresenter implements Presenter, DialogInterface.OnClickListe
         if (backuping)
             return;
         backuping = true;
-        view.toast(R.string.backup_local);
-        mObservableUtils.backNotes(mContext, mFinalDb, mFileUtils)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((success) -> {
-                    view.toast(R.string.backup_local_done);
-                    backuping = false;
-                }, (e) -> {
-                    onGetUserException(e);
-                    view.toast(R.string.backup_local_fail);
-                    backuping = false;
-                });
+
+        PermissionRequester.getInstance(mContext).
+                request(new PermissionRequester.RequestPermissionsResultCallBackImpl() {
+                    @Override
+                    public void onRequestPermissionsResult(String[] permission, int[] grantResult) {
+                        if (grantResult[0] != PackageManager.PERMISSION_GRANTED){
+                            view.showSnackbar(R.string.backup_local_fail);
+                            return;
+                        }
+                        mObservableUtils.backNotes(mContext, mFinalDb, mFileUtils)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe((success) -> {
+                                    view.showSnackbar(R.string.backup_local_done);
+                                    backuping = false;
+                                }, (e) -> {
+                                    view.showSnackbar(R.string.backup_local_fail);
+                                    backuping = false;
+                                });
+                    }
+                }, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
     }
 
     @Override
@@ -299,7 +311,7 @@ public class SettingPresenter implements Presenter, DialogInterface.OnClickListe
         event.setType(MainPresenter.NotifyEvent.CHANGE_THEME);
         //post change theme event immediately
         EventBus.getDefault().post(event);
-        view.finishView();
+        view.reload();
     }
 
     private String getString(Context context, @StringRes int string){

@@ -105,14 +105,6 @@ public class NoteActivity extends BaseActivity implements NoteView{
         return notePresenter.onKeyDown(keyCode) || super.onKeyDown(keyCode, event);
     }
 
-
-    @Override
-    public void finish() {
-        super.finish();
-        notePresenter.finish();
-    }
-
-
     @Override
     public void finishView() {
         finish();
@@ -158,7 +150,7 @@ public class NoteActivity extends BaseActivity implements NoteView{
     @Override
     public void initViewOnCreateMode(SNote note) {
         labelEditText.requestFocus();
-        labelEditText.addTextChangedListener(notePresenter);
+        //labelEditText.addTextChangedListener(notePresenter);
         contentEditText.addTextChangedListener(notePresenter);
     }
 
@@ -196,21 +188,11 @@ public class NoteActivity extends BaseActivity implements NoteView{
 
     @Override
     public void showNotSaveNoteDialog(){
-        AlertDialog.Builder builder = DialogUtils.makeDialogBuilderByTheme(this);
+        AlertDialog.Builder builder = DialogUtils.makeDialogBuilder(this);
         builder.setTitle(R.string.not_save_note_leave_tip);
         builder.setPositiveButton(R.string.sure, notePresenter);
         builder.setNegativeButton(R.string.cancel, notePresenter);
         builder.show();
-    }
-
-    @Override
-    public void showActivityInAnim(){
-        overridePendingTransition(R.anim.activity_down_up_anim, R.anim.activity_exit_anim);
-    }
-
-    @Override
-    public void showActivityExitAnim(){
-        overridePendingTransition(R.anim.activity_exit_anim, R.anim.activity_up_down_anim);
     }
 
     @Override

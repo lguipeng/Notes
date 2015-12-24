@@ -22,7 +22,6 @@ public class SettingActivity extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        showActivityInAnim();
         init();
     }
 
@@ -52,14 +51,6 @@ public class SettingActivity extends BaseActivity{
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, settingFragment).commit();
     }
 
-    private void showActivityInAnim(){
-        overridePendingTransition(R.anim.activity_right_left_anim, R.anim.activity_exit_anim);
-    }
-
-    private void showActivityExitAnim(){
-        overridePendingTransition(R.anim.activity_exit_anim, R.anim.activity_left_right_anim);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -69,9 +60,4 @@ public class SettingActivity extends BaseActivity{
         }
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        showActivityExitAnim();
-    }
 }

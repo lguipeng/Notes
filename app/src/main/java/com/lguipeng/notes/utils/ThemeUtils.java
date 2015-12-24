@@ -10,7 +10,7 @@ import com.lguipeng.notes.R;
  */
 public class ThemeUtils {
 
-    public static void changTheme(Activity activity, Theme theme){
+    public static void changeTheme(Activity activity, Theme theme){
         if (activity == null)
             return;
         int style = R.style.RedTheme;

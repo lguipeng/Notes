@@ -96,4 +96,5 @@
     <string name="backup_local_fail">备份失败</string>
     <string name="just_now">刚刚</string>
     <string name="before_half_hour">半个小时之前</string>
+    <string name="default_label">无标题</string>
 </resources>

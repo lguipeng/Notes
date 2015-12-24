@@ -101,4 +101,6 @@
   public static final android.os.Parcelable$Creator *;
 }
 
+-dontwarn org.apache.http.**
+
 -keepattributes SourceFile,LineNumberTable

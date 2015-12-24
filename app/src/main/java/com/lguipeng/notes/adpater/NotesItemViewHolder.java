@@ -48,8 +48,10 @@ public class NotesItemViewHolder extends RecyclerView.ViewHolder{
     }
 
     private void setTextView(TextView view, CharSequence text){
-        if (view == null || TextUtils.isEmpty(text))
+        if (view == null )
             return;
+        if (TextUtils.isEmpty(text))
+            view.setVisibility(View.GONE);
         view.setText(text);
     }
 

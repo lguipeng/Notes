@@ -24,28 +24,29 @@ public class FileUtils {
     public final static String SD_ROOT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
     public final static String APP_DIR = SD_ROOT_DIR + File.separator +"SNotes" ;
     public final static String BACKUP_FILE_NAME = "notes.txt" ;
-    /**
-     * 创建APP 的SD卡文件夹
-     */
-    {
-        if (checkSdcardStatus()) {
-            mkdir(APP_DIR);
-            NotesLog.d("create app dir ok");
-        }else{
-            NotesLog.e("sd card not ready");
-        }
-    }
 
     @Inject @Singleton
     public FileUtils() {
+    }
+
+    private void makeSureAppDirCreated(){
+        if (checkSdcardStatus()) {
+            mkdir(APP_DIR);
+        }else{
+            NotesLog.e("sd card not ready");
+        }
     }
 
     public void mkdir(String dir){
         if (TextUtils.isEmpty(dir))
             return;
         File dirFile = new File(dir);
-        if (!dirFile.exists())
-            dirFile.mkdir();
+        if (!dirFile.exists()){
+            boolean res = dirFile.mkdir();
+            if (!res) {
+                NotesLog.e("make dir " + dir + " error!");
+            }
+        }
     }
     public boolean isFileExist(String filePath){
         if (TextUtils.isEmpty(filePath)) {
@@ -61,7 +62,8 @@ public class FileUtils {
      * @return true if create success
      */
     public boolean createFile(String filename) {
-       return createFile(APP_DIR, filename);
+        makeSureAppDirCreated();
+        return createFile(APP_DIR, filename);
     }
 
     public boolean createFile(String dir, String filename) {
@@ -89,21 +91,20 @@ public class FileUtils {
      */
     public boolean deleteFile(String filename) {
         File deleteFile = new File(filename);
-        if (deleteFile.exists())
-        {
+        if (deleteFile.exists()) {
             deleteFile.delete();
             return true;
-        }else
-        {
+        }else {
             return false;
         }
     }
 
     public boolean  writeSNotesFile(String content) {
-        return writeFile(APP_DIR, BACKUP_FILE_NAME, content, false);
+        return writeFile(BACKUP_FILE_NAME, content, false);
     }
 
     public boolean  writeFile(String fileName, String content, boolean append) {
+        makeSureAppDirCreated();
         return writeFile(APP_DIR, fileName, content, append);
     }
 
@@ -119,16 +120,17 @@ public class FileUtils {
             fileWriter.close();
             return true;
         } catch (IOException e) {
-            throw new RuntimeException("IOException occurred. ", e);
+            e.printStackTrace();
         } finally {
             if (fileWriter != null) {
                 try {
                     fileWriter.close();
                 } catch (IOException e) {
-                    throw new RuntimeException("IOException occurred. ", e);
+                    e.printStackTrace();
                 }
             }
         }
+        return false;
     }
 
     public long getFileSize(String path) {

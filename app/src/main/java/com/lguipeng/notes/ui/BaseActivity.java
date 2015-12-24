@@ -1,6 +1,7 @@
 package com.lguipeng.notes.ui;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -23,9 +24,15 @@ import butterknife.ButterKnife;
  * Created by lgp on 2015/5/24.
  */
 public abstract class BaseActivity extends AppCompatActivity {
+    public final static String IS_START_ANIM = "IS_START_ANIM";
+    public final static String IS_CLOSE_ANIM = "IS_CLOSE_ANIM";
     protected ActivityComponent mActivityComponent;
+    protected boolean isStartAnim = true;
+    protected boolean isCloseAnim = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        parseIntent(getIntent());
+        showActivityInAnim();
         initTheme();
         super.onCreate(savedInstanceState);
         initWindow();
@@ -37,7 +44,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void initTheme(){
         ThemeUtils.Theme theme = ThemeUtils.getCurrentTheme(this);
-        ThemeUtils.changTheme(this, theme);
+        ThemeUtils.changeTheme(this, theme);
+    }
+
+    private void parseIntent(Intent intent){
+        if (intent != null) {
+            isStartAnim = intent.getBooleanExtra(IS_START_ANIM, true);
+            isCloseAnim = intent.getBooleanExtra(IS_CLOSE_ANIM, true);
+        }
     }
 
     public int getCompactColor(@ColorRes int res){
@@ -51,7 +65,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @TargetApi(19)
     private void initWindow(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
@@ -107,6 +121,48 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void initToolbar(){
 
+    }
+
+    public void reload(boolean anim) {
+        Intent intent = getIntent();
+        if (!anim) {
+            overridePendingTransition(0, 0);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            intent.putExtra(BaseActivity.IS_START_ANIM, false);
+        }
+        finish();
+        if (!anim) {
+            overridePendingTransition(0, 0);
+        }
+        startActivity(intent);
+    }
+
+    protected void showActivityInAnim(){
+        if (isStartAnim) {
+            overridePendingTransition(R.anim.activity_down_up_anim, R.anim.activity_exit_anim);
+        }
+    }
+
+    protected void showActivityExitAnim(){
+        if (isCloseAnim) {
+            overridePendingTransition(R.anim.activity_exit_anim, R.anim.activity_up_down_anim);
+        }
+    }
+
+
+    @Override
+    public void finish() {
+        super.finish();
+        showActivityExitAnim();
+    }
+
+    //call before super.onCreate(savedInstanceState)
+    protected void launchWithNoAnim() {
+        isStartAnim = false;
+    }
+
+    protected void exitWithNoAnim() {
+        isCloseAnim = false;
     }
 
     protected void initializeDependencyInjector(){

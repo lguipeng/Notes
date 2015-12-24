@@ -15,16 +15,17 @@
         app:cardElevation="4dp"
         app:cardCornerRadius="2dp">
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/note_label_text"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="4dp"
                     android:paddingTop="6dp"
@@ -34,38 +35,40 @@
                     android:maxLines="14"
                     android:ellipsize="end"
                     android:lineSpacingExtra="2dp"
-                    android:textColor="@color/dark_grey"
-                    android:textSize="@dimen/abc_text_size_medium_material"/>
-                <ImageButton
-                    android:id="@+id/note_more"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="4dp"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"/>
+                <TextView
+                    android:id="@+id/note_content_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_more_grey"/>
+                    android:padding="6dp"
+                    android:maxLines="14"
+                    android:lineSpacingExtra="2dp"
+                    tools:text="Content Text"
+                    android:ellipsize="end"
+                    android:textColor="#413f3f"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/note_last_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="6dp"
+                    tools:text="2015-5-24:16:05"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="12sp"/>
             </LinearLayout>
-            <TextView
-                android:id="@+id/note_content_text"
-                android:layout_width="match_parent"
+
+            <ImageButton
+                android:id="@+id/note_more"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="6dp"
-                android:maxLines="14"
-                android:lineSpacingExtra="2dp"
-                android:ellipsize="end"
-                android:textColor="#848484"
-                android:textSize="@dimen/abc_text_size_small_material"/>
-            <TextView
-                android:id="@+id/note_last_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="6dp"
-                tools:text="2015-5-24:16:05"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textColor="?android:textColorSecondary"
-                android:textSize="@dimen/abc_text_size_caption_material"/>
+                android:src="@drawable/ic_more_grey"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </com.balysv.materialripple.MaterialRippleLayout>

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import java.util.List;
 public class NotesAdapter extends BaseRecyclerViewAdapter<SNote> implements Filterable{
 
     private final List<SNote> originalList;
-
+    private Context mContext;
     public NotesAdapter(List<SNote> list) {
         super(list);
         originalList = new ArrayList<>(list);
@@ -38,8 +39,8 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<SNote> implements Filt
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        final View view = LayoutInflater.from(context).inflate(R.layout.notes_item_layout, parent, false);
+        mContext = parent.getContext();
+        final View view = LayoutInflater.from(mContext).inflate(R.layout.notes_item_layout, parent, false);
         return new NotesItemViewHolder(view);
     }
 
@@ -50,7 +51,13 @@ public class NotesAdapter extends BaseRecyclerViewAdapter<SNote> implements Filt
         SNote note = list.get(position);
         if (note == null)
             return;
-        holder.setLabelText(note.getLabel());
+        //TODO
+        String label = "";
+        if (mContext != null) {
+            boolean b  = TextUtils.equals(mContext.getString(R.string.default_label), note.getLabel());
+            label = b? "": note.getLabel();
+        }
+        holder.setLabelText(label);
         holder.setContentText(note.getContent());
         holder.setTimeText(TimeUtils.getConciseTime(note.getLastOprTime(), mContext));
         animate(viewHolder, position);

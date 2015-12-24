@@ -96,4 +96,5 @@
     <string name="backup_local_fail">Backup fail</string>
     <string name="just_now">just now</string>
     <string name="before_half_hour">a half of hour ago</string>
+    <string name="default_label">No Title</string>
 </resources>
